@@ -9,7 +9,7 @@ function Header() {
   const menuStructure = [
     {
       title: "착한가격업소 안내",
-      link: "/guide",
+      link: "/company",
       subMenu: [
         {
           title: "소개",
@@ -41,12 +41,12 @@ function Header() {
     },
     {
       title: "착한업소찾기",
-      link: "/find",
+      link: "/contact",
       subMenu: [{ title: "착한업소 지도", link: "/find/map" }],
     },
     {
       title: "커뮤니티",
-      link: "/community",
+      link: "/marketplace",
       subMenu: [
         { title: "공지사항", link: "/community/notice" },
         { title: "Q&A", link: "/community/qna" },
@@ -55,12 +55,12 @@ function Header() {
     },
     {
       title: "채팅",
-      link: "/chat",
+      link: "/features",
       subMenu: [{ title: "내 채팅방", link: "/chat/room" }],
     },
     {
       title: "마이페이지",
-      link: "/mypage",
+      link: "/team",
       subMenu: [
         { title: "내 정보", link: "/mypage/info" },
         ...(userRole === "user"
@@ -164,7 +164,7 @@ function Header() {
               to="/join"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
-              Get started
+              Join us
             </Link>
           </div>
         </div>

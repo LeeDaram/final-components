@@ -43,15 +43,15 @@ function Footer() {
                 </h2>
                 <ul className="text-gray-600 dark:text-gray-400">
                   <li className="mb-4">
-                    <a href="https://github.com/" className="hover:underline ">
+                    <a
+                      href="https://github.com/thermoCat/final-components"
+                      className="hover:underline "
+                    >
                       Github
                     </a>
                   </li>
                   <li>
-                    <a
-                      href="https://discord.gg/4eeurUVvTy"
-                      className="hover:underline"
-                    >
+                    <a href="디코있는사람~" className="hover:underline">
                       Discord
                     </a>
                   </li>

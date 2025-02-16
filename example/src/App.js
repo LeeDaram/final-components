@@ -6,6 +6,8 @@ import Contact from "./pages/Contact";
 import Company from "./pages/Company";
 import Marketplace from "./pages/Marketplace";
 import Features from "./pages/Features";
+import Login from "./pages/Login";
+import Join from "./pages/Join";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
@@ -24,6 +26,8 @@ function App() {
             <Route path="/features" element={<Features />} />
             <Route path="/team" element={<Team />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/join" element={<Join />} />
           </Routes>
         </main>
       </div>
