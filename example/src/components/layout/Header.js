@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 
 function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
+  const [userRole, setUserRole] = useState("user");
 
-  const userRole = "business"; // user, business, admin 로 로그인 구분 null이거나 undefined시 로그아웃으로 간주함
+  const userRole1 = "user"; // user, business, admin 로 로그인 구분 null이거나 undefined시 로그아웃으로 간주함
 
   const menuStructure = [
     {
@@ -162,7 +163,7 @@ function Header() {
             {userRole ? (
               <>
                 {/* 알림 */}
-                <div className="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]">
+                <div className="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] ml-4 mr-4">
                   <button
                     id="dropdown-scrollable"
                     type="button"
@@ -218,7 +219,7 @@ function Header() {
                   </div>
                 </div>
                 {/* 사용자 */}
-                <div className="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] ml-4">
+                <div className="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] ml-4 mr-4">
                   <button
                     id="dropdown-scrollable"
                     type="button"
@@ -275,6 +276,7 @@ function Header() {
                         className="btn btn-error btn-soft btn-block"
                         onClick={() => {
                           /* 로그아웃 로직 추가 해야됨 */
+                          setUserRole(null);
                         }}
                       >
                         <span className="icon-[tabler--logout]"></span>
