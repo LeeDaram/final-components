@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import aboutImg from "../../../assets/images/g-service/about.png";
+import functionImg from "../../../assets/images/g-service/function-4.png";
+import partnerImg from "../../../assets/images/g-service/partner-1.png";
+import partnerImg2 from "../../../assets/images/g-service/partner-2.png";
+import partnerImg3 from "../../../assets/images/g-service/partner-3.png";
 
 const Service = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,14 +24,14 @@ const Service = () => {
       desc: "부산의 돌고래순두부는 착한가격업소의 좋은 예로, 합리적인 가격에 맛있는 음식을 제공하여 지역 주민들에게 큰 사랑을 받고 있습니다.",
     },
     {
-      name: "해물파전집",
-      city: "부산시",
-      desc: "부산의 해물파전집은 착한가격업소의 대표적인 사례로, 신선한 해산물과 바삭한 전을 합리적인 가격에 제공하여 많은 지역 주민들에게 사랑받고 있습니다. 이곳은 가족 단위 손님부터 친구들과의 모임까지 다양한 고객층이 찾는 인기 있는 장소입니다.",
+      name: "가이오청년밥상",
+      city: "청주시",
+      desc: "청주의 가이오청년밥상은 착한가격업소로, 깊고 진한 국물 맛과 신선한 재료를 사용하여 저렴한 가격에 푸짐한 한 끼를 제공합니다.",
     },
     {
-      name: "ㅇㅇ",
-      city: "ㅇㅇ",
-      desc: "ㅇㅇ",
+      name: "고가네칼국수",
+      city: "공주시",
+      desc: "공주의 고가네칼국수는 착한가격업소의 대표적인 사례로, 가족 단위 손님부터 친구들과의 모임까지 다양한 고객층이 찾는 인기 있는 장소입니다.",
     },
   ];
 
@@ -50,11 +55,7 @@ const Service = () => {
       {/* About Section */}
       <section className="flex flex-col md:flex-row items-center p-12 bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg">
         <div className="w-full md:w-1/2 flex justify-center">
-          <img
-            src="images/about-img.png"
-            alt="About"
-            className="w-72 shadow-xl rounded-xl"
-          />
+          <img src={aboutImg} alt="About" className="w-100 rounded-xl" />
         </div>
         <div className="w-full md:w-1/2 p-6">
           <h2 className="text-5xl font-bold mb-6 leading-tight">
@@ -74,101 +75,121 @@ const Service = () => {
           </a>
         </div>
       </section>
-
-      {/* 주요 기능 */}
-      <section className="p-12">
-        <h2 className="text-center text-4xl font-extrabold mb-12 text-gray-800">
-          주요 기능 알아보기
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {[
-            "합리적인 가격 정책",
-            "고품질 서비스 제공",
-            "전문가 팀의 신뢰성",
-            "고객의 맞춤형 서비스",
-          ].map((title, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center bg-blue-50 p-6 rounded-xl shadow-lg hover:scale-105 transition transform hover:shadow-xl"
-            >
-              <img
-                src={`images/t${index + 1}.png`}
-                alt={title}
-                className="w-24 h-24 mb-6"
-              />
-              <h4 className="text-xl font-semibold text-center text-gray-800">
-                {title}
-              </h4>
+      <div className="flex justify-center items-center">
+        <div className="w-9/12 mx-auto">
+          {/* 주요 기능 */}
+          <section className="p-12">
+            <h2 className="text-center text-4xl font-extrabold mb-12 text-gray-800">
+              주요 기능 알아보기
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              {[
+                "합리적인 가격 정책",
+                "고품질 서비스 제공",
+                "전문가 팀의 신뢰성",
+                "고객의 맞춤형 서비스",
+              ].map((title, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center bg-blue-50 p-6 rounded-xl shadow-lg hover:scale-105 transition transform hover:shadow-xl"
+                >
+                  <img
+                    src={functionImg}
+                    alt={title}
+                    className="w-24 h-24 mb-6"
+                  />
+                  <h4 className="text-xl font-semibold text-center text-gray-800">
+                    {title}
+                  </h4>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      {/* 착한가격업소 사례 */}
-      <section className="p-12 bg-gray-100">
-        <h2 className="text-4xl text-center font-extrabold mb-12 text-gray-900">
-          착한가격업소 사례
-        </h2>
-        <div className="relative w-full h-64 overflow-hidden rounded-xl shadow-xl">
-          <div
-            className="flex w-full h-full transition-transform duration-700 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {slides.map((item, index) => (
+          {/* 착한가격업소 사례 */}
+          <section className="p-12 bg-gray-100">
+            <h2 className="text-4xl text-center font-extrabold mb-12 text-gray-900">
+              착한가격업소 사례
+            </h2>
+            <div className="relative w-full h-64 overflow-hidden rounded-xl shadow-xl">
               <div
-                key={index}
-                className="min-w-full bg-white p-8 flex flex-col justify-center items-center text-center"
+                className="flex w-full h-full transition-transform duration-700 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
               >
-                <h5 className="text-2xl font-bold mb-3 text-blue-600">
-                  {item.name}
-                </h5>
-                <p className="text-sm text-gray-500 mb-4">{item.city}</p>
-                <p className="text-gray-700 text-lg max-w-xl">{item.desc}</p>
+                {slides.map((item, index) => (
+                  <div
+                    key={index}
+                    className="min-w-full bg-white p-8 flex flex-col justify-center items-center text-center"
+                  >
+                    <h5 className="text-2xl font-bold mb-3 text-blue-600">
+                      {item.name}
+                    </h5>
+                    <p className="text-sm text-gray-500 mb-4">{item.city}</p>
+                    <p className="text-gray-700 text-lg max-w-xl">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <button
-            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700"
-            onClick={prevSlide}
-          >
-            ◀
-          </button>
-          <button
-            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700"
-            onClick={nextSlide}
-          >
-            ▶
-          </button>
+              <button
+                className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700"
+                onClick={prevSlide}
+              >
+                ◀
+              </button>
+              <button
+                className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700"
+                onClick={nextSlide}
+              >
+                ▶
+              </button>
+            </div>
+          </section>
         </div>
-      </section>
-
+      </div>
       {/* 파트너사 소개 */}
-      <section className="flex flex-col md:flex-row items-center p-12 bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg">
-        <div className="w-full md:w-1/2 flex justify-center">
+      <section className="flex flex-col items-center p-12 bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg">
+        {/* 파트너사 소개 제목 */}
+        <div className="w-full p-6 text-center">
+          <h2 className="text-4xl font-extrabold mb-12">파트너사 소개</h2>
+        </div>
+
+        {/* 파트너사 로고 영역 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           <img
-            src="images/about-img.png"
-            alt="About"
-            className="w-72 shadow-xl rounded-xl"
+            src={partnerImg}
+            alt="Partner 1"
+            className="w-48 h-48 object-contain mx-auto"
+          />
+          <img
+            src={partnerImg2}
+            alt="Partner 2"
+            className="w-48 h-48 object-contain mx-auto"
+          />
+          <img
+            src={partnerImg3}
+            alt="Partner 3"
+            className="w-48 h-48 object-contain mx-auto"
+          />
+          <img
+            src={partnerImg}
+            alt="Partner 4"
+            className="w-48 h-48 object-contain mx-auto"
+          />
+          <img
+            src={partnerImg}
+            alt="Partner 5"
+            className="w-48 h-48 object-contain mx-auto"
+          />
+          <img
+            src={partnerImg}
+            alt="Partner 6"
+            className="w-48 h-48 object-contain mx-auto"
           />
         </div>
-        <div className="w-full md:w-1/2 p-6">
-          <h2 className="text-5xl font-bold mb-6 leading-tight">
-            <span className="text-yellow-300">착한가격업소</span>는 저렴한
-            가격과 <br />
-            우수한 서비스를 제공합니다.
-          </h2>
-          <p className="mb-6 text-lg">
-            정부와 지방자치단체가 지정한 물가안정 모범업소로 소비자에게 <br />
-            저렴한 가격과 우수한 서비스를 제공합니다.
-          </p>
-          <a
-            href="#"
-            className="inline-block px-6 py-3 bg-yellow-300 text-blue-900 font-semibold rounded-lg hover:bg-yellow-400 transition shadow-lg"
-          >
-            바로가기
-          </a>
-        </div>
       </section>
+
+      {/* 헬프미 */}
 
       <section className="p-16 bg-white">
         <div className="max-w-5xl mx-auto p-10 bg-white shadow-xl rounded-lg flex justify-between">
