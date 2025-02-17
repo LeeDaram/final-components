@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // import midImage from "assets/images/Brand/mid.png";
-ㄴㄴ;
+
 {
   /* <div className="flex justify-center items-center">
           <div className="w-9/12 mx-auto">
@@ -83,11 +83,11 @@ const Guide = () => {
               <div className="mt-4 border p-4 rounded-lg bg-white-50 text-center">
                 <h3 className="font-semibold">{step.content}</h3>
                 <p className="text-sm text-gray-600 mt-2">{step.description}</p>
-                <img
+                {/* <img
                   src={step.img}
                   alt={step.title}
                   className="mt-4 w-48 mx-auto"
-                />
+                /> */}
               </div>
             </div>
           ))}
