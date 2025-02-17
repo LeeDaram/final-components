@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const service = () => {
+const Service = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slides = [
     {
@@ -201,4 +201,4 @@ const service = () => {
   );
 };
 
-export default service;
+export default Service;

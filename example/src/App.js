@@ -11,6 +11,7 @@ import Join from "./pages/login-related/Join";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
+import Service from "./pages/guide-related/intro/g-service";
 
 function App() {
   return (
@@ -20,6 +21,11 @@ function App() {
         {/* <Header /> */}
         <main>
           <Routes>
+            <Route
+              path="/guide-related/intro/g-service"
+              element={<Service />}
+            />
+
             <Route path="/" element={<Home />} />
             <Route path="/company" element={<Company />} />
             <Route path="/marketplace" element={<Marketplace />} />
