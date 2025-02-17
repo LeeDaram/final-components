@@ -4,9 +4,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // import midImage from "assets/images/Brand/mid.png";
-// import n1 from "assets/images/n1.png";
-// import n2 from "assets/images/n2.png";
-// import n3 from "assets/images/n3.png";
+
+{
+  /* <div className="flex justify-center items-center">
+        <div className="w-9/12 mx-auto">
+나중에 통일할것 */
+}
 
 const ValueAndGoal = () => {
   const [modal, setModal] = useState(null);

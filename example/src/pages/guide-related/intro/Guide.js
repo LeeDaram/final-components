@@ -1,5 +1,16 @@
 import { useState } from "react";
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+// import midImage from "assets/images/Brand/mid.png";
+ㄴㄴ;
+{
+  /* <div className="flex justify-center items-center">
+          <div className="w-9/12 mx-auto">
+  나중에 통일할것 */
+}
+
 const Guide = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [modal, setModal] = useState(null);
