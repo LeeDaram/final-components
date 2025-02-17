@@ -16,8 +16,8 @@ function Header() {
           title: "소개",
           link: "/guide/intro",
           subMenu: [
-            { title: "사이트소개", link: "/guide/intro/site" },
-            { title: "서비스 소개", link: "/guide/intro/service" },
+            { title: "사이트소개", link: "/guide-related/intro/site" },
+            { title: "서비스 소개", link: "/guide-related/intro/service" },
             { title: "이용가이드", link: "/guide/intro/guide" },
             { title: "브랜드 가이드", link: "/guide/intro/brand" },
             { title: "연혁 페이지", link: "/guide/intro/history" },
