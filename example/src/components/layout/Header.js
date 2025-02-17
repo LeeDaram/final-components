@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
-  const [userRole, setUserRole] = useState("user");
+  const [userRole, setUserRole] = useState("user"); // user, business, admin 로 로그인 구분 null이거나 undefined시 로그아웃으로 간주함
 
   const userRole1 = "user"; // user, business, admin 로 로그인 구분 null이거나 undefined시 로그아웃으로 간주함
 
@@ -160,148 +160,125 @@ function Header() {
             ))}
           </div>
           <div className="flex items-center lg:order-2">
-            {userRole ? (
-              <>
-                {/* 알림 */}
-                <div className="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] ml-4 mr-4">
-                  <button
-                    id="dropdown-scrollable"
-                    type="button"
-                    className="dropdown-toggle btn btn-text btn-circle dropdown-open:bg-base-content/10 size-10"
-                    aria-haspopup="menu"
-                    aria-expanded="false"
-                    aria-label="Dropdown"
-                    onClick={toggleDropdown}
-                  >
-                    <div className="indicator">
-                      <span className="indicator-item bg-error size-2 rounded-full"></span>
-                      <span className="icon-[tabler--bell] text-base-content size-[1.375rem]"></span>
-                    </div>
-                  </button>
-                  <div
-                    className="dropdown-item absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="dropdown-scrollable"
-                  >
-                    <div className="dropdown-header justify-center">
-                      <h6 className="text-base-content text-base">
-                        Notifications
-                      </h6>
-                    </div>
-                    <div className="vertical-scrollbar horizontal-scrollbar rounded-scrollbar text-base-content/80 max-h-56 overflow-auto max-md:max-w-60">
-                      <div className="dropdown-item">
-                        <div className="avatar away-bottom">
-                          <div className="w-10 rounded-full">
-                            <img
-                              src="https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q0oOxqQNdL6kZp0iSKLbV1/img.png"
-                              alt="avatar 1"
-                            />
+            <div className="w-48 flex justify-center min-w-[192px]">
+              {userRole ? (
+                <>
+                  <div className="dropdown relative inline-flex ml-4 mr-4">
+                    <button
+                      type="button"
+                      className="dropdown-toggle btn btn-text btn-circle size-10"
+                      onClick={toggleDropdown}
+                    >
+                      <div className="indicator">
+                        <span className="indicator-item bg-error size-2 rounded-full"></span>
+                        <span className="icon-[tabler--bell] text-base-content size-[1.375rem]"></span>
+                      </div>
+                    </button>
+                    <div className="dropdown-item absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden">
+                      <div className="dropdown-header justify-center">
+                        <h6 className="text-base-content text-base">
+                          Notifications
+                        </h6>
+                      </div>
+                      <div className="max-h-56 overflow-auto">
+                        <div className="dropdown-item">
+                          <div className="avatar away-bottom">
+                            <div className="w-10 rounded-full">
+                              <img
+                                src="https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q0oOxqQNdL6kZp0iSKLbV1/img.png"
+                                alt="avatar 1"
+                              />
+                            </div>
+                          </div>
+                          <div className="w-60">
+                            <h6 className="truncate text-base">
+                              Charles Franklin
+                            </h6>
+                            <small className="text-base-content/50 truncate">
+                              Accepted your connection
+                            </small>
                           </div>
                         </div>
-                        <div className="w-60">
-                          <h6 className="truncate text-base">
-                            Charles Franklin
-                          </h6>
-                          <small className="text-base-content/50 truncate">
-                            Accepted your connection
-                          </small>
-                        </div>
                       </div>
+                      <a
+                        href="#"
+                        className="dropdown-footer justify-center gap-1"
+                      >
+                        <span className="icon-[tabler--eye] size-4"></span>
+                        View all
+                      </a>
                     </div>
-                    <a
-                      href="#"
-                      className="dropdown-footer justify-center gap-1"
-                    >
-                      <span className="icon-[tabler--eye] size-4"></span>
-                      View all
-                    </a>
                   </div>
-                </div>
-                {/* 사용자 */}
-                <div className="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end] ml-4 mr-4">
-                  <button
-                    id="dropdown-scrollable"
-                    type="button"
-                    className="dropdown-toggle flex items-center"
-                    aria-haspopup="menu"
-                    aria-expanded="false"
-                    aria-label="Dropdown"
-                    onClick={toggleDropdown}
-                  >
-                    <div className="avatar">
-                      <div className="size-9.5 rounded-full">
-                        <img
-                          src="https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q0oOxqQNdL6kZp0iSKLbV1/img.png"
-                          alt="avatar 1"
-                        />
-                      </div>
-                    </div>
-                  </button>
-                  <ul
-                    className="dropdown-item absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="dropdown-avatar"
-                  >
-                    <li className="dropdown-header gap-2">
+                  <div className="dropdown relative inline-flex ml-4 mr-4">
+                    <button
+                      type="button"
+                      className="dropdown-toggle flex items-center"
+                      onClick={toggleDropdown}
+                    >
                       <div className="avatar">
-                        <div className="w-10 rounded-full">
+                        <div className="size-9.5 rounded-full">
                           <img
                             src="https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q0oOxqQNdL6kZp0iSKLbV1/img.png"
                             alt="avatar"
                           />
                         </div>
                       </div>
-                      <div>
-                        <h6 className="text-base-content text-base font-semibold">
-                          John Doe
-                        </h6>
-                        <small className="text-base-content/50">
-                          {userRole}
-                        </small>
-                      </div>
-                    </li>
-                    <li>
-                      <a
-                        className="dropdown-item block px-4 py-2 hover:bg-gray-100"
-                        href="#"
-                      >
-                        <span className="icon-[tabler--user]"></span>
-                        My Profile
-                      </a>
-                    </li>
-                    <li className="dropdown-footer gap-2">
-                      <button
-                        className="btn btn-error btn-soft btn-block"
-                        onClick={() => {
-                          /* 로그아웃 로직 추가 해야됨 */
-                          setUserRole(null);
-                        }}
-                      >
-                        <span className="icon-[tabler--logout]"></span>
-                        Sign out
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/join"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Join us
-                </Link>
-              </>
-            )}
+                    </button>
+                    <ul className="dropdown-item absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden">
+                      <li className="dropdown-header gap-2">
+                        <div className="avatar">
+                          <div className="w-10 rounded-full">
+                            <img
+                              src="https://blog.kakaocdn.net/dn/4CElL/btrQw18lZMc/Q0oOxqQNdL6kZp0iSKLbV1/img.png"
+                              alt="avatar"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <h6 className="text-base-content text-base font-semibold">
+                            John Doe
+                          </h6>
+                          <small className="text-base-content/50">
+                            {userRole}
+                          </small>
+                        </div>
+                      </li>
+                      <li>
+                        <a
+                          className="dropdown-item block px-4 py-2 hover:bg-gray-100"
+                          href="#"
+                        >
+                          My Profile
+                        </a>
+                      </li>
+                      <li className="dropdown-footer gap-2">
+                        <button
+                          className="btn btn-error btn-soft btn-block"
+                          onClick={() => setUserRole(null)}
+                        >
+                          Sign out
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    to="/join"
+                    className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 ml-4"
+                  >
+                    Join us
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </nav>
