@@ -8,6 +8,7 @@ import Marketplace from "./pages/Marketplace";
 import Features from "./pages/Features";
 import Login from "./pages/login-related/Login";
 import Join from "./pages/login-related/Join";
+import Store from "./pages/find-related/store";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
@@ -28,6 +29,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
+            <Route path="/store" element={<Store />} />
           </Routes>
         </main>
       </div>
