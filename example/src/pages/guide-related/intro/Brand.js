@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-// import Slider from "react-slick";
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+// import frontImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.jpg";
+import midImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/mid.png";
+// import backImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.jpg";
+import n1 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n1.png";
+import n2 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n2.png";
+import n3 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n3.png";
 
-// import midImage from "assets/images/Brand/mid.png";
-
-{
-  /* <div className="flex justify-center items-center">
+/* <div className="flex justify-center items-center">
         <div className="w-9/12 mx-auto">
 나중에 통일할것 */
-}
 
 const ValueAndGoal = () => {
   const [modal, setModal] = useState(null);
@@ -76,9 +78,9 @@ const ValueAndGoal = () => {
               </div>
             </section>
 
-            {/* <div className="relative w-full max-w-4xl mx-auto">
+            <div className="relative w-full max-w-4xl mx-auto">
               <Slider {...settings}>
-                {[midImage, n1, n2, n3].map((img, index) => (
+                {[midImage, midImage, midImage].map((img, index) => (
                   <div key={index} className="w-full">
                     <img
                       src={img}
@@ -88,7 +90,7 @@ const ValueAndGoal = () => {
                   </div>
                 ))}
               </Slider>
-            </div> */}
+            </div>
 
             <section className="py-12">
               <h2 className="text-[36px] font-semibold text-center">
@@ -97,26 +99,26 @@ const ValueAndGoal = () => {
               <div className="flex flex-wrap justify-center gap-12 mt-12">
                 {[
                   {
-                    // img: n1,
+                    img: n1,
                     title: "시작과 목적",
                     desc: "착한 업소 솔루션은 소상공인을 돕고, 소비자가 믿고 찾을 수 있는 환경을 만들기 위해 시작되었습니다.",
                   },
                   {
-                    // img: n2,
+                    img: n2,
                     title: "핵심 가치",
                     desc: "단순한 장소 추천을 넘어, 착한 소비 문화를 조성하며 지역 경제 활성화에 기여하고자 합니다.",
                   },
                   {
-                    // img: n3,
+                    img: n3,
                     title: "앞으로의 목표",
                     desc: "앞으로도 소상공인과 소비자가 함께 성장하는 지속 가능한 플랫폼으로 발전해 나가겠습니다.",
                   },
-                ].map(({ title, desc }, index) => (
+                ].map(({ img, title, desc }, index) => (
                   <div
                     key={index}
                     className="w-[300px] bg-white text-center p-6 rounded-lg"
                   >
-                    {/* <img src={img} className="h-28 mx-auto mb-6" alt={title} /> */}
+                    <img src={img} className="h-28 mx-auto mb-6" alt={title} />
                     <h3 className="text-[22px] font-semibold">{title}</h3>
                     <p className="text-gray-600 text-[20px]">{desc}</p>
                   </div>
