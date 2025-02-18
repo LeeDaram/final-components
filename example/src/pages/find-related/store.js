@@ -30,35 +30,6 @@ function Store() {
 
   return (
     <>
-      {isLoading
-        ? "Loading..."
-        : stores.map((d) => <StoreComponent key={d.storeId} data={d} />)}
-
-      <button
-        type="button"
-        className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        onClick={() => setCurrentPage(0)}
-      >
-        1
-      </button>
-      <button
-        type="button"
-        className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        onClick={() => setCurrentPage(1)}
-      >
-        2
-      </button>
-      <button
-        type="button"
-        className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        onClick={() => {
-          setCurrentPage(2);
-          setIsLodaing(true);
-        }}
-      >
-        3
-      </button>
-
       <div className="w-full h-80 bg-current"></div>
 
       <div className="max-w-[60%] mx-auto">
@@ -126,6 +97,34 @@ function Store() {
             </div>
           ))}
         </div>
+        {isLoading
+          ? "Loading..."
+          : stores.map((d) => <StoreComponent key={d.storeId} data={d} />)}
+
+        <button
+          type="button"
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={() => setCurrentPage(0)}
+        >
+          1
+        </button>
+        <button
+          type="button"
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={() => setCurrentPage(1)}
+        >
+          2
+        </button>
+        <button
+          type="button"
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={() => {
+            setCurrentPage(2);
+            setIsLodaing(true);
+          }}
+        >
+          3
+        </button>
       </div>
     </>
   );
