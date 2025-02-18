@@ -64,7 +64,7 @@ function Home() {
               <input
                 type="text"
                 placeholder="가게명 검색"
-                class="input input-floating peer"
+                className="input input-floating peer rounded-full"
                 id="floatingInput"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -74,17 +74,12 @@ function Home() {
               </label>
             </div>
             <button
-              className="p-2 bg-blue-500 text-white rounded"
+              className="p-2 bg-blue-500 text-white rounded-full"
               onClick={handleSearch}
             >
-              검색
+              {/* 엔터키 함수로 따로 빼서 검색버튼 없애면 이쁠듯 */}
+              <Link to="/find/map">검색</Link>
             </button>
-            <Link
-              to="/find/map"
-              className="p-2 bg-green-500 text-white rounded"
-            >
-              바로 이동
-            </Link>
           </div>
           <div className="flex flex-wrap justify-start items-center mx-auto max-w-screen-xl">
             <div className="text-left w-full">
@@ -101,7 +96,7 @@ function Home() {
                   시그마 보이
                 </p>
                 <button className="p-2 w-25 bg-blue-500 text-white rounded-full mb-10">
-                  Shop Now
+                  <Link to="/find/map">Shop Now</Link>
                 </button>
                 <div className="grid grid-cols-3 gap-4 text-center pt-4">
                   <div>
@@ -114,7 +109,7 @@ function Home() {
                   </div>
                   <div>
                     <h1 className="text-4xl font-bold text-gray-800">
-                      50,800+
+                      30,800+
                     </h1>
                     <p className="text-sm text-gray-500">이용자수</p>
                   </div>
@@ -128,31 +123,10 @@ function Home() {
       <div className="flex justify-center items-center">
         <div className="w-9/12 mx-auto">
           <div className="p-6 text-left">
-            {/* 검색 및 이동 */}
-            <div className="flex items-center justify-start space-x-2 mb-6">
-              <input
-                type="text"
-                placeholder="가게명 검색"
-                className="p-2 border border-gray-300 rounded"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button
-                className="p-2 bg-blue-500 text-white rounded"
-                onClick={handleSearch}
-              >
-                검색
-              </button>
-              <Link
-                to="/find/map"
-                className="p-2 bg-green-500 text-white rounded"
-              >
-                바로 이동
-              </Link>
-            </div>
-
             {/* 착한가격업소 */}
-            <h2 className="text-xl font-bold mb-4">오늘의 착한가격업소</h2>
+            <h2 className="text-3xl text-center font-bold mb-4 py-12">
+              오늘의 착한가격업소
+            </h2>
             <div className="grid grid-cols-4 gap-4 mb-6 justify-center">
               {stores.map((store) => (
                 <Link
@@ -163,7 +137,7 @@ function Home() {
                   <img
                     src={store.src}
                     alt="업소사진"
-                    className="w-full h-48 object-cover rounded mb-4"
+                    className="w-full h-64 object-cover rounded mb-4"
                   />
                   <div className="text-lg font-semibold">{store.name}</div>
                   <div className="text-sm text-gray-500">
@@ -174,7 +148,9 @@ function Home() {
             </div>
 
             {/* 베스트 포토후기 */}
-            <h2 className="text-xl font-bold mb-4">베스트 포토후기</h2>
+            <h2 className="text-3xl text-center font-bold mb-4 py-12">
+              베스트 포토후기
+            </h2>
             <div className="grid grid-cols-4 gap-4 mb-6 justify-center">
               {reviews.map((review) => (
                 <Link
@@ -185,7 +161,7 @@ function Home() {
                   <img
                     src={review.src}
                     alt="포토후기"
-                    className="w-full h-48 object-cover"
+                    className="w-full h-64 object-cover"
                   />
                   <div className="text-lg font-semibold">
                     {review.storeName}
@@ -197,18 +173,22 @@ function Home() {
             </div>
 
             {/* 공지사항 */}
-            <h2 className="text-xl font-bold mb-4">공지사항</h2>
-            <div className="grid grid-cols-3 gap-4 justify-center">
-              {notices.map((notice) => (
-                <Link
-                  key={notice.id}
-                  to={`/review/${notice.id}`}
-                  className="border p-4 rounded shadow hover:bg-gray-100"
-                >
-                  <div className="text-lg font-semibold">{notice.title}</div>
-                  <div className="text-sm text-gray-500">{notice.content}</div>
-                </Link>
-              ))}
+            <h2 className="text-xl font-bold mb-4 mt-20">공지사항</h2>
+            <div className="border p-5 rounded-lg">
+              <div className="grid grid-cols-3 gap-4 justify-center">
+                {notices.map((notice) => (
+                  <Link
+                    key={notice.id}
+                    to={`/notice/${notice.id}`}
+                    className="border p-4 rounded shadow hover:bg-gray-100"
+                  >
+                    <div className="text-lg font-semibold">{notice.title}</div>
+                    <div className="text-sm text-gray-500">
+                      {notice.content}
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
