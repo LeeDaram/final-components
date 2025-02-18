@@ -11,7 +11,9 @@ import Join from "./pages/login-related/Join";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
-
+import QnATable from "./pages/community-related/Notice";
+import Write from "./components/community-related/Write";
+import Faq from "./pages/community-related/Faq";
 function App() {
   return (
     <Router>
@@ -28,6 +30,12 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
+            <Route path="/community-related/notice" element={<QnATable />} />
+            <Route
+              path="/components/community-related/write"
+              element={<Write />}
+            />
+            <Route path="/faq" element={<Faq />} />
           </Routes>
         </main>
       </div>
