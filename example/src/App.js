@@ -13,6 +13,8 @@ import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
 import PersonalForm from './pages/login-related/personalForm';
 import BusinessForm from './pages/login-related/businessForm';
+import FindUserId from './pages/login-related/findUserId';
+import FindUserPassword from './pages/login-related/findUserPassword';
 
 function App() {
     return (
@@ -32,6 +34,8 @@ function App() {
                         <Route path="/join" element={<Join />} />
                         <Route path="/personal-form" element={<PersonalForm />} />
                         <Route path="/business-form" element={<BusinessForm />} />
+                        <Route path="/find-id" element={<FindUserId />} />
+                        <Route path="/find-password" element={<FindUserPassword />} />
                     </Routes>
                 </main>
             </div>

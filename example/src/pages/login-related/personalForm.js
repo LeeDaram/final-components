@@ -54,7 +54,7 @@ function PersonalForm() {
                     <div className="join w-full">
                         <input
                             type="text"
-                            className="input h-12 border-gray-300 join-item focus:border-blue-500"
+                            className="input h-12 border-gray-300 join-item "
                             id="userId"
                             placeholder="5~20자리 / 영문, 숫자 포함"
                         />
@@ -75,7 +75,7 @@ function PersonalForm() {
                     <input
                         type="password"
                         placeholder="8~16자리 / 영문, 숫자, 특수기호 포함 "
-                        className="input h-12 border-gray-300 focus:border-blue-500"
+                        className="input h-12 border-gray-300 "
                         id="userPassword"
                     />
                     <span className="label">
@@ -88,7 +88,7 @@ function PersonalForm() {
                     <input
                         type="password"
                         placeholder="비밀번호를 한 번 더 입력해 주세요"
-                        className="input h-12 border-gray-300 focus:border-blue-500"
+                        className="input h-12 border-gray-300 "
                     />
                     <span className="label">
                         <span className="label-text-alt text-red-500 hidden">비밀번호 확인을 입력해주세요</span>
@@ -100,12 +100,7 @@ function PersonalForm() {
                     <label className="label label-text text-base font-semibold " for="userName">
                         이름
                     </label>
-                    <input
-                        type="text"
-                        placeholder="실명"
-                        className="input h-12 border-gray-300  focus:border-blue-500"
-                        id="userName"
-                    />
+                    <input type="text" placeholder="실명" className="input h-12 border-gray-300  " id="userName" />
                     <span className="label">
                         <span className="label-text-alt text-red-500 hidden">이름을 입력해주세요</span>
                     </span>
@@ -119,7 +114,7 @@ function PersonalForm() {
                     <input
                         type="date"
                         placeholder="숫자 8자리 / 예 : 20021001"
-                        className="input h-12 border-gray-300 focus:border-blue-500"
+                        className="input h-12 border-gray-300 "
                         id="userBirth"
                     />
                     <span className="label">
@@ -135,7 +130,7 @@ function PersonalForm() {
                     <input
                         type="tel"
                         placeholder="01012345678"
-                        className="input h-12 border-gray-300 focus:border-blue-500"
+                        className="input h-12 border-gray-300 "
                         id="userPhone"
                     />
                     <span className="label">
@@ -151,7 +146,7 @@ function PersonalForm() {
                     <div className="join w-full">
                         <input
                             type="email"
-                            className="h-12 input join-item border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            className="h-12 input join-item border-gray-300  "
                             id="userEmail"
                             placeholder="email@goodprice.com"
                         />
@@ -171,9 +166,10 @@ function PersonalForm() {
                             <input
                                 type="text"
                                 placeholder="인증번호 입력"
-                                className="h-12 input join-item w-full border-gray-300 focus:border-blue-500"
+                                className="h-12 input join-item w-full border-gray-300 "
                                 id="helperTextInput"
                             />
+
                             <button className="h-12 btn join-item w-3/12 border-gray-300 text-gray-500 bg-white hover:text-white hover:bg-gray-500 hover:border-gray-500">
                                 확인
                             </button>
@@ -199,7 +195,7 @@ function PersonalForm() {
                                 checked={allChecked}
                                 onChange={handleAllChange}
                                 type="checkbox"
-                                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                className="w-5 h-5 rounded border-gray-300 text-blue-600 "
                             />
                             <span className="ml-2 font-semibold text-lg">전체동의</span>
                         </label>
@@ -217,7 +213,7 @@ function PersonalForm() {
                                     checked={checkedItems.terms1}
                                     onChange={(e) => handleItemChange(e, 'terms1')}
                                     type="checkbox"
-                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 "
                                 />
                                 <span className="ml-2 font-semibold text-lg">(필수) 개인회원 약관에 동의</span>
                             </div>
@@ -261,7 +257,7 @@ function PersonalForm() {
                                     checked={checkedItems.terms2}
                                     onChange={(e) => handleItemChange(e, 'terms2')}
                                     type="checkbox"
-                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 "
                                 />
                                 <span className="ml-2 font-medium text-lg">(선택) 마케팅 정보 수신 동의 - 이메일</span>
                             </div>

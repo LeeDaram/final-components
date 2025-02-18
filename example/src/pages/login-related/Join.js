@@ -20,7 +20,6 @@ function Join() {
             <div className="mx-auto max-w-screen-xl p-12">
                 <div className="md:flex md:justify-between">
                     {/* 좌측 - 회원가입 안내 */}
-
                     <div className="w-1/2 p-16 ">
                         <nav
                             className="tabs tabs-bordered pb-2"
@@ -54,11 +53,7 @@ function Join() {
                         <div className="mt-3">
                             {activeTab === 'user' && (
                                 <div role="tabpanel">
-                                    <div className="flex items-center my-4">
-                                        <div className="flex-1 border-t border-gray-300"></div>
-                                        <p className="text-gray-500 px-3 text-sm">소셜 계정으로 간편 회원가입</p>
-                                        <div className="flex-1 border-t border-gray-300"></div>
-                                    </div>
+                                    <div class="divider border-gray-300 text-gray-500">소셜 계정으로 간편 회원가입</div>
                                     <button className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500 mb-5">
                                         <img
                                             src="https://img.icons8.com/?size=512&id=17949&format=png"

@@ -1,8 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
     const [activeTab, setActiveTab] = useState('user');
+    const navigate = useNavigate();
+
+    // 아이디 찾기, 비밀번호 찾기 링크 클릭 시 동작 처리
+    const handleLinkClick = (action) => {
+        if (action === 'find-id') {
+            navigate('/find-id'); // 아이디 찾기 페이지로 이동
+        } else if (action === 'find-password') {
+            navigate('/find-password'); // 비밀번호 찾기 페이지로 이동
+        }
+    };
 
     return (
         <div className="p-4 bg-white sm:p-6 dark:bg-gray-800 ">
@@ -112,19 +122,23 @@ function Login() {
                                     </button>
 
                                     <p className="mt-3 text-gray-500 text-xs">
-                                        <a href="#" className="hover:underline">
+                                        <span
+                                            href="#"
+                                            className="hover:underline"
+                                            onClick={() => handleLinkClick('find-id')}
+                                        >
                                             아이디 찾기
-                                        </a>
+                                        </span>
                                         {' | '}
-                                        <a href="#" className="hover:underline">
+                                        <span
+                                            href="#"
+                                            className="hover:underline"
+                                            onClick={() => handleLinkClick('find-password')}
+                                        >
                                             비밀번호 찾기
-                                        </a>
+                                        </span>
                                     </p>
-                                    <div className="flex items-center my-4">
-                                        <div className="flex-1 border-t border-gray-300"></div>
-                                        <p className="text-gray-500 px-3 text-sm">소셜 계정으로 간편 회원가입</p>
-                                        <div className="flex-1 border-t border-gray-300"></div>
-                                    </div>
+                                    <div class="divider border-gray-300 text-gray-500">소셜 계정으로 간편 회원가입</div>
 
                                     <button className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500">
                                         <img
@@ -167,13 +181,21 @@ function Login() {
                                     </button>
 
                                     <p className="mt-3 text-gray-500 text-xs">
-                                        <a href="#" className="hover:underline">
+                                        <span
+                                            href="#"
+                                            className="hover:underline"
+                                            onClick={() => handleLinkClick('find-id')}
+                                        >
                                             아이디 찾기
-                                        </a>
+                                        </span>
                                         {' | '}
-                                        <a href="#" className="hover:underline">
+                                        <span
+                                            href="#"
+                                            className="hover:underline"
+                                            onClick={() => handleLinkClick('find-password')}
+                                        >
                                             비밀번호 찾기
-                                        </a>
+                                        </span>
                                     </p>
                                 </div>
                             )}
