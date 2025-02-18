@@ -12,6 +12,7 @@ import Join from "./pages/login-related/Join";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import Service from "./pages/guide-related/intro/g-service";
+import Site from "./pages/guide-related/intro/site";
 
 function App() {
   return (
@@ -25,7 +26,6 @@ function App() {
               path="/guide-related/intro/g-service"
               element={<Service />}
             />
-
             <Route path="/" element={<Home />} />
             <Route path="/company" element={<Company />} />
             <Route path="/marketplace" element={<Marketplace />} />
@@ -34,6 +34,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
+            <Route path="/guide-related/intro/site" element={<Site />} />
           </Routes>
         </main>
       </div>
