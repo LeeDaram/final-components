@@ -4,6 +4,9 @@ import functionImg from "../../../assets/images/g-service/function-4.png";
 import partnerImg from "../../../assets/images/g-service/partner-1.png";
 import partnerImg2 from "../../../assets/images/g-service/partner-2.png";
 import partnerImg3 from "../../../assets/images/g-service/partner-3.png";
+import partnerImg4 from "../../../assets/images/g-service/partner-4.png";
+import partnerImg5 from "../../../assets/images/g-service/partner-5.png";
+import partnerImg6 from "../../../assets/images/g-service/partner-6.png";
 
 const Service = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -131,18 +134,6 @@ const Service = () => {
                   </div>
                 ))}
               </div>
-              <button
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700"
-                onClick={prevSlide}
-              >
-                ◀
-              </button>
-              <button
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700"
-                onClick={nextSlide}
-              >
-                ▶
-              </button>
             </div>
           </section>
         </div>
@@ -157,32 +148,32 @@ const Service = () => {
         {/* 파트너사 로고 영역 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           <img
-            src={partnerImg}
+            src={partnerImg4}
             alt="Partner 1"
             className="w-48 h-48 object-contain mx-auto"
           />
           <img
-            src={partnerImg2}
+            src={partnerImg5}
             alt="Partner 2"
             className="w-48 h-48 object-contain mx-auto"
           />
           <img
-            src={partnerImg3}
+            src={partnerImg}
             alt="Partner 3"
             className="w-48 h-48 object-contain mx-auto"
           />
           <img
-            src={partnerImg}
+            src={partnerImg2}
             alt="Partner 4"
             className="w-48 h-48 object-contain mx-auto"
           />
           <img
-            src={partnerImg}
+            src={partnerImg3}
             alt="Partner 5"
             className="w-48 h-48 object-contain mx-auto"
           />
           <img
-            src={partnerImg}
+            src={partnerImg6}
             alt="Partner 6"
             className="w-48 h-48 object-contain mx-auto"
           />
