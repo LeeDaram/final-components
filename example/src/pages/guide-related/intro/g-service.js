@@ -180,10 +180,8 @@ const Service = () => {
         </div>
       </section>
 
-      {/* 헬프미 */}
-
       <section className="p-16 bg-white">
-        <div className="max-w-5xl mx-auto p-10 bg-white shadow-xl rounded-lg flex justify-between">
+        <div className="max-w-4xl mx-auto p-10 bg-white shadow-xl rounded-lg flex justify-between">
           <div className="flex-1">
             <h3 className="text-2xl font-bold mb-4 text-gray-800 text-left">
               착한가격업소, 무엇이 더 궁금하신가요?
@@ -198,13 +196,14 @@ const Service = () => {
               { label: "영상보기", icon: "fa-video-camera" },
               { label: "전화상담", icon: "fa-phone" },
             ].map((item, index) => (
-              <div
+              <button
                 key={index}
-                className="flex flex-col items-center p-4 bg-white text-gray-800 border border-gray-400 rounded-md hover:bg-gray-100 transition shadow-sm w-23 h-23"
+                className="bg-white border border-gray-300 text-gray-800 flex flex-col items-center p-4 shadow-sm rounded-lg
+                     hover:bg-gray-100 active:scale-95 transition-all duration-200 ease-in-out"
               >
-                <i className={`fa ${item.icon} text-3xl mb-3`}></i>
+                <i className={`fa ${item.icon} text-3xl mb-2`}></i>
                 <span className="text-base font-medium">{item.label}</span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
