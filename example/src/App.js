@@ -11,9 +11,11 @@ import Join from "./pages/login-related/Join";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
-import QnATable from "./pages/community-related/Notice";
+import NoticePage from "./pages/community-related/Notice";
 import Write from "./components/community-related/Write";
 import Faq from "./pages/community-related/Faq";
+import Answer from "./components/community-related/Answer";
+import QnaPage from "./pages/community-related/Qna";
 function App() {
   return (
     <Router>
@@ -30,12 +32,14 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
-            <Route path="/community-related/notice" element={<QnATable />} />
+            <Route path="/community-related/notice" element={<NoticePage />} />
             <Route
               path="/components/community-related/write"
               element={<Write />}
             />
-            <Route path="/faq" element={<Faq />} />
+            <Route path="/community-related/qna" element={<QnaPage />} />
+            <Route path="/community-related/faq" element={<Faq />} />
+            <Route path="/qna/answer" element={<Answer />} />
           </Routes>
         </main>
       </div>

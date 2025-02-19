@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
-const NoticePage = ({ QnAdata }) => {
+const QnaPage = ({ QnAdata }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 13;
   const notices = [
@@ -84,7 +84,7 @@ const NoticePage = ({ QnAdata }) => {
       <div className="flex justify-center items-center pb-20 mt-10">
         <div className="w-9/12">
           <ImgCarousel />
-          <h1 className="text-3xl font-bold mb-4 mt-10">공지사항</h1>
+          <h1 className="text-3xl font-bold mb-4 mt-10">Q&A</h1>
 
           <div className="flex justify-between items-center border-b pb-4 mb-1 border-black">
             <div className="text-gray-700">
@@ -108,7 +108,7 @@ const NoticePage = ({ QnAdata }) => {
                 <th className="p-3 text-center">제목</th>
                 <th className="p-3  w-[7rem]">작성자</th>
                 <th className="p-3 text-center w-[10rem]">작성일</th>
-                <th className="p-3 w-[7rem] ">첨부파일</th>
+                <th className="p-3 w-[7rem] ">답변여부</th>
                 <th className="p-3 w-[7rem]">조회수</th>
               </tr>
             </thead>
@@ -124,7 +124,7 @@ const NoticePage = ({ QnAdata }) => {
                       notice.id
                     )}
                   </td>
-                  <Link to="/qna/answer" state={{ notice: "공지사항" }}>
+                  <Link to="/qna/answer" state={{ qna: "Q&A" }}>
                     <div className="hover:underline">
                       <td
                         className={`p-3 ${notice.important && "font-semibold"}`}
@@ -135,7 +135,7 @@ const NoticePage = ({ QnAdata }) => {
                   </Link>
                   <td className="p-3">{notice.author}</td>
                   <td className="p-3 text-center">{notice.date}</td>
-                  <td className="p-3 pl-8">{notice.attachment && "📂"}</td>
+                  <td className="p-3 pl-8">{notice.attachment && "✅"}</td>
                   <td className="p-3">{notice.views}</td>
                 </tr>
               ))}
@@ -183,4 +183,4 @@ const NoticePage = ({ QnAdata }) => {
   );
 };
 
-export default NoticePage;
+export default QnaPage;
