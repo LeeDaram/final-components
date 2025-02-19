@@ -8,6 +8,7 @@ import midImage from "/Users/nextit/Documents/GitHub/final-components/example/sr
 import n1 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n1.png";
 import n2 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n2.png";
 import n3 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n3.png";
+import { MdOutlineScreenSearchDesktop } from "react-icons/md";
 
 /* <div className="flex justify-center items-center">
         <div className="w-9/12 mx-auto">
@@ -47,7 +48,7 @@ const ValueAndGoal = () => {
                     와
                     <span className="text-blue-600 font-semibold">
                       {" "}
-                      네트워크{" "}
+                      네트워크
                     </span>
                     를 제공하여
                     <span className="text-blue-600 font-semibold">
@@ -91,6 +92,47 @@ const ValueAndGoal = () => {
                 ))}
               </Slider>
             </div>
+
+            <section className="text-center py-16">
+              <h2 className="text-3xl font-extrabold text-blue-700">
+                우리의 가치와 목표
+              </h2>
+              <div className="mt-6 mx-auto w-full max-w-4xl border border-blue-700 rounded-xl h-full p-6 bg-white-50">
+                <ul className="text-left text-gray-700 space-y-4 leading-relaxed">
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 font-bold">✔</span>
+                    창업부터 성장까지 필요한
+                    <span className="text-blue-600 font-semibold"> 정보 </span>
+                    와
+                    <span className="text-blue-600 font-semibold">
+                      네트워크
+                    </span>
+                    를 제공하여
+                    <span className="text-blue-600 font-semibold">
+                      안정적인 운영
+                    </span>
+                    과
+                    <span className="text-blue-600 font-semibold">
+                      경쟁력 강화
+                    </span>
+                    를 지원합니다.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 font-bold">✔</span>
+                    변화하는 시장에 맞게 유연한 전략을 세우고,
+                    <span className="text-blue-600 font-semibold"> 혁신 </span>
+                    으로 지속 성장합니다.
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2 text-blue-600 font-bold">✔</span>
+                    <span className="text-blue-600 font-semibold">
+                      투명한 운영과 정직한 소통
+                    </span>
+                    으로 신뢰를 구축하고 장기적인 관계를 형성합니다.
+                  </li>
+                </ul>
+              </div>
+            </section>
 
             <section className="py-12">
               <h2 className="text-[36px] font-semibold text-center">
