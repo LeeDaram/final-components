@@ -21,12 +21,18 @@ const option = [
 
 function Store() {
   // 상태 관리
-  const [stores, setStores] = useState([]);
-  const [sido, setSido] = useState([]);
-  const [sigungu, setSigungu] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [stores, setStores] = useState([]); // 업소 정보들
+  const [filteredStores, setFilteredStores] = useState([]); // 필터링된 업소 데이터
+  const [sido, setSido] = useState([]); // 시도
+  const [sigungu, setSigungu] = useState([]); // 시군구
+  const [filterSigungu, setFilterSigungu] = useState([]); // 필터링된 시군구
+  const [selectSido, setSelectSido] = useState(""); // 선택된 시도
+  const [selectSigungu, setSelectSigungu] = useState([]); // 선택된 시군구
+  const [industry, setIndustry] = useState([]); // 업종
+  const [selectIndustry, setSelectIndustry] = useState([]); // 선택된 업종
+  const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
+  const [isLoading, setIsLoading] = useState(false); // 로딩
+  const [activeSort, setActiveSort] = useState("recommend"); // 추천순or평점순or거리순의 현재 값
 
   // 페이지네이션 설정
   const totalElement = 8707;
@@ -41,15 +47,60 @@ function Store() {
         const resp = await axios.get(
           `http://localhost:8080/stores?page=${currentPage}&size=${size}`
         );
+        const sidoData = await axios.get(`http://localhost:8080/sido`);
+        const sigunguData = await axios.get(`http://localhost:8080/sigungu`);
+        const industryData = await axios.get(`http://localhost:8080/industry`);
+
         setStores(resp.data.content);
-        // console.log(setStores(resp.data.content));
+        setSido(sidoData.data);
+        setSigungu(sigunguData.data);
+        setIndustry(industryData.data);
       } catch (error) {
         console.error("데이터 로드 실패:", error);
       }
       setIsLoading(false);
     }
+
     fetch();
   }, [currentPage]);
+
+  // 시도 선택 시 시군구 필터링
+  useEffect(() => {
+    setFilterSigungu([]);
+
+    if (selectSido) {
+      setFilterSigungu(
+        sigungu.filter(
+          (sigunguList) => sigunguList.sidoId === parseInt(selectSido)
+        )
+      );
+    }
+  }, [selectSido, sigungu]);
+
+  // 업소 필터링 및 정렬
+  useEffect(() => {
+    let filtered = stores.filter((store) => {
+      return (
+        (!selectSido || store.sidoId === parseInt(selectSido)) &&
+        (!selectSigungu || store.sigunguId === parseInt(selectSigungu)) &&
+        (!selectIndustry || store.industryId === parseInt(selectIndustry))
+      );
+    });
+
+    // 정렬 기준 적용
+    if (activeSort === "rating") {
+      filtered.sort((a, b) => b.averageRating - a.averageRating); // 평점 높은 순
+    } else if (activeSort === "distance") {
+      filtered.sort((a, b) => a.distance - b.distance); // 거리 가까운 순
+    }
+
+    setFilteredStores(filtered); // 필터링된 결과 업데이트
+  }, [stores, selectSido, selectSigungu, selectIndustry, activeSort]);
+
+  //추천,평점,거리
+  const handleSortSelection = (param) => {
+    setActiveSort(param);
+  };
 
   // 페이지 번호 생성
   const getPageNumbers = () => {
@@ -72,7 +123,7 @@ function Store() {
 
   return (
     <>
-      {/* 나중에 카카오 지도 api 넣을 곳 */}
+      {/* 카카오 지도 api 넣을 곳 */}
       <div className="w-full h-96 bg-current"></div>
 
       {/* 옵션 관련 */}
@@ -80,15 +131,31 @@ function Store() {
         <div className="flex justify-evenly items-center gap-6 py-4">
           <div className="flex items-center">
             <label className="font-bold mr-2">시도</label>
-            <select className="border border-gray-400 px-4 py-2 rounded-md text-center sm:w-64 md:w-80 lg:w-96">
+            <select
+              className="border border-gray-400 px-4 py-2 rounded-md text-center sm:w-64 md:w-80 lg:w-96"
+              value={selectSido}
+              onChange={(e) => setSelectSido(Number(e.target.value))}
+            >
               <option value="">전체</option>
+              {sido.map((value) => (
+                <option value={`${value.sidoId}`} key={`${value.sidoId}`}>
+                  {value.sidoName}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="flex items-center">
             <label className="font-bold mr-2">시군구</label>
             <select className="border border-gray-400 px-4 py-2 rounded-md text-center sm:w-64 md:w-80 lg:w-96">
-              <option value="">전체</option>
+              <option id="sidototal" value="">
+                전체
+              </option>
+              {filterSigungu.map((value) => (
+                <option key={`sigungu-${value.sigunguId}`}>
+                  {value.sigunguName}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -96,6 +163,14 @@ function Store() {
             <label className="font-bold mr-2">업종</label>
             <select className="border border-gray-400 px-4 py-2 rounded-md text-center text-gray-400">
               <option value="">전체</option>
+              {industry.map((value) => (
+                <option
+                  value={`${value.industryId}`}
+                  key={`industry-${value.industryId}`}
+                >
+                  {value.industryName}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -104,19 +179,43 @@ function Store() {
           <div className="flex items-center gap-2">
             <select className="border border-gray-400 px-4 py-2 rounded-md text-center text-gray-400">
               <option value="">업소명</option>
+              <option value="">대표메뉴</option>
             </select>
 
             <input
               type="text"
               placeholder="검색어를 입력해주세요."
-              className="border border-gray-400 px-4 py-2 rounded-md text-center w-60 mr-40"
+              className="border border-gray-400 px-4 py-2 rounded-md text-center w-60 mr-40 sm:w-64 md:w-80 lg:w-96"
             />
           </div>
 
           <div className="flex items-center gap-2 text-gray-400">
-            <p>추천순 |</p>
-            <p>평점순 |</p>
-            <p>거리순</p>
+            <p
+              onClick={() => handleSortSelection("recommend")}
+              className={`cursor-pointer ${
+                activeSort === "recommend" ? "text-blue-500 font-bold" : ""
+              }`}
+            >
+              추천순
+            </p>
+            ㅣ
+            <p
+              onClick={() => handleSortSelection("rating")}
+              className={`cursor-pointer ${
+                activeSort === "rating" ? "text-blue-500 font-bold" : ""
+              }`}
+            >
+              평점순
+            </p>
+            ㅣ
+            <p
+              onClick={() => handleSortSelection("distance")}
+              className={`cursor-pointer ${
+                activeSort === "distance" ? "text-blue-500 font-bold" : ""
+              }`}
+            >
+              거리순
+            </p>
           </div>
         </div>
 
@@ -141,7 +240,7 @@ function Store() {
           ))}
         </div>
 
-        {/* 카드 레이아웃 */}
+        {/* 업소 목록 */}
         {isLoading ? (
           <div className="text-center py-6 font-bold text-gray-600">
             Loading...

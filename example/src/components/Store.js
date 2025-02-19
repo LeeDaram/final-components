@@ -1,5 +1,6 @@
 import React from "react";
 import { Phone, Banknote } from "lucide-react";
+import { FaStar } from "react-icons/fa6";
 
 function StoreComponent({ data }) {
   return (
@@ -7,13 +8,18 @@ function StoreComponent({ data }) {
       <div className="w-full h-48 bg-gray-300 flex items-center justify-center text-lg font-bold text-gray-700">
         <img
           src={data.storeImage}
-          alt="이미지"
+          alt="업소대표 이미지"
           className="w-full h-full object-cover"
         />
       </div>
 
       <div className="mt-4 px-2">
-        <span className="text-blue-600 text-sm font-bold">New</span>
+        <span className="flex text-blue-600 text-sm font-bold">
+          <div className="mt-0.5 pr-0.5">
+            <FaStar />
+          </div>
+          {data.averageRating}
+        </span>
         <div className="mt-2 text-lg font-semibold">{data.storeName}</div>
 
         <div className="mt-3 text-sm space-y-2">
