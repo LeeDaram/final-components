@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
-const QnaPage = ({ QnAdata }) => {
+const QnaPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 13;
   const notices = [
@@ -171,7 +171,10 @@ const QnaPage = ({ QnAdata }) => {
 
           {/* admin 일때만만 글쓰기 버튼 */}
           <div className="flex justify-end mt-6">
-            <Link to="/components/community-related/write">
+            <Link
+              to="/components/community-related/write"
+              state={{ qna: "Q&A" }}
+            >
               <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-700">
                 글쓰기 USER_ROLE에 따라서 컨트롤
               </button>

@@ -16,6 +16,7 @@ import Write from "./components/community-related/Write";
 import Faq from "./pages/community-related/Faq";
 import Answer from "./components/community-related/Answer";
 import QnaPage from "./pages/community-related/Qna";
+import { CommuModal } from "./components/community-related/CommuModal";
 function App() {
   return (
     <Router>

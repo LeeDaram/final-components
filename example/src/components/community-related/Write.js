@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { FileInput, Label } from "flowbite-react";
+import { CommuModal } from "./CommuModal";
 
 const Write = () => {
   const [title, setTitle] = useState("");
@@ -10,21 +11,41 @@ const Write = () => {
   const [isItalic, setIsItalic] = useState(false);
   const [isHeader, setIsHeader] = useState(false);
   const [files, setFiles] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
   const navigate = useNavigate();
+
+  //넘어오는 페이지 별로 제목 수정
+  const location = useLocation();
+  const data = location.state;
 
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleContentChange = (e) => setContent(e.target.value);
 
   const handleSubmit = () => {
+    if (!title.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
+
+    if (!content.trim()) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
     console.log("제목:", title);
     console.log("내용:", content);
     console.log("첨부파일:", files);
     alert("글이 작성되었습니다.");
-    navigate("/");
+
+    if (data?.notice) {
+      navigate("/community-related/notice");
+    } else if (data?.qna) {
+      navigate("/community-related/qna");
+    }
   };
 
+  //취소버튼 모달열기
   const handleCancel = () => {
-    navigate("/");
+    setIsModalOpen(true);
   };
 
   const toggleBold = () => setIsBold((prev) => !prev);
@@ -39,8 +60,14 @@ const Write = () => {
     return styles;
   };
 
+  //업로드 파일 이름 표기
   const handleFileChange = (event) => {
     setFiles(Array.from(event.target.files));
+  };
+  //중요공지 체크박스 T, F 판단
+  const [isNotice, setIsNotice] = useState("F");
+  const handleCheckboxChange = (e) => {
+    setIsNotice(e.target.checked ? "T" : "F");
   };
 
   return (
@@ -62,22 +89,48 @@ const Write = () => {
               </button>
             </div>
 
-            <h1 className="text-3xl font-bold mb-6">Q&A</h1>
+            <h1 className="text-3xl font-bold mb-6">
+              {data?.notice}
+              {data?.qna}
+            </h1>
+            {/* 공지사항일때 && 어드민일때(어드민일때만 버튼 보여서 ㄱㅊ을듯) 중요공지 보이기 */}
+            {data?.notice && (
+              <div className="mb-4 flex ">
+                <input
+                  type="text"
+                  placeholder="제목을 입력해 주세요"
+                  value={title}
+                  onChange={handleTitleChange}
+                  className="w-[88%] p-3 border border-gray-300 rounded mr-auto"
+                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4"
+                    checked={isNotice === "T"}
+                    onChange={(e) => handleCheckboxChange(e)}
+                  />
+                  <span className="font-bold">중요공지로 등록</span>
+                </div>
+              </div>
+            )}
+            {data?.qna && (
+              <div className="mb-4 flex ">
+                <input
+                  type="text"
+                  placeholder="제목을 입력해 주세요"
+                  value={title}
+                  onChange={handleTitleChange}
+                  className="w-full p-3 border border-gray-300 rounded mr-auto"
+                />
+              </div>
+            )}
 
             <div className="mb-4">
-              <input
-                type="text"
-                placeholder="제목을 입력해 주세요"
-                value={title}
-                onChange={handleTitleChange}
-                className="w-full p-3 border border-gray-300 rounded"
-              />
-            </div>
-
-            <div className="mb-4">
-              <div className="border border-black p-2 mb-2 flex space-x-4">
+              <div className="border border-black p-2 mb-2 flex items-center space-x-2">
+                {" "}
                 <button
-                  className={`text-gray-700 font-bold ${
+                  className={`text-gray-700 font-bold px-3 py-1 ${
                     isBold ? "bg-gray-300" : ""
                   }`}
                   onClick={toggleBold}
@@ -85,7 +138,7 @@ const Write = () => {
                   B
                 </button>
                 <button
-                  className={`text-gray-700 italic ${
+                  className={`text-gray-700 italic px-3 py-1 ${
                     isItalic ? "bg-gray-300" : ""
                   }`}
                   onClick={toggleItalic}
@@ -93,7 +146,7 @@ const Write = () => {
                   I
                 </button>
                 <button
-                  className={`text-gray-700 font-bold ${
+                  className={`text-gray-700 font-bold px-3 py-1 ${
                     isHeader ? "bg-gray-300" : ""
                   }`}
                   onClick={toggleHeader}
@@ -101,7 +154,7 @@ const Write = () => {
                   H
                 </button>
                 <button
-                  className="text-gray-700"
+                  className="text-gray-700 px-3 py-1"
                   onClick={() => document.getElementById("file-upload").click()}
                 >
                   🔗
@@ -136,13 +189,13 @@ const Write = () => {
             <div className="flex justify-center space-x-4 mt-6">
               <button
                 onClick={handleSubmit}
-                className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800"
+                className="bg-black text-white px-10 py-3 rounded hover:bg-gray-800"
               >
                 확인
               </button>
               <button
                 onClick={handleCancel}
-                className="bg-white text-black px-6 py-3 border border-gray-400 rounded hover:bg-gray-100"
+                className="bg-white text-black px-10 py-3 border border-gray-400 rounded hover:bg-gray-100"
               >
                 취소
               </button>
@@ -150,6 +203,12 @@ const Write = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <CommuModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </>
   );
 };

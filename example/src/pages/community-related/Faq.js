@@ -52,7 +52,7 @@ function Faq() {
   return (
     <div className="flex justify-center items-center py-20 bg-gray-50">
       <div className="w-9/12 flex items-start">
-        {/* 이미지지 */}
+        {/* 이미지 */}
         <div className="w-1/2 flex justify-center items-start flex-shrink-0 pt-[60px]">
           <div className="w-10/12 h-[550px] bg-gray-200 flex justify-center items-center text-gray-500 text-lg">
             이미지
