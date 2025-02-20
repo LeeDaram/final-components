@@ -65,10 +65,10 @@ function Faq() {
           <Accordion alwaysOpen>
             {faqData.map((item, index) => (
               <Accordion.Panel key={index}>
-                <Accordion.Title className="!text-lg font-semibold">
+                <Accordion.Title className="!text-lg font-semibold bg-blue-50 hover:bg-blue-100 ">
                   {item.question}
                 </Accordion.Title>
-                <Accordion.Content>
+                <Accordion.Content className="bg-slate-50">
                   <p className="text-gray-600 text-sm">{item.answer}</p>
                 </Accordion.Content>
               </Accordion.Panel>
