@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Home from "./pages/Home";
 import Team from "./pages/Team";
 import Contact from "./pages/Contact";
@@ -11,6 +13,7 @@ import Join from "./pages/login-related/Join";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
+import SimpleSlider from "./components/ui/homeCarousel/HomeCarousel";
 
 function App() {
   return (
@@ -28,6 +31,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
+            <Route path="/test" element={<SimpleSlider />} />
           </Routes>
         </main>
       </div>

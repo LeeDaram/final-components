@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SimpleSlider from "../components/ui/homeCarousel/HomeCarousel";
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -124,28 +125,12 @@ function Home() {
         <div className="w-9/12 mx-auto">
           <div className="p-6 text-left">
             {/* 착한가격업소 */}
+
             <h2 className="text-3xl text-center font-bold mb-4 py-12">
               오늘의 착한가격업소
             </h2>
-            <div className="grid grid-cols-4 gap-4 mb-6 justify-center">
-              {stores.map((store) => (
-                <Link
-                  key={store.id}
-                  to={`/store/${store.id}`}
-                  className="border p-4 rounded shadow hover:bg-gray-100"
-                >
-                  <img
-                    src={store.src}
-                    alt="업소사진"
-                    className="w-full h-64 object-cover rounded mb-4"
-                  />
-                  <div className="text-lg font-semibold">{store.name}</div>
-                  <div className="text-sm text-gray-500">
-                    {store.description}
-                  </div>
-                </Link>
-              ))}
-            </div>
+
+            <SimpleSlider data={stores} />
 
             {/* 베스트 포토후기 */}
             <h2 className="text-3xl text-center font-bold mb-4 py-12">
