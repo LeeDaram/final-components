@@ -8,7 +8,13 @@ import CarouselImg5 from "../../assets/images/CarouselImg/CarouselImg5.png";
 export function ImgCarousel() {
   return (
     <div className="h-32 sm:h-8 xl:h-20 2xl:h-60">
-      <Carousel className="text-white text-xl" leftControl="<" rightControl=">">
+      <Carousel
+        slideInterval={3000}
+        indicators={false}
+        className="text-white text-xl"
+        leftControl="<"
+        rightControl=">"
+      >
         <img src={CarouselImg1} alt="CarouselImg1" />
         <img src={CarouselImg2} alt="CarouselImg2" />
         <img src={CarouselImg3} alt="CarouselImg3" />

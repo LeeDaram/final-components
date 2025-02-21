@@ -24,7 +24,7 @@ const Answer = () => {
   ]);
   const [editingId, setEditingId] = useState(null);
   const [editingContent, setEditingContent] = useState(""); //답글 수정
-  const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
+  const USER_ROLE = "user"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
 
@@ -93,6 +93,10 @@ const Answer = () => {
     setEditingId(null);
     setEditingContent("");
   };
+  //qna 글 삭제
+  const handleDeletQna = () => {
+    setIsModalOpen(true);
+  };
 
   return (
     <>
@@ -126,7 +130,7 @@ const Answer = () => {
               <span className="text-gray-600 mt-2">2025.02.10</span>
             </div>
 
-            {/* 수정 모드일 때 textarea 표시, 아닐 때 기존 내용 표시 */}
+            {/* 본 내용 수정 모드일 때 textarea 표시 아닐 때 기존 내용 표시 */}
             {isEditingMain ? (
               <textarea
                 className="w-full p-3 border rounded h-24 resize-none"
@@ -181,7 +185,7 @@ const Answer = () => {
           {data?.qna && USER_ROLE === "user" && (
             <div className="flex justify-end space-x-4 mt-6">
               <button
-                // onClick={handleEditMain}
+                onClick={handleDeletQna}
                 className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 mb-4"
               >
                 삭제

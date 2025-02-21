@@ -93,6 +93,8 @@ export default function DeletModal({ isOpen, onClose }) {
               color="failure"
               onClick={() => {
                 onClose();
+                alert("삭제되었습니다");
+                // navigate notice qna판단로직직
                 navigate("/community-related/notice");
               }}
             >
