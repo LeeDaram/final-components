@@ -30,11 +30,13 @@ function Store() {
   const [selectSigungu, setSelectSigungu] = useState([]); // 선택된 시군구
   const [industry, setIndustry] = useState([]); // 업종
   const [selectIndustry, setSelectIndustry] = useState([]); // 선택된 업종
+  // const [searchTerm, setSearchTerm] = useState(""); // 검색어
+  // const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 편의시설
   const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
   const [isLoading, setIsLoading] = useState(false); // 로딩
   const [activeSort, setActiveSort] = useState("recommend"); // 추천순or평점순or거리순의 현재 값
 
-  // 페이지네이션 설정
+  // 페이지 기본 값
   const totalElement = 8707;
   const size = 8;
   const totalPages = Math.ceil(totalElement / size);
@@ -77,7 +79,7 @@ function Store() {
     }
   }, [selectSido, sigungu]);
 
-  // 업소 필터링 및 정렬
+  // 시도, 시군구, 업종 선택 시 자동 필터링
   useEffect(() => {
     let filtered = stores.filter((store) => {
       return (
@@ -87,20 +89,24 @@ function Store() {
       );
     });
 
-    // 정렬 기준 적용
-    if (activeSort === "rating") {
-      filtered.sort((a, b) => b.averageRating - a.averageRating); // 평점 높은 순
-    } else if (activeSort === "distance") {
-      filtered.sort((a, b) => a.distance - b.distance); // 거리 가까운 순
+    // 필터링된 데이터가 없으면 전체 데이터를 유지
+    if (filtered.length === 0) {
+      filtered = [...stores];
     }
 
-    setFilteredStores(filtered); // 필터링된 결과 업데이트
+    // 정렬 적용
+    let sortedStores = [...filtered];
+    if (activeSort === "rating") {
+      sortedStores.sort((a, b) => b.averageRating - a.averageRating);
+    } else if (activeSort === "distance") {
+      sortedStores.sort((a, b) => a.distance - b.distance);
+    }
+
+    setFilteredStores(sortedStores);
   }, [stores, selectSido, selectSigungu, selectIndustry, activeSort]);
 
-  //추천,평점,거리
-  const handleSortSelection = (param) => {
-    setActiveSort(param);
-  };
+  // 검색 버튼
+  const handleSearchClick = () => {};
 
   // 페이지 번호 생성
   const getPageNumbers = () => {
@@ -147,12 +153,17 @@ function Store() {
 
           <div className="flex items-center">
             <label className="font-bold mr-2">시군구</label>
-            <select className="border border-gray-400 px-4 py-2 rounded-md text-center sm:w-64 md:w-80 lg:w-96">
-              <option id="sidototal" value="">
-                전체
-              </option>
+            <select
+              className="border border-gray-400 px-4 py-2 rounded-md text-center sm:w-64 md:w-80 lg:w-96"
+              value={selectSigungu}
+              onChange={(e) => setSelectSigungu(e.target.value)}
+            >
+              <option value="">전체</option>
               {filterSigungu.map((value) => (
-                <option key={`sigungu-${value.sigunguId}`}>
+                <option
+                  key={`sigungu-${value.sigunguId}`}
+                  value={value.sigunguId}
+                >
                   {value.sigunguName}
                 </option>
               ))}
@@ -161,11 +172,15 @@ function Store() {
 
           <div className="flex items-center">
             <label className="font-bold mr-2">업종</label>
-            <select className="border border-gray-400 px-4 py-2 rounded-md text-center text-gray-400">
+            <select
+              className="border border-gray-400 px-4 py-2 rounded-md text-center text-gray-400"
+              value={selectIndustry}
+              onChange={(e) => setSelectIndustry(e.target.value)}
+            >
               <option value="">전체</option>
               {industry.map((value) => (
                 <option
-                  value={`${value.industryId}`}
+                  value={value.industryId}
                   key={`industry-${value.industryId}`}
                 >
                   {value.industryName}
@@ -175,13 +190,15 @@ function Store() {
           </div>
         </div>
 
-        <div className="flex justify-center items-center gap-2 mt-2">
+        {/* 업소명, 대표메뉴 검색 필터링 */}
+        <div className="flex justify-evenly items-center gap-2 mt-2">
           <div className="flex items-center gap-2">
             <select className="border border-gray-400 px-4 py-2 rounded-md text-center text-gray-400">
               <option value="">업소명</option>
               <option value="">대표메뉴</option>
             </select>
 
+            {/* 검색바 */}
             <input
               type="text"
               placeholder="검색어를 입력해주세요."
@@ -189,9 +206,10 @@ function Store() {
             />
           </div>
 
+          {/* 추천순, 평점순, 거리순 필터링 */}
           <div className="flex items-center gap-2 text-gray-400">
             <p
-              onClick={() => handleSortSelection("recommend")}
+              onClick={() => setActiveSort("recommend")}
               className={`cursor-pointer ${
                 activeSort === "recommend" ? "text-blue-500 font-bold" : ""
               }`}
@@ -200,7 +218,7 @@ function Store() {
             </p>
             ㅣ
             <p
-              onClick={() => handleSortSelection("rating")}
+              onClick={() => setActiveSort("rating")}
               className={`cursor-pointer ${
                 activeSort === "rating" ? "text-blue-500 font-bold" : ""
               }`}
@@ -209,7 +227,7 @@ function Store() {
             </p>
             ㅣ
             <p
-              onClick={() => handleSortSelection("distance")}
+              onClick={() => setActiveSort("distance")}
               className={`cursor-pointer ${
                 activeSort === "distance" ? "text-blue-500 font-bold" : ""
               }`}
@@ -219,6 +237,7 @@ function Store() {
           </div>
         </div>
 
+        {/* 편의시설 필터링 */}
         <div className="flex justify-center items-center w-full mt-4">
           {option.map((label, index) => (
             <div
@@ -239,6 +258,18 @@ function Store() {
             </div>
           ))}
         </div>
+        {/* 검색, 초기화 버튼 */}
+        <div className="flex justify-center mt-3">
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded-md text-center mr-4"
+            onClick={() => handleSearchClick()}
+          >
+            검색
+          </button>
+          <button className="border bg-white text-blue-600 px-4 py-2 rounded-md text-center">
+            초기화
+          </button>
+        </div>
 
         {/* 업소 목록 */}
         {isLoading ? (
@@ -247,8 +278,8 @@ function Store() {
           </div>
         ) : (
           <div className="grid grid-cols-4 gap-6 p-6">
-            {stores.length > 0 ? (
-              stores.map((d, index) => (
+            {filteredStores.length > 0 ? (
+              filteredStores.map((d, index) => (
                 <StoreComponent key={`${d.storeId}-${index}`} data={d} />
               ))
             ) : (
