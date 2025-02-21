@@ -24,7 +24,7 @@ const Answer = () => {
   ]);
   const [editingId, setEditingId] = useState(null);
   const [editingContent, setEditingContent] = useState(""); //답글 수정
-  const USER_ROLE = "user"; // 현재 관리자 역할 (테스트용)
+  const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
 
@@ -213,87 +213,68 @@ const Answer = () => {
             </div>
           )}
 
-          {/* notice일때는 관리자만 답변가능*/}
-          {data?.notice && USER_ROLE === "admin" && (
-            <div className="mb-6">
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="w-full p-3 border rounded h-24 resize-none"
-                placeholder="답글을 입력하세요..."
-              />
-              <div className="flex justify-end">
-                <button
-                  onClick={handleCommentSubmit}
-                  className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-                >
-                  등록
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* 관리자 답변 목록 */}
-          <h2 className="text-xl font-semibold mb-4">답변</h2>
-          {comments.map((c) => (
-            <div
-              key={c.id}
-              className="border p-4 mb-3 rounded-lg bg-gray-50 relative"
-            >
-              <div className="flex justify-between">
-                <span className="font-semibold">관리자</span>
-                <div>
-                  {USER_ROLE === "admin" ? (
-                    editingId === c.id ? (
-                      <>
-                        <button
-                          className="text-sm text-green-600 hover:underline mr-2"
-                          onClick={() => handleSaveEdit(c.id)}
-                        >
-                          저장
-                        </button>
-                        <button
-                          className="text-sm text-red-600 hover:underline"
-                          onClick={() => setEditingId(null)}
-                        >
-                          취소
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="text-sm text-gray-600 hover:underline mr-2"
-                          onClick={() => handleEdit(c.id, c.content)}
-                        >
-                          수정
-                        </button>
-                        <button
-                          className="text-sm text-gray-600 hover:underline"
-                          onClick={() => handleDelete(c.id)}
-                        >
-                          삭제
-                        </button>
-                      </>
-                    )
-                  ) : null}{" "}
+          {data?.qna && <h2 className="text-xl font-semibold mb-4">답변</h2>}
+          {data?.qna &&
+            comments.map((c) => (
+              <div
+                key={c.id}
+                className="border p-4 mb-3 rounded-lg bg-gray-50 relative"
+              >
+                <div className="flex justify-between">
+                  <span className="font-semibold">관리자</span>
+                  <div>
+                    {USER_ROLE === "admin" ? (
+                      editingId === c.id ? (
+                        <>
+                          <button
+                            className="text-sm text-green-600 hover:underline mr-2"
+                            onClick={() => handleSaveEdit(c.id)}
+                          >
+                            저장
+                          </button>
+                          <button
+                            className="text-sm text-red-600 hover:underline"
+                            onClick={() => setEditingId(null)}
+                          >
+                            취소
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="text-sm text-gray-600 hover:underline mr-2"
+                            onClick={() => handleEdit(c.id, c.content)}
+                          >
+                            수정
+                          </button>
+                          <button
+                            className="text-sm text-gray-600 hover:underline"
+                            onClick={() => handleDelete(c.id)}
+                          >
+                            삭제
+                          </button>
+                        </>
+                      )
+                    ) : null}{" "}
+                  </div>
                 </div>
+
+                {editingId === c.id ? (
+                  <textarea
+                    className="w-full p-2 border rounded h-20 my-3"
+                    value={editingContent}
+                    onChange={(e) => setEditingContent(e.target.value)}
+                  />
+                ) : (
+                  <p className="text-gray-700 mt-5">{c.content}</p>
+                )}
+
+                <p className="text-gray-500 text-sm absolute right-4 bottom-2">
+                  {c.date}
+                </p>
               </div>
-
-              {editingId === c.id ? (
-                <textarea
-                  className="w-full p-2 border rounded h-20 my-3"
-                  value={editingContent}
-                  onChange={(e) => setEditingContent(e.target.value)}
-                />
-              ) : (
-                <p className="text-gray-700 mt-5">{c.content}</p>
-              )}
-
-              <p className="text-gray-500 text-sm absolute right-4 bottom-2">
-                {c.date}
-              </p>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
       {isModalOpen && (
