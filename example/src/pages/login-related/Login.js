@@ -2,15 +2,88 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
+    // 탭 버튼 상태관리
     const [activeTab, setActiveTab] = useState('user');
+
+    // 개인회원, 관리자 로그인폼 상태관리
+    const [userId, setUserId] = useState('');
+    const [userPassword, setUserPassword] = useState('');
+    const [errorUserIdMessage, setErrorUserIdMessage] = useState('');
+    const [errorUserPwMessage, setErrorUserPwMessage] = useState('');
+
+    // 사업자 로그인폼 상태관리리
+    const [bizId, setBizId] = useState('');
+    const [bizPassword, setBizPassword] = useState('');
+    const [errorBizIdMessage, setErrorBizIdMessage] = useState('');
+    const [errorBizPwMessage, setErrorBizPwMessage] = useState('');
+
+    // 페이지 이동
     const navigate = useNavigate();
 
-    // 아이디 찾기, 비밀번호 찾기 링크 클릭 시 동작 처리
+    // 아이디 찾기, 비밀번호 찾기 페이지로 이동
     const handleLinkClick = (action) => {
         if (action === 'find-id') {
-            navigate('/find-id'); // 아이디 찾기 페이지로 이동
+            navigate('/find-id');
         } else if (action === 'find-password') {
-            navigate('/find-password'); // 비밀번호 찾기 페이지로 이동
+            navigate('/find-password');
+        }
+    };
+
+    // 개인회원, 관리자 로그인폼 예외처리
+    const handleUserLogin = () => {
+        setErrorUserIdMessage('');
+        setErrorUserPwMessage('');
+
+        if (!userId) {
+            setErrorUserIdMessage('아이디를 입력해주세요');
+        }
+        if (!userPassword) {
+            setErrorUserPwMessage('비밀번호를 입력해주세요');
+        }
+
+        if (userId && userPassword) {
+            userLogin(userId, userPassword);
+        }
+    };
+
+    // 사업자 로그인폼 예외처리
+    const handleBizLogin = () => {
+        setErrorBizIdMessage('');
+        setErrorBizPwMessage('');
+
+        if (!bizId) {
+            setErrorBizIdMessage('아이디를 입력해주세요');
+        }
+        if (!bizPassword) {
+            setErrorBizPwMessage('비밀번호를 입력해주세요');
+        }
+
+        if (bizId && bizPassword) {
+            userLogin(bizId, bizPassword);
+        }
+    };
+
+    // 서버통신
+    const userLogin = async (id, pw) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/sign-in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: id, password: pw }),
+                credentials: 'include', // 쿠키에 JWT 저장하려면 필요
+            });
+
+            if (!response.ok) {
+                throw new Error('로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('token', data.token); // JWT 저장 (쿠키도 가능)
+            navigate('/'); // 로그인 성공 시 이동할 페이지
+        } catch (error) {
+            alert('로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.');
         }
     };
 
@@ -98,11 +171,15 @@ function Login() {
                                             type="text"
                                             placeholder="아이디"
                                             className="input h-14 focus:border-blue-500"
+                                            value={userId}
+                                            onChange={(e) => setUserId(e.target.value)}
                                         />
-                                        <span className="label ">
-                                            <span className="label-text-alt text-red-500 hidden">
-                                                아이디를 입력해주세요
-                                            </span>
+                                        <span className="label">
+                                            {errorUserIdMessage && (
+                                                <span className="label-text-alt text-red-500">
+                                                    {errorUserIdMessage}
+                                                </span>
+                                            )}
                                         </span>
                                     </div>
                                     <div className="w-full">
@@ -110,14 +187,21 @@ function Login() {
                                             type="password"
                                             placeholder="비밀번호"
                                             className="input h-14 focus:border-blue-500"
+                                            value={userPassword}
+                                            onChange={(e) => setUserPassword(e.target.value)}
                                         />
                                         <span className="label">
-                                            <span className="label-text-alt text-red-500 hidden">
-                                                비밀번호를 입력해주세요
-                                            </span>
+                                            {errorUserPwMessage && (
+                                                <span className="label-text-alt text-red-500">
+                                                    {errorUserPwMessage}
+                                                </span>
+                                            )}
                                         </span>
                                     </div>
-                                    <button className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700">
+                                    <button
+                                        className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700"
+                                        onClick={handleUserLogin}
+                                    >
                                         로그인
                                     </button>
 
@@ -157,11 +241,13 @@ function Login() {
                                             type="text"
                                             placeholder="아이디"
                                             className="input h-14 focus:border-blue-500"
+                                            value={bizId}
+                                            onChange={(e) => setBizId(e.target.value)}
                                         />
                                         <span className="label">
-                                            <span className="label-text-alt text-red-500 hidden">
-                                                아이디를 입력해주세요
-                                            </span>
+                                            {errorBizIdMessage && (
+                                                <span className="label-text-alt text-red-500">{errorBizIdMessage}</span>
+                                            )}
                                         </span>
                                     </div>
                                     <div className="w-full">
@@ -169,14 +255,19 @@ function Login() {
                                             type="password"
                                             placeholder="비밀번호"
                                             className="input h-14 focus:border-blue-500"
+                                            value={bizPassword}
+                                            onChange={(e) => setBizPassword(e.target.value)}
                                         />
                                         <span className="label">
-                                            <span className="label-text-alt text-red-500 hidden">
-                                                비밀번호를 입력해주세요
-                                            </span>
+                                            {errorBizPwMessage && (
+                                                <span className="label-text-alt text-red-500">{errorBizPwMessage}</span>
+                                            )}
                                         </span>
                                     </div>
-                                    <button className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700">
+                                    <button
+                                        className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700"
+                                        onClick={handleBizLogin}
+                                    >
                                         로그인
                                     </button>
 
