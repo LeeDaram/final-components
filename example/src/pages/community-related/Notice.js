@@ -1,78 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
+import axios from "axios";
 const NoticePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 13;
-  const notices = [
-    {
-      id: "공지",
-      title: "중요공지 1번",
-      author: "작성자",
-      date: "작성일",
-      attachment: null,
-      views: "조회수",
-      important: true,
-    },
-    {
-      id: "공지",
-      title: "중요공지 2번",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-      important: true,
-    },
-    {
-      id: "공지",
-      title: "중요공지 3번",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-      important: true,
-    },
-    {
-      id: 124,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 123,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 122,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 121,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 120,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-  ];
+
+  const [notices, setNotice] = useState([]);
+  useEffect(() => {
+    const getNoticeData = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/notice/main");
+        setNotice(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getNoticeData();
+  }, []);
+  console.log(notices);
 
   const handlePageClick = (page) => {
     setCurrentPage(page);
@@ -116,12 +62,12 @@ const NoticePage = () => {
               {notices.map((notice, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="p-3">
-                    {notice.important ? (
+                    {notice.isMainNotice === "T" ? (
                       <span className="bg-black text-white px-2 py-1 text-sm rounded-full">
                         공지
                       </span>
                     ) : (
-                      notice.id
+                      notice.noticeId
                     )}
                   </td>
                   <Link to="/qna/answer" state={{ notice: "공지사항" }}>
@@ -133,8 +79,8 @@ const NoticePage = () => {
                       </td>
                     </div>
                   </Link>
-                  <td className="p-3">{notice.author}</td>
-                  <td className="p-3 text-center">{notice.date}</td>
+                  <td className="p-3">관리자</td>
+                  <td className="p-3 text-center">{notice.createdAt}</td>
                   <td className="p-3 pl-8">{notice.attachment && "📂"}</td>
                   <td className="p-3">{notice.views}</td>
                 </tr>
