@@ -4,7 +4,7 @@ import axios from "axios";
 
 function Faq() {
   const [faqData, setFaqData] = useState([]); // faq 데이터
-  const [pageError, setPageError] = useState(false);
+
   useEffect(() => {
     const getFaqData = async () => {
       try {
@@ -16,10 +16,6 @@ function Faq() {
     };
     getFaqData();
   }, []);
-  console.log(faqData);
-  // useEffect(() => {
-
-  // }, [faqData]);
 
   return (
     <div className="flex justify-center items-center py-20 bg-gray-50">
@@ -47,21 +43,15 @@ function Faq() {
                 </Accordion.Panel>
               ))
             ) : (
-              <div className="flex justify-center items-center h-[550px] ">
+              <div className="flex flex-col justify-center items-center h-[550px] ">
                 <div class="card group hover:shadow w-full">
                   <div class="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
                     <span class="loading loading-spinner loading-lg text-primary"></span>
                   </div>
                 </div>
+                <p className="text-2xl mt-10">사이트 점검중입니다</p>
               </div>
             )}
-            {/* <div className="flex justify-center items-center h-[550px] ">
-              <div class="card group hover:shadow w-full">
-                <div class="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                  <p className="text-3xl"> 사이트 점검중입니다.</p>
-                </div>
-              </div>
-            </div> */}
           </Accordion>
         </div>
       </div>
