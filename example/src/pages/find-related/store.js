@@ -9,122 +9,239 @@ import {
 import axios from "axios";
 
 // 체크박스 옵션
-const option = [
-  "주차",
-  "포장",
-  "배달",
-  "예약",
-  "와이파이",
-  "반려동물",
-  "유아시설",
+const filterCheckboxes = [
+  { key: "parking", name: "주차" },
+  { key: "takeout", name: "포장" },
+  { key: "delivery", name: "배달" },
+  // {key: 'parking', name: '예약'}, // TODO: 예약 관련 코드 추가
+  { key: "wifi", name: "와이파이" },
+  { key: "pet", name: "반려동물" },
+  { key: "kid", name: "유아시설" },
 ];
+
+const SIZE = 8;
+const MAX_PAGES_TO_SHOW = 10; // 10개씩 그룹화
 
 function Store() {
   // 상태 관리
   const [stores, setStores] = useState([]); // 업소 정보들
-  const [filteredStores, setFilteredStores] = useState([]); // 필터링된 업소 데이터
+
+  /**
+   * Filters
+   */
   const [sido, setSido] = useState([]); // 시도
-  const [sigungu, setSigungu] = useState([]); // 시군구
-  const [filterSigungu, setFilterSigungu] = useState([]); // 필터링된 시군구
   const [selectSido, setSelectSido] = useState(""); // 선택된 시도
+
+  const [sigungu, setSigungu] = useState([]); // 시군구
   const [selectSigungu, setSelectSigungu] = useState([]); // 선택된 시군구
+
   const [industry, setIndustry] = useState([]); // 업종
   const [selectIndustry, setSelectIndustry] = useState([]); // 선택된 업종
-  // const [searchTerm, setSearchTerm] = useState(""); // 검색어
-  // const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 편의시설
-  const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
-  const [isLoading, setIsLoading] = useState(false); // 로딩
+
+  const [searchType, setSearchType] = useState("storeName"); // 업소명/대표메뉴 선택
+  const [searchKeyword, setSearchKeyword] = useState(""); // 검색 키워드
+
+  // 체크박스 상태 관리
+  const [filters, setFilters] = useState({
+    parking: "",
+    takeout: "",
+    delivery: "",
+    wifi: "",
+    pet: "",
+    kid: "",
+  });
+
   const [activeSort, setActiveSort] = useState("recommend"); // 추천순or평점순or거리순의 현재 값
 
-  // 페이지 기본 값
-  const totalElement = 8707;
-  const size = 8;
-  const totalPages = Math.ceil(totalElement / size);
+  //const [filteredStores, setFilteredStores] = useState([]); // 필터링된 업소 데이터
+  const [filterSigungu, setFilterSigungu] = useState([]); // 필터링된 시군구
 
-  // 데이터 가져오기
-  useEffect(() => {
-    async function fetch() {
-      setIsLoading(true);
-      try {
-        const resp = await axios.get(
-          `http://localhost:8080/stores?page=${currentPage}&size=${size}`
-        );
-        const sidoData = await axios.get(`http://localhost:8080/sido`);
-        const sigunguData = await axios.get(`http://localhost:8080/sigungu`);
-        const industryData = await axios.get(`http://localhost:8080/industry`);
+  const [isLoading, setIsLoading] = useState(false); // 로딩
 
-        setStores(resp.data.content);
-        setSido(sidoData.data);
-        setSigungu(sigunguData.data);
-        setIndustry(industryData.data);
-      } catch (error) {
-        console.error("데이터 로드 실패:", error);
-      }
-      setIsLoading(false);
-    }
+  const [totalElement, setTotalElement] = useState(0); // 페이지 토탈 개수
+  // const [filterParams, setFilterParams] = useState({}); // 페이지
 
-    fetch();
-  }, [currentPage]);
+  // const totalPages = Math.ceil(totalElement / size);
+  const totalPages = 1;
+  const [page, setPage] = useState(null);
 
   // 시도 선택 시 시군구 필터링
   useEffect(() => {
-    setFilterSigungu([]);
+    if (!selectSido) {
+      setFilterSigungu([]);
+      return;
+    }
 
-    if (selectSido) {
-      setFilterSigungu(
-        sigungu.filter(
-          (sigunguList) => sigunguList.sidoId === parseInt(selectSido)
-        )
+    if (sigungu.length > 0) {
+      const filtered = sigungu.filter(
+        (sigunguList) => Number(sigunguList.sidoId) === Number(selectSido)
       );
+      setFilterSigungu(filtered);
     }
   }, [selectSido, sigungu]);
 
+  // useEffect(() => {
+  //   console.log(" 시군구 데이터:", sigungu);
+  // }, [sigungu]);
+
+  // useEffect(() => {
+  //   console.log(" 선택된 시도 ID:", selectSido);
+  // }, [selectSido]);
+
   // 시도, 시군구, 업종 선택 시 자동 필터링
-  useEffect(() => {
-    let filtered = stores.filter((store) => {
-      return (
-        (!selectSido || store.sidoId === parseInt(selectSido)) &&
-        (!selectSigungu || store.sigunguId === parseInt(selectSigungu)) &&
-        (!selectIndustry || store.industryId === parseInt(selectIndustry))
-      );
-    });
+  // useEffect(() => {
+  //   console.log(stores);
+  //   let filtered = stores.filter((store) => {
+  //     return (
+  //       (!selectSido || store.sidoId === parseInt(selectSido)) &&
+  //       (!selectSigungu || store.sigunguId === parseInt(selectSigungu)) &&
+  //       (!selectIndustry || store.industryId === parseInt(selectIndustry))
+  //     );
+  //   });
 
-    // 필터링된 데이터가 없으면 전체 데이터를 유지
-    if (filtered.length === 0) {
-      filtered = [...stores];
-    }
+  //   // 필터링된 데이터가 없으면 전체 데이터를 유지
+  //   if (filtered.length === 0) {
+  //     filtered = [...stores];
+  //   }
 
-    // 정렬 적용
-    let sortedStores = [...filtered];
-    if (activeSort === "rating") {
-      sortedStores.sort((a, b) => b.averageRating - a.averageRating);
-    } else if (activeSort === "distance") {
-      sortedStores.sort((a, b) => a.distance - b.distance);
-    }
+  //   // 정렬 적용
+  //   let sortedStores = [...filtered];
+  //   if (activeSort === "rating") {
+  //     sortedStores.sort((a, b) => b.averageRating - a.averageRating);
+  //   } else if (activeSort === "distance") {
+  //     sortedStores.sort((a, b) => a.distance - b.distance);
+  //   }
 
-    setFilteredStores(sortedStores);
-  }, [stores, selectSido, selectSigungu, selectIndustry, activeSort]);
+  //   setFilteredStores(sortedStores);
+  // }, [stores, selectSido, selectSigungu, selectIndustry, activeSort]);
 
   // 검색 버튼
-  const handleSearchClick = () => {};
+  const handleSearchClick = async (page = 0) => {
+    const { parking, takeout, delivery, wifi, pet, kid } = filters; // TODO: 예약 관련 코드 추가해야 함
+    console.log(filters);
+    const params = {
+      page,
+      size: SIZE,
+      sidoId: selectSido || null,
+      sigunguId: selectSigungu || null,
+      industryId: selectIndustry || null,
+      storeName: searchType === "storeName" ? searchKeyword : "",
+      mainMenu: searchType === "mainMenu" ? searchKeyword : "",
+      parking,
+      takeout,
+      delivery,
+      wifi,
+      pet,
+      kid,
+    };
+
+    console.log("검색 요청 파라미터:", params);
+
+    try {
+      const response = await axios.get("http://localhost:8080/stores", {
+        params,
+      });
+
+      console.log("서버 응답:", response.data);
+
+      if (response.data && response.data.content.length > 0) {
+        const isAnyFilterChecked = Object.values(filters).some(Boolean);
+
+        console.log("필터 적용 여부:", isAnyFilterChecked);
+        setStores(response.data.content);
+        setPage(response.data.page); // 페이지 정보 업데이트
+      } else {
+        setStores([]); // 데이터 없을 경우 빈 배열로 초기화
+        setPage(null);
+      }
+    } catch (error) {
+      console.error(" 필터 검색 실패:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   async function fetchFilteredData() {
+  //     setIsLoading(true);
+
+  //     const params = {
+  //       page: currentPage, // 선택한 페이지로 요청
+  //       size,
+  //       sidoId: selectSido || null,
+  //       sigunguId: selectSigungu || null,
+  //       industryId: selectIndustry || null,
+  //       storeName: searchType === "storeName" ? searchKeyword : "",
+  //       mainMenu: searchType === "mainMenu" ? searchKeyword : "",
+  //       parking: filters.parking ? "T" : null,
+  //       takeout: filters.takeout ? "T" : null,
+  //       delivery: filters.delivery ? "T" : null,
+  //       wifi: filters.wifi ? "T" : null,
+  //       pet: filters.pet ? "T" : null,
+  //       kid: filters.kid ? "T" : null,
+  //     };
+
+  //     try {
+  //       const response = await axios.get("http://localhost:8080/filter", {
+  //         params,
+  //       });
+  //       setStores(response.data.content || []);
+  //       setTotalElement(response.data.totalElements || 0);
+  //     } catch (error) {
+  //       console.error(" 데이터 로드 실패:", error);
+  //     }
+
+  //     setIsLoading(false);
+  //   }
+
+  //   fetchFilteredData();
+  // }, [currentPage]);
 
   // 페이지 번호 생성
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxPagesToShow = 10;
-    let start = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-    let end = start + maxPagesToShow - 1;
+  const makePageNumbers = (currentPage, totalPages) => {
+    let pages = [];
 
-    if (end >= totalPages) {
-      end = totalPages - 1;
-      start = Math.max(0, end - maxPagesToShow + 1);
-    }
+    // 현재 그룹의 시작/끝 페이지 계산
+    let start = Math.floor(currentPage / MAX_PAGES_TO_SHOW) * MAX_PAGES_TO_SHOW;
+    let end = Math.min(start + MAX_PAGES_TO_SHOW - 1, totalPages - 1);
 
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
 
     return pages;
+  };
+
+  // 검색조건 가져오기
+  useEffect(() => {
+    async function fetch() {
+      try {
+        // const resp = await axios.get(
+        //   `http://localhost:8080/stores?page=${currentPage}&size=${size}`
+        // );
+        const sidoData = await axios.get(`http://localhost:8080/sido`);
+        const sigunguData = await axios.get(`http://localhost:8080/sigungu`);
+        const industryData = await axios.get(`http://localhost:8080/industry`);
+
+        await handleSearchClick();
+
+        // setStores(resp.data.content);
+        setSido(sidoData.data);
+        setSigungu(sigunguData.data);
+        setIndustry(industryData.data);
+      } catch (error) {
+        console.error("데이터 로드 실패:", error);
+      }
+    }
+
+    fetch();
+  }, []);
+
+  const handleFilterChange = (event) => {
+    console.log(event);
+    const { id, name, checked } = event.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [id]: checked ? "T" : "",
+    }));
   };
 
   return (
@@ -239,21 +356,21 @@ function Store() {
 
         {/* 편의시설 필터링 */}
         <div className="flex justify-center items-center w-full mt-4">
-          {option.map((label, index) => (
+          {filterCheckboxes.map((item, index) => (
             <div
-              key={`${label}-${index}`}
+              key={`${item.key}`}
               className="flex items-center gap-1 mr-10 px-5"
             >
               <input
-                id={`checkbox${label}`}
+                id={item.key}
                 type="checkbox"
+                name={item.name}
+                checked={filters[item.key] === "T"}
+                onChange={handleFilterChange}
                 className="w-4 h-4 cursor-pointer"
               />
-              <label
-                htmlFor={`checkbox${label}`}
-                className="text-sm cursor-pointer"
-              >
-                {label}
+              <label htmlFor={item.key} className="text-sm cursor-pointer">
+                {item.name}
               </label>
             </div>
           ))}
@@ -278,8 +395,8 @@ function Store() {
           </div>
         ) : (
           <div className="grid grid-cols-4 gap-6 p-6">
-            {filteredStores.length > 0 ? (
-              filteredStores.map((d, index) => (
+            {stores.length > 0 ? (
+              stores.map((d, index) => (
                 <StoreComponent key={`${d.storeId}-${index}`} data={d} />
               ))
             ) : (
@@ -291,77 +408,98 @@ function Store() {
         )}
 
         {/* 페이지 관련 */}
-        <div className="flex justify-center items-center mt-6">
-          <nav
-            aria-label="Pagination"
-            className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-          >
-            <button
-              className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
-                currentPage === 0
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-gray-900 hover:bg-gray-100"
-              }`}
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage(0)}
-            >
-              <FiChevronsLeft />
-            </button>
-            <button
-              className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-medium ${
-                currentPage === 0
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-gray-900 hover:bg-gray-100"
-              }`}
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              <FiChevronLeft />
-            </button>
-
-            {getPageNumbers().map((page) => (
-              <button
-                key={`i-${page}`}
-                onClick={() => setCurrentPage(page)}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                  currentPage === page
-                    ? "bg-indigo-600 text-white"
-                    : "bg-white text-gray-900 hover:bg-gray-100"
-                }`}
+        {page && (
+          <>
+            <div className="flex justify-center items-center mt-6">
+              <nav
+                aria-label="Pagination"
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
               >
-                {page + 1}
-              </button>
-            ))}
+                <button
+                  className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                    page.number === 0
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-white text-gray-900 hover:bg-gray-100"
+                  }`}
+                  disabled={page.number === 0}
+                  onClick={() => handleSearchClick(0)}
+                >
+                  <FiChevronsLeft />
+                </button>
 
-            <button
-              className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
-                currentPage === totalPages - 1
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-gray-900 hover:bg-gray-100"
-              }`}
-              disabled={currentPage === totalPages - 1}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              <FiChevronRight />
-            </button>
+                {/* 전 페이지로 이동 */}
+                <button
+                  className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-medium ${
+                    page.number === 0
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-white text-gray-900 hover:bg-gray-100"
+                  }`}
+                  disabled={page.number === 0}
+                  onClick={() =>
+                    handleSearchClick(
+                      makePageNumbers(page.number, page.totalPages)[
+                        MAX_PAGES_TO_SHOW - 10
+                      ] - 1
+                    )
+                  }
+                >
+                  <FiChevronLeft />
+                </button>
 
-            <button
-              className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
-                currentPage === totalPages - 1
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-gray-900 hover:bg-gray-100"
-              }`}
-              disabled={currentPage === totalPages - 1}
-              onClick={() => setCurrentPage(totalPages - 1)}
-            >
-              <FiChevronsRight />
-            </button>
-          </nav>
-        </div>
+                {/* 페이지 넘버 */}
+                {makePageNumbers(page.number, page.totalPages).map((navNum) => (
+                  <button
+                    key={navNum}
+                    onClick={() => handleSearchClick(navNum)}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                      page.number === navNum
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white text-gray-900 hover:bg-gray-100"
+                    }`}
+                  >
+                    {navNum + 1}
+                  </button>
+                ))}
 
-        <div className="text-center mt-4 text-sm text-gray-600">
-          페이지 {currentPage + 1} / {totalPages}
-        </div>
+                {/* 다음 페이지로 이동 */}
+                <button
+                  className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                    page.number === page.totalPages
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-white text-gray-900 hover:bg-gray-100"
+                  }`}
+                  disabled={page.number === page.totalPages}
+                  onClick={() =>
+                    handleSearchClick(
+                      makePageNumbers(page.number, page.totalPages)[
+                        MAX_PAGES_TO_SHOW - 1
+                      ] + 1
+                    )
+                  }
+                >
+                  <FiChevronRight />
+                </button>
+
+                {/* 끝 페이지로 이동 */}
+                <button
+                  className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                    page.number === page.totalPages - 1
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-white text-gray-900 hover:bg-gray-100"
+                  }`}
+                  disabled={page.number === page.totalPages - 1}
+                  onClick={() => handleSearchClick(page.totalPages - 1)}
+                >
+                  <FiChevronsRight />
+                </button>
+              </nav>
+            </div>
+
+            <div className="text-center mt-4 text-sm text-gray-600">
+              페이지 {page.number + 1} / {page.totalPages}
+            </div>
+          </>
+        )}
       </div>
     </>
   );
