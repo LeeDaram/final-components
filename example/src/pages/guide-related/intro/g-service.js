@@ -8,33 +8,52 @@ import partnerImg4 from "../../../assets/images/g-service/partner-4.png";
 import partnerImg5 from "../../../assets/images/g-service/partner-5.png";
 import partnerImg6 from "../../../assets/images/g-service/partner-6.png";
 
+// 슬라이드 이미지
+import eat1 from "../../../assets/images/g-service/eat-1.jpg";
+import eat2 from "../../../assets/images/g-service/eat-2.jpeg";
+import eat3 from "../../../assets/images/g-service/eat-3.png";
+import eat4 from "../../../assets/images/g-service/eat-4.jpg";
+import eat5 from "../../../assets/images/g-service/eat-5.png";
+import eat6 from "../../../assets/images/g-service/eat-6.jpg";
+
 const Service = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slides = [
     {
       name: "나영왕돈까스",
       city: "대전시",
-      desc: "대전에 위치한 나영왕돈까스는 지역 주민들에게 저렴한 가격으로 고품질 반찬과 간단한 식사를 제공하는 곳입니다.",
+      desc: "대전에 위치한 나영왕돈까스는 지역 주민들에게 저렴한 가격으로 고품질의 반찬과 간단한 식사를 제공하는 맛집입니다. 신선한 재료로 만든 바삭한 돈까스와 다양한 반찬이 특징이며, 아늑한 분위기와 친절한 서비스로 많은 사랑을 받고 있습니다. 가성비 좋은 식사를 원하는 이들에게 안성맞춤인 곳입니다.",
+      image: eat1,
     },
     {
       name: "신가네칼국수",
       city: "서울시",
-      desc: "서울에 위치한 신가네칼국수는 지역 주민들에게 합리적인 가격으로 맛있는 칼국수와 다양한 반찬을 제공하는 식당입니다.",
+      desc: "신가네칼국수는 서울에 위치한 식당으로, 합리적인 가격에 맛있는 칼국수와 다양한 반찬을 제공합니다. 신선한 재료로 만든 칼국수는 깊은 국물 맛이 특징이며, 다양한 반찬과 함께 제공되어 만족스러운 식사를 경험할 수 있습니다.",
+      image: eat2,
     },
     {
       name: "돌고래순두부",
       city: "부산시",
-      desc: "부산의 돌고래순두부는 착한가격업소의 좋은 예로, 합리적인 가격에 맛있는 음식을 제공하여 지역 주민들에게 큰 사랑을 받고 있습니다.",
+      desc: "부산의 돌고래순두부는 착한가격업소로서, 합리적인 가격에 신선하고 맛있는 순두부 요리를 제공하여 지역 주민들에게 경제적 부담을 덜어주고, 동시에 지역 사회의 식문화 발전에 기여하며 많은 사랑을 받고 있는 식당입니다.",
+      image: eat3,
     },
     {
       name: "가이오청년밥상",
       city: "청주시",
-      desc: "청주의 가이오청년밥상은 착한가격업소로, 깊고 진한 국물 맛과 신선한 재료를 사용하여 저렴한 가격에 푸짐한 한 끼를 제공합니다.",
+      desc: "청주의 가이오청년밥상은 착한가격업소로서, 깊고 진한 국물 맛이 특징인 다양한 한식 메뉴를 제공하며, 신선한 재료를 아낌없이 사용하여 저렴한 가격에 푸짐한 한 끼를 즐길 수 있는 곳입니다. 다양한 연령층들이 이 곳을 찾고 있습니다.",
+      image: eat4,
     },
     {
       name: "고가네칼국수",
       city: "공주시",
-      desc: "공주의 고가네칼국수는 착한가격업소의 대표적인 사례로, 가족 단위 손님부터 친구들과의 모임까지 다양한 고객층이 찾는 인기 있는 장소입니다.",
+      desc: "공주의 고가네칼국수는 착한가격업소의 대표적인 사례로, 가족 단위 손님부터 친구들과의 모임까지 다양한 고객층이 찾는 인기 있는 장소로, 저렴한 가격에 맛있는 칼국수를 제공하여 지역 주민들과 관광객들에게 사랑받고 있는 곳입니다.",
+      image: eat5,
+    },
+    {
+      name: "돈오야",
+      city: "서울시",
+      desc: "서울의 돈오야는 착한가격업소로서, 고물가 시대에 보기 힘든 금액으로 숙성삼겹살을 판매하는 장소로, 삼겹살 뿐만 아니라 다양한 계절 메뉴로 든든하게 한 끼를 즐길 수 있는 곳입니다. 관광객들에게 많은 사랑을 받고 있습니다.",
+      image: eat6,
     },
   ];
 
@@ -110,27 +129,39 @@ const Service = () => {
           </section>
 
           {/* 착한가격업소 사례 */}
-          <section className="p-12 bg-gray-100">
-            <h2 className="text-4xl text-center font-extrabold mb-12 text-gray-900">
+          <section className="p-16 bg-gray-100">
+            <h2 className="text-4xl text-center font-extrabold mb-16 text-gray-900">
               착한가격업소 사례
             </h2>
-            <div className="relative w-full h-64 overflow-hidden rounded-xl shadow-xl">
+            <div className="relative w-full overflow-hidden rounded-xl shadow-xl">
               <div
-                className="flex w-full h-full transition-transform duration-700 ease-in-out"
+                className="flex w-full transition-transform duration-700 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
               >
                 {slides.map((item, index) => (
                   <div
                     key={index}
-                    className="min-w-full bg-white p-8 flex flex-col justify-center items-center text-center"
+                    className="min-w-full flex flex-col md:flex-row items-center bg-white p-12 gap-12"
                   >
-                    <h5 className="text-2xl font-bold mb-3 text-blue-600">
-                      {item.name}
-                    </h5>
-                    <p className="text-sm text-gray-500 mb-4">{item.city}</p>
-                    <p className="text-gray-700 text-lg max-w-xl">
-                      {item.desc}
-                    </p>
+                    {/* 텍스트 영역 */}
+                    <div className="flex-1 max-w-3xl text-left">
+                      <h5 className="text-3xl font-bold mb-4 text-blue-600">
+                        {item.name}
+                      </h5>
+                      <p className="text-lg text-gray-600 mb-6">{item.city}</p>
+                      <p className="text-gray-800 text-1xl leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+
+                    {/* 이미지 영역 */}
+                    <div className="w-80 h-52 self-end ml-auto">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded-lg shadow-md"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -146,36 +177,36 @@ const Service = () => {
         </div>
 
         {/* 파트너사 로고 영역 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           <img
             src={partnerImg4}
             alt="Partner 1"
-            className="w-48 h-48 object-contain mx-auto"
+            className="w-48 h-48 object-contain mx-auto mt-0"
           />
           <img
             src={partnerImg5}
             alt="Partner 2"
-            className="w-48 h-48 object-contain mx-auto"
+            className="w-48 h-48 object-contain mx-auto mt-8"
           />
           <img
             src={partnerImg}
             alt="Partner 3"
-            className="w-48 h-48 object-contain mx-auto"
+            className="w-48 h-48 object-contain mx-auto mt-0"
           />
           <img
             src={partnerImg2}
             alt="Partner 4"
-            className="w-48 h-48 object-contain mx-auto"
+            className="w-48 h-48 object-contain mx-auto mt-8"
           />
           <img
             src={partnerImg3}
             alt="Partner 5"
-            className="w-48 h-48 object-contain mx-auto"
+            className="w-48 h-48 object-contain mx-auto mt-0"
           />
           <img
             src={partnerImg6}
             alt="Partner 6"
-            className="w-48 h-48 object-contain mx-auto"
+            className="w-48 h-48 object-contain mx-auto mt-8"
           />
         </div>
       </section>

@@ -13,6 +13,7 @@ import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import Service from "./pages/guide-related/intro/g-service";
 import Site from "./pages/guide-related/intro/site";
+import Brand from "./pages/guide-related/intro/brand";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
             <Route path="/guide-related/intro/site" element={<Site />} />
+            <Route path="/guide-related/intro/brand" element={<Brand />} />
           </Routes>
         </main>
       </div>
