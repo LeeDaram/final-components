@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 const NoticePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchNotice, setSearchNotice] = useState("");
   const totalPages = 13;
 
   const [notices, setNotice] = useState([]);
@@ -24,6 +25,21 @@ const NoticePage = () => {
     setCurrentPage(page);
   };
 
+  const handleSearch = () => {
+    const getNoticeData = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/notice/main/{searchNotice}"
+        );
+        setNotice(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getNoticeData();
+  };
+  console.log(searchNotice);
+
   return (
     <>
       {/* 테이블 위에 정보 */}
@@ -41,8 +57,14 @@ const NoticePage = () => {
                 type="text"
                 placeholder="제목 또는 내용을 입력해주세요"
                 className="p-2 w-64 border-none outline-none bg-white"
+                onChange={(e) => setSearchNotice(e.target.value)}
               />
-              <button className="bg-black text-white px-4 py-2">검색</button>
+              <button
+                className="bg-black text-white px-4 py-2"
+                onClick={handleSearch}
+              >
+                검색
+              </button>
             </div>
           </div>
 
