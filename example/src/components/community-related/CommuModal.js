@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { handleEnterKey, handleEscKey } from "../../utils/Keydown"; //키다운함수수
+import axios from "axios";
 
 export function CommuModal({ isOpen, onClose }) {
   const navigate = useNavigate();
@@ -58,16 +59,26 @@ export function CommuModal({ isOpen, onClose }) {
     </Modal>
   );
 }
-export default function DeletModal({ isOpen, onClose }) {
+
+export default function DeletModal({ isOpen, onClose, notice }) {
+  console.log(notice, "@@");
   const navigate = useNavigate();
+  const handleDeleteMain = async () => {
+    try {
+      await axios.delete(`http://localhost:8080/notice/delete/${notice.id}`);
+    } catch (error) {
+      console.log("ERROR");
+    }
+    navigate("/community-related/notice");
+  };
 
   // 모달이 열려 있을 때만 적용시키기기
   useEffect(() => {
     if (isOpen) {
       const handleKeyDown = (e) => {
         handleEnterKey(e, () => {
+          // Enter키 == 확인
           onClose();
-          navigate("/community-related/notice"); // Enter키 == 확인
         });
 
         handleEscKey(e, onClose); // Esc키 == 취소
@@ -93,6 +104,9 @@ export default function DeletModal({ isOpen, onClose }) {
               color="failure"
               onClick={() => {
                 onClose();
+                if (notice.page === "notice") {
+                  handleDeleteMain();
+                }
                 alert("삭제되었습니다");
                 // navigate notice qna판단로직직
                 navigate("/community-related/notice");

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
+import { handleEnterKey, handleEscKey } from "../../utils/Keydown";
 import axios from "axios";
 const NoticePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -8,6 +9,7 @@ const NoticePage = () => {
   const totalPages = 13;
 
   const [notices, setNotice] = useState([]);
+  // 첫 로드때 데이터 가져오기기
   useEffect(() => {
     const getNoticeData = async () => {
       try {
@@ -19,17 +21,13 @@ const NoticePage = () => {
     };
     getNoticeData();
   }, []);
-  console.log(notices);
 
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
-
+  // 검색시 제목, 내용에 있는 거 검색어 일치하는거 가져오기기
   const handleSearch = () => {
     const getNoticeData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8080/notice/main/{searchNotice}"
+          `http://localhost:8080/notice/main/search/${searchNotice}`
         );
         setNotice(res.data);
       } catch (error) {
@@ -38,7 +36,9 @@ const NoticePage = () => {
     };
     getNoticeData();
   };
-  console.log(searchNotice);
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
@@ -58,6 +58,7 @@ const NoticePage = () => {
                 placeholder="제목 또는 내용을 입력해주세요"
                 className="p-2 w-64 border-none outline-none bg-white"
                 onChange={(e) => setSearchNotice(e.target.value)}
+                onKeyDown={(e) => handleEnterKey(e, handleSearch)}
               />
               <button
                 className="bg-black text-white px-4 py-2"
@@ -92,7 +93,10 @@ const NoticePage = () => {
                       notice.noticeId
                     )}
                   </td>
-                  <Link to="/qna/answer" state={{ notice: "공지사항" }}>
+                  <Link
+                    to="/answer"
+                    state={{ notice: "공지사항", id: notice.noticeId }}
+                  >
                     <div className="hover:underline">
                       <td
                         className={`p-3 ${notice.important && "font-semibold"}`}

@@ -1,32 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import DeletModal from "./CommuModal";
+import axios from "axios";
 
 const Answer = () => {
   const location = useLocation();
   const data = location.state;
 
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: "관리자",
-      content: "질문에 대한 답변입니다.",
-      date: "2025.02.15",
-    },
-    {
-      id: 2,
-      author: "관리자",
-      content: "질문에 대한 답변입니다.",
-      date: "2025.02.15",
-    },
-  ]);
+  const [isEditingMain, setIsEditingMain] = useState(false); // 메인글 수정 상태
+  const [title, setTitle] = useState(""); //메인 제목내용
+  const [editingMain, setEditingMain] = useState(""); // 메인글 내용
+  const [comments, setComments] = useState([]); //코멘트 내용
   const [editingId, setEditingId] = useState(null);
   const [editingContent, setEditingContent] = useState(""); //답글 수정
   const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
+  // 첫로드시 클릭된 내용
+
+  useEffect(() => {
+    const getNoticeData = async () => {
+      try {
+        //공지사항인지 qna인지 조건걸기기
+        const res = await axios.get(
+          `http://localhost:8080/notice/main/${data.id}`
+        );
+        setEditingMain(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getNoticeData();
+  }, []);
+
+  console.log(editingMain);
 
   // 답글 등록
   const handleCommentSubmit = () => {
@@ -46,20 +55,26 @@ const Answer = () => {
     setComment("");
   };
 
-  const [isEditingMain, setIsEditingMain] = useState(false); // 메인글 수정 상태
-  const [editingMain, setEditingMain] = useState(
-    "여기 작성된 내용은 사용자가 궁금해하는 내용입니다. 여기 작성된 내용은 사용자가 궁금해하는 내용입니다. 여기 작성된 내용은 사용자가 궁금해하는 내용입니다."
-  ); // 메인글 내용
-
   // 메인글 수정 시작
   const handleEditMain = () => {
     setIsEditingMain(true);
   };
 
   // 메인글 저장
-  const handleSaveMain = () => {
+  const handleSaveMain = async () => {
+    try {
+      //공지사항인지 qna인지 조건걸기
+      const res = await axios.patch(
+        `http://localhost:8080/notice/update/${data.id}`,
+        { title: title, content: editingMain }
+      );
+      setEditingMain(res.data);
+    } catch (error) {
+      console.log("ERROR");
+    }
     setIsEditingMain(false);
     alert("완료되었습니다");
+    navigate("/community-related/notice");
   };
 
   // 메인글 수정 취소
@@ -124,22 +139,32 @@ const Answer = () => {
 
           {/* 질문 내용 */}
           <div className="border-b pb-6 mb-6">
-            <h2 className="text-2xl font-bold mb-2">질문이 있는데요.</h2>
+            {isEditingMain ? (
+              <textarea
+                className="w-full text-2xl p-3 border rounded h-15 resize-none"
+                value={editingMain.title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            ) : (
+              <h2 className="text-2xl font-bold mb-2">{editingMain.title}</h2>
+            )}
             <div className="border-b py-2">
               <span className="text-gray-600 mr-5">회원ID</span>
-              <span className="text-gray-600 mt-2">2025.02.10</span>
+              <span className="text-gray-600 mt-2">
+                {editingMain.createdAt}
+              </span>
             </div>
 
             {/* 본 내용 수정 모드일 때 textarea 표시 아닐 때 기존 내용 표시 */}
             {isEditingMain ? (
               <textarea
                 className="w-full p-3 border rounded h-24 resize-none"
-                value={editingMain}
+                value={editingMain.content}
                 onChange={(e) => setEditingMain(e.target.value)}
               />
             ) : (
               <p className="mt-4 text-gray-700 leading-relaxed py-7">
-                {editingMain}
+                {editingMain.content}
               </p>
             )}
           </div>
@@ -281,6 +306,7 @@ const Answer = () => {
         <DeletModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          notice={{ page: "notice", id: data.id }}
         />
       )}
     </>

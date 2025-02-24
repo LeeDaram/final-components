@@ -40,7 +40,7 @@ function App() {
             />
             <Route path="/community-related/qna" element={<QnaPage />} />
             <Route path="/community-related/faq" element={<Faq />} />
-            <Route path="/qna/answer" element={<Answer />} />
+            <Route path="/answer" element={<Answer />} />
           </Routes>
         </main>
       </div>
