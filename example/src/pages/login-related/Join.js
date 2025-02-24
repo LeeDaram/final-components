@@ -4,6 +4,20 @@ import { Carousel } from 'flowbite-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import banner01 from '../../assets/images/join_banner/join_banner_01.png';
+import banner02 from '../../assets/images/join_banner/join_banner_02.png';
+import banner03 from '../../assets/images/join_banner/join_banner_03.png';
+
+function Banner() {
+    return (
+        <div>
+            <img src={banner01} alt="Banner 01" />
+            <img src={banner02} alt="Banner 02" />
+            <img src={banner03} alt="Banner 03" />
+        </div>
+    );
+}
+
 function Join() {
     const [activeTab, setActiveTab] = useState('user');
     const navigate = useNavigate();
@@ -83,13 +97,13 @@ function Join() {
 
                     {/* 우측 - 로그인 */}
                     <div className="w-1/2">
-                        <div className="h-96 sm:h-70 xl:h-80 2xl:h-96">
+                        <div className="h-[500px] sm:h-[450px] xl:h-[500px] 2xl:h-[600px]">
+                            {' '}
+                            {/* 세로 길이 조정 */}
                             <Carousel leftControl=" " rightControl=" ">
-                                <img src="https://flowbite.com/docs/images/carousel/carousel-1.svg" alt="..." />
-                                <img src="https://flowbite.com/docs/images/carousel/carousel-2.svg" alt="..." />
-                                <img src="https://flowbite.com/docs/images/carousel/carousel-3.svg" alt="..." />
-                                <img src="https://flowbite.com/docs/images/carousel/carousel-4.svg" alt="..." />
-                                <img src="https://flowbite.com/docs/images/carousel/carousel-5.svg" alt="..." />
+                                <img src={banner01} alt="Banner 01" className="w-full h-full object-cover" />
+                                <img src={banner02} alt="Banner 02" className="w-full h-full object-cover" />
+                                <img src={banner03} alt="Banner 03" className="w-full h-full object-cover" />
                             </Carousel>
                         </div>
                     </div>

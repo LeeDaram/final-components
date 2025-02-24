@@ -37,3 +37,11 @@ input:focus,
     border-color: var(--tw-ring-color) !important;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
+
+/* 드롭다운 박스 */
+.dropdown-item:focus,
+.dropdown-item:hover,
+.dropdown-item:active {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+}

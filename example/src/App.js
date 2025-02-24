@@ -15,31 +15,34 @@ import PersonalForm from './pages/login-related/personalForm';
 import BusinessForm from './pages/login-related/businessForm';
 import FindUserId from './pages/login-related/findUserId';
 import FindUserPassword from './pages/login-related/findUserPassword';
+import { AuthProvider } from './pages/login-related/AuthContext';
 
 function App() {
     return (
         <Router>
-            <div>
-                <Header />
-                {/* <Header /> */}
-                <main>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/company" element={<Company />} />
-                        <Route path="/marketplace" element={<Marketplace />} />
-                        <Route path="/features" element={<Features />} />
-                        <Route path="/team" element={<Team />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/join" element={<Join />} />
-                        <Route path="/personal-form" element={<PersonalForm />} />
-                        <Route path="/business-form" element={<BusinessForm />} />
-                        <Route path="/find-id" element={<FindUserId />} />
-                        <Route path="/find-password" element={<FindUserPassword />} />
-                    </Routes>
-                </main>
-            </div>
-            <Footer />
+            <AuthProvider>
+                <div>
+                    <Header />
+                    {/* <Header /> */}
+                    <main>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/company" element={<Company />} />
+                            <Route path="/marketplace" element={<Marketplace />} />
+                            <Route path="/features" element={<Features />} />
+                            <Route path="/team" element={<Team />} />
+                            <Route path="/contact" element={<Contact />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/join" element={<Join />} />
+                            <Route path="/personal-form" element={<PersonalForm />} />
+                            <Route path="/business-form" element={<BusinessForm />} />
+                            <Route path="/find-id" element={<FindUserId />} />
+                            <Route path="/find-password" element={<FindUserPassword />} />
+                        </Routes>
+                    </main>
+                </div>
+                <Footer />
+            </AuthProvider>
         </Router>
     );
 }

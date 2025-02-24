@@ -1,11 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../pages/login-related/AuthContext';
 
 function Header() {
-    const [activeMenu, setActiveMenu] = useState(null);
-    const [userRole, setUserRole] = useState('user'); // user, business, admin 로 로그인 구분 null이거나 undefined시 로그아웃으로 간주함
+    // 로그인, 로그아웃
+    const { user, logout } = useAuth();
 
-    const userRole1 = 'user'; // user, business, admin 로 로그인 구분 null이거나 undefined시 로그아웃으로 간주함
+    // 메뉴바
+    const [activeMenu, setActiveMenu] = useState(null);
+
+    // 권한 상태값
+    const [userRole, setUserRole] = useState('');
+
+    const roleMap = {
+        ROLE_USER: 'user',
+        ROLE_BIZ: 'business',
+        ROLE_ADMIN: 'admin',
+    };
+
+    const roleDisplayMap = {
+        user: '개인회원',
+        business: '사업자',
+        admin: '관리자',
+    };
+
+    // 로그인한 유저에 맞춰 업데이트
+    useEffect(() => {
+        if (user?.role) {
+            setUserRole(roleMap[user?.role] || '손님');
+        } else {
+            setUserRole('');
+        }
+    }, [user]);
 
     const menuStructure = [
         {
@@ -157,6 +183,7 @@ function Header() {
                         <div className="w-48 flex justify-center min-w-[192px]">
                             {userRole ? (
                                 <>
+                                    {/* 채팅방 알림 */}
                                     <div className="dropdown relative inline-flex ml-4 mr-4">
                                         <button
                                             type="button"
@@ -168,9 +195,9 @@ function Header() {
                                                 <span className="icon-[tabler--bell] text-base-content size-[1.375rem]"></span>
                                             </div>
                                         </button>
-                                        <div className="dropdown-item absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden">
+                                        <div className="p-2 absolute top-full -left-48 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden">
                                             <div className="dropdown-header justify-center">
-                                                <h6 className="text-base-content text-base">Notifications</h6>
+                                                <h6 className="text-base-content text-base">알림</h6>
                                             </div>
                                             <div className="max-h-56 overflow-auto">
                                                 <div className="dropdown-item">
@@ -183,19 +210,21 @@ function Header() {
                                                         </div>
                                                     </div>
                                                     <div className="w-60">
-                                                        <h6 className="truncate text-base">Charles Franklin</h6>
+                                                        <h6 className="truncate text-base">홍사업, 홍유저</h6>
                                                         <small className="text-base-content/50 truncate">
-                                                            Accepted your connection
+                                                            채팅내용입니다.
                                                         </small>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <a href="#" className="dropdown-footer justify-center gap-1">
+                                            <a href="#" className="mt-2 dropdown-footer justify-center gap-1">
                                                 <span className="icon-[tabler--eye] size-4"></span>
-                                                View all
+                                                더보기
                                             </a>
                                         </div>
                                     </div>
+
+                                    {/* 마이페이지 */}
                                     <div className="dropdown relative inline-flex ml-4 mr-4">
                                         <button
                                             type="button"
@@ -211,7 +240,7 @@ function Header() {
                                                 </div>
                                             </div>
                                         </button>
-                                        <ul className="dropdown-item absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden">
+                                        <ul className="p-2 absolute top-full left-0 mt-2 z-50 w-60 bg-white shadow-lg border rounded-md flex flex-col hidden">
                                             <li className="dropdown-header gap-2">
                                                 <div className="avatar">
                                                     <div className="w-10 rounded-full">
@@ -223,22 +252,24 @@ function Header() {
                                                 </div>
                                                 <div>
                                                     <h6 className="text-base-content text-base font-semibold">
-                                                        John Doe
+                                                        {user?.name}
                                                     </h6>
-                                                    <small className="text-base-content/50">{userRole}</small>
+                                                    <small className="text-base-content/50">
+                                                        {roleDisplayMap[userRole] || ''}
+                                                    </small>
                                                 </div>
                                             </li>
                                             <li>
-                                                <a className="dropdown-item block px-4 py-2 hover:bg-gray-100" href="#">
-                                                    My Profile
+                                                <a class="dropdown-item" href="#">
+                                                    마이페이지
                                                 </a>
                                             </li>
-                                            <li className="dropdown-footer gap-2">
+                                            <li className="dropdown-footer gap-2 mt-2">
                                                 <button
                                                     className="btn btn-error btn-soft btn-block"
-                                                    onClick={() => setUserRole(null)}
+                                                    onClick={() => logout()}
                                                 >
-                                                    Sign out
+                                                    로그아웃
                                                 </button>
                                             </li>
                                         </ul>
@@ -250,13 +281,13 @@ function Header() {
                                         to="/login"
                                         className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2"
                                     >
-                                        Log in
+                                        로그인
                                     </Link>
                                     <Link
                                         to="/join"
                                         className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 ml-4"
                                     >
-                                        Join us
+                                        회원가입
                                     </Link>
                                 </>
                             )}
