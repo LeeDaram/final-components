@@ -11,6 +11,10 @@ function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
 
+    const handleGoogleLogin = () => {
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    };
+
     // 입력 값 업데이트
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -139,7 +143,10 @@ function Login() {
                         {activeTab === 'user' && (
                             <>
                                 <div className="divider border-gray-300 text-gray-500">소셜 계정으로 간편 회원가입</div>
-                                <button className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500">
+                                <button
+                                    className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500"
+                                    onClick={handleGoogleLogin}
+                                >
                                     <img
                                         src="https://img.icons8.com/?size=512&id=17949&format=png"
                                         alt="Google"

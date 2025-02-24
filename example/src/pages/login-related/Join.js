@@ -1,26 +1,21 @@
 'use client';
 
+import React from 'react';
 import { Carousel } from 'flowbite-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+import { jwtDecode } from 'jwt-decode';
 
 import banner01 from '../../assets/images/join_banner/join_banner_01.png';
 import banner02 from '../../assets/images/join_banner/join_banner_02.png';
 import banner03 from '../../assets/images/join_banner/join_banner_03.png';
 
-function Banner() {
-    return (
-        <div>
-            <img src={banner01} alt="Banner 01" />
-            <img src={banner02} alt="Banner 02" />
-            <img src={banner03} alt="Banner 03" />
-        </div>
-    );
-}
-
 function Join() {
     const [activeTab, setActiveTab] = useState('user');
     const navigate = useNavigate();
+
+    const { login } = useAuth();
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -28,6 +23,30 @@ function Join() {
             navigate('/business-form');
         }
     };
+
+    const handleGoogleLogin = () => {
+        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    };
+
+    // const handleGoogleLogin = async () => {
+    //     try {
+    //         const response = await fetch('http://localhost:8080/oauth2/authorization/google', {
+    //             method: 'GET',
+    //             credentials: 'include',
+    //         });
+
+    //         if (!response.ok) throw new Error('구글 로그인 실패');
+
+    //         const data = await response.json();
+    //         const decoded = jwtDecode(data.token);
+    //         console.log(decoded);
+    //         login(data.token, { id: decoded.sub, name: decoded.name, role: decoded.authorities });
+
+    //         navigate('/');
+    //     } catch (error) {
+    //         alert(error.message);
+    //     }
+    // };
 
     return (
         <div className="p-4 bg-white sm:p-6 dark:bg-gray-800 ">
@@ -68,7 +87,10 @@ function Join() {
                             {activeTab === 'user' && (
                                 <div role="tabpanel">
                                     <div class="divider border-gray-300 text-gray-500">소셜 계정으로 간편 회원가입</div>
-                                    <button className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500 mb-5">
+                                    <button
+                                        className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500 mb-5"
+                                        onClick={handleGoogleLogin}
+                                    >
                                         <img
                                             src="https://img.icons8.com/?size=512&id=17949&format=png"
                                             alt="Google"
@@ -85,9 +107,9 @@ function Join() {
                                     <Link to="/login">
                                         <p className="mt-3 text-gray-500 text-xs">
                                             이미 회원이신가요? {'  '}
-                                            <a href="#" className="hover:underline">
+                                            <span href="#" className="hover:underline">
                                                 로그인
-                                            </a>
+                                            </span>
                                         </p>
                                     </Link>
                                 </div>
