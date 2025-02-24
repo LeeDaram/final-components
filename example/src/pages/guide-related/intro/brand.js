@@ -5,7 +5,7 @@ import Img3 from "../../../assets/images/brand/ai2-3.png";
 
 function Brand() {
   return (
-    <div className="dark:bg-gray-800 py-32 font-sans">
+    <div className="dark:bg-gray-800 py-16 font-sans">
       {/* 메인 소개 섹션 */}
       <section className="p-16 text-center bg-blue-500 text-white rounded-2xl shadow-xl max-w-6xl mx-auto">
         <h2 className="text-5xl font-extrabold mb-8 tracking-tight">

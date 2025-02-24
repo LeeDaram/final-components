@@ -28,7 +28,7 @@ const Service = () => {
           착한업소솔루션 소개
         </h2>
         <hr className="border-blue-500 w-[5%] mx-auto align-middle mb-7" />
-        <p className="text-md text-black max-w-2xl mx-auto">
+        <p className="text-md text-black max-w-2xl mx-auto ">
           착한업소솔루션은 전국 각지의 가성비 좋은 업소들을 엄선해 한눈에 비교할
           수 있도록 도와주는 플랫폼입니다. 우리는 소비자들이 쉽고 빠르게 믿을
           만한 업소 정보를 찾아내어 합리적인 선택을 할 수 있도록 지원합니다.
