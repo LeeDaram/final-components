@@ -8,7 +8,9 @@ import midImage from "/Users/nextit/Documents/GitHub/final-components/example/sr
 import n1 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n1.png";
 import n2 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n2.png";
 import n3 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n3.png";
-import { MdOutlineScreenSearchDesktop } from "react-icons/md";
+// import { MdOutlineScreenSearchDesktop } from "react-icons/md";
+import frontImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.png";
+// import backImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.png";
 
 /* <div className="flex justify-center items-center">
         <div className="w-9/12 mx-auto">
@@ -81,7 +83,7 @@ const ValueAndGoal = () => {
 
             <div className="relative w-full max-w-4xl mx-auto">
               <Slider {...settings}>
-                {[midImage, midImage, midImage].map((img, index) => (
+                {[frontImage, midImage, midImage].map((img, index) => (
                   <div key={index} className="w-full">
                     <img
                       src={img}
@@ -95,7 +97,7 @@ const ValueAndGoal = () => {
 
             <section className="text-center py-16">
               <h2 className="text-3xl font-extrabold text-blue-700">
-                우리의 가치와 목표
+                소상공인을 돕고, 소비자가 믿을 수 있게.{" "}
               </h2>
               <div className="mt-6 mx-auto w-full max-w-4xl border border-blue-700 rounded-xl h-full p-6 bg-white-50">
                 <ul className="text-left text-gray-700 space-y-4 leading-relaxed">
@@ -134,11 +136,11 @@ const ValueAndGoal = () => {
               </div>
             </section>
 
-            <section className="py-12">
-              <h2 className="text-[36px] font-semibold text-center">
+            <section className="py-8">
+              <h2 className="text-[40px] font-semibold text-center">
                 브랜드 철학
               </h2>
-              <div className="flex flex-wrap justify-center gap-12 mt-12">
+              <div className="flex flex-wrap justify-center gap-7 mt-12 ">
                 {[
                   {
                     img: n1,
@@ -160,9 +162,9 @@ const ValueAndGoal = () => {
                     key={index}
                     className="w-[300px] bg-white text-center p-6 rounded-lg"
                   >
-                    <img src={img} className="h-28 mx-auto mb-6" alt={title} />
+                    <img src={img} className="h-50 mx-auto mb-6" alt={title} />
                     <h3 className="text-[22px] font-semibold">{title}</h3>
-                    <p className="text-gray-600 text-[20px]">{desc}</p>
+                    <p className="text-gray-600 text-[15px]">{desc}</p>
                   </div>
                 ))}
               </div>
