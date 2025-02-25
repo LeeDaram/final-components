@@ -1,17 +1,17 @@
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
 
 const data = [
-  { name: "식당", value: 70, color: "#FF5733  " }, // 파란색
-  { name: "미용실", value: 20, color: "#33FF57  " }, // 빨간색
-  { name: "숙소", value: 5, color: "#3357FF  " }, // 노란색
-  { name: "기타", value: 5, color: "#FF33A1  " }, // 주황색
-  { name: "기타", value: 5, color: "#FFD700  " }, // 주황색
-  { name: "기타", value: 5, color: "#00FFFF  " }, // 주황색
-  { name: "기타", value: 5, color: "#8A2BE2  " }, // 주황색
-  { name: "기타", value: 5, color: "#FF4500  " }, // 주황색
-  { name: "기타", value: 5, color: "#32CD32  " }, // 주황색
-  { name: "기타", value: 5, color: "#DC143C  " }, // 주황색
-  { name: "기타", value: 5, color: "#6495ED  " }, // 주황색
+  { name: "식당", value: 70, color: "#FF5733  " },
+  { name: "미용실", value: 20, color: "#33FF57  " },
+  { name: "숙소", value: 5, color: "#3357FF  " },
+  { name: "기타", value: 5, color: "#FF33A1  " },
+  { name: "기타", value: 5, color: "#FFD700  " },
+  { name: "기타", value: 5, color: "#00FFFF  " },
+  { name: "기타", value: 5, color: "#8A2BE2  " },
+  { name: "기타", value: 5, color: "#FF4500  " },
+  { name: "기타", value: 5, color: "#32CD32  " },
+  { name: "기타", value: 5, color: "#DC143C  " },
+  { name: "기타", value: 5, color: "#6495ED  " },
 ];
 
 const ChartComponent = () => {
