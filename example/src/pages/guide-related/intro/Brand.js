@@ -2,18 +2,16 @@ import React, { useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// import frontImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.jpg";
-import midImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/mid.png";
-// import backImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.jpg";
-import n1 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n1.png";
-import n2 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n2.png";
-import n3 from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/n3.png";
-// import { MdOutlineScreenSearchDesktop } from "react-icons/md";
-import frontImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.png";
-// import backImage from "/Users/nextit/Documents/GitHub/final-components/example/src/assets/images/Brand/front.png";
+// 로컬 이미지 경로 예시 (프로젝트 상황에 맞게 수정하세요)
+import frontImage from "../../../assets/images/Brand/front.png";
+import midImage from "../../../assets/images/Brand/mid.png";
+//import backImage from "../../../assets/images/Brand/front.jpg";
+import n1 from "../../../assets/images/Brand/n1.png";
+import n2 from "../../../assets/images/Brand/n2.png";
+import n3 from "../../../assets/images/Brand/n3.png";
 
 /* <div className="flex justify-center items-center">
-        <div className="w-9/12 mx-auto">
+        <div className="w-9/12 mx-auto">  
 나중에 통일할것 */
 
 const ValueAndGoal = () => {
