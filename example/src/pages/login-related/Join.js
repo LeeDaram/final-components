@@ -4,8 +4,6 @@ import React from 'react';
 import { Carousel } from 'flowbite-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { jwtDecode } from 'jwt-decode';
 
 import banner01 from '../../assets/images/join_banner/join_banner_01.png';
 import banner02 from '../../assets/images/join_banner/join_banner_02.png';
@@ -14,8 +12,6 @@ import banner03 from '../../assets/images/join_banner/join_banner_03.png';
 function Join() {
     const [activeTab, setActiveTab] = useState('user');
     const navigate = useNavigate();
-
-    const { login } = useAuth();
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -27,26 +23,6 @@ function Join() {
     const handleGoogleLogin = () => {
         window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     };
-
-    // const handleGoogleLogin = async () => {
-    //     try {
-    //         const response = await fetch('http://localhost:8080/oauth2/authorization/google', {
-    //             method: 'GET',
-    //             credentials: 'include',
-    //         });
-
-    //         if (!response.ok) throw new Error('구글 로그인 실패');
-
-    //         const data = await response.json();
-    //         const decoded = jwtDecode(data.token);
-    //         console.log(decoded);
-    //         login(data.token, { id: decoded.sub, name: decoded.name, role: decoded.authorities });
-
-    //         navigate('/');
-    //     } catch (error) {
-    //         alert(error.message);
-    //     }
-    // };
 
     return (
         <div className="p-4 bg-white sm:p-6 dark:bg-gray-800 ">
