@@ -21,6 +21,7 @@ const NoticePage = () => {
     };
     getNoticeData();
   }, []);
+  console.log(notices, "@@");
 
   // 검색시 제목, 내용에 있는 거 검색어 일치하는거 가져오기기
   const handleSearch = () => {

@@ -1,78 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const QnaPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 13;
-  const notices = [
-    {
-      id: "공지",
-      title: "중요공지 1번",
-      author: "작성자",
-      date: "작성일",
-      attachment: null,
-      views: "조회수",
-      important: true,
-    },
-    {
-      id: "공지",
-      title: "중요공지 2번",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-      important: true,
-    },
-    {
-      id: "공지",
-      title: "중요공지 3번",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-      important: true,
-    },
-    {
-      id: 124,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 123,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 122,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 121,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-    {
-      id: 120,
-      title: "일반 공지사항",
-      author: "작성자",
-      date: "작성일",
-      attachment: "첨부파일",
-      views: "조회수",
-    },
-  ];
+  const [qnas, setQnas] = useState([]);
+
+  useEffect(() => {
+    const getQnaData = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/qna/main");
+        setQnas(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getQnaData();
+  }, []);
+
+  console.log(qnas);
 
   const handlePageClick = (page) => {
     setCurrentPage(page);
@@ -113,30 +61,19 @@ const QnaPage = () => {
               </tr>
             </thead>
             <tbody>
-              {notices.map((notice, index) => (
+              {qnas.map((qna, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="p-3">
-                    {notice.important ? (
-                      <span className="bg-black text-white px-2 py-1 text-sm rounded-full">
-                        공지
-                      </span>
-                    ) : (
-                      notice.id
-                    )}
-                  </td>
+                  <td className="p-3">{qna.questionId}</td>
                   <Link to="/qna/answer" state={{ qna: "Q&A" }}>
                     <div className="hover:underline">
-                      <td
-                        className={`p-3 ${notice.important && "font-semibold"}`}
-                      >
-                        {notice.title}
-                      </td>
+                      <td className="p-3">{qna.title}</td>
                     </div>
                   </Link>
-                  <td className="p-3">{notice.author}</td>
-                  <td className="p-3 text-center">{notice.date}</td>
-                  <td className="p-3 pl-8">{notice.attachment && "✅"}</td>
-                  <td className="p-3">{notice.views}</td>
+                  <td className="p-3">{qna.userId}</td>
+                  <td className="p-3 text-center">{qna.createdAt}</td>
+                  {/* 조인해서 다시 가져와야함 쿼리 수정 필요요 */}
+                  <td className="p-3 pl-8">{qna.attachment && "✅"}</td>
+                  <td className="p-3">{qna.views}</td>
                 </tr>
               ))}
             </tbody>

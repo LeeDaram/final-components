@@ -3,13 +3,16 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { FileInput, Label } from "flowbite-react";
 import { CommuModal } from "./CommuModal";
+import axios from "axios";
 
 const Write = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState(""); //제목
+  const [content, setContent] = useState(""); //내용
+
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isHeader, setIsHeader] = useState(false);
+
   const [files, setFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
   const navigate = useNavigate();
@@ -21,7 +24,7 @@ const Write = () => {
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleContentChange = (e) => setContent(e.target.value);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim()) {
       alert("제목을 입력해주세요.");
       return;
@@ -31,9 +34,19 @@ const Write = () => {
       alert("내용을 입력해주세요.");
       return;
     }
-    console.log("제목:", title);
-    console.log("내용:", content);
-    console.log("첨부파일:", files);
+    //공지사항인지 qna인지 조건걸기기
+    if (data?.notice) {
+      try {
+        await axios.post(`http://localhost:8080/notice/create`, {
+          title: title,
+          content: content,
+          isMainNotice: isNotice,
+        });
+      } catch (error) {
+        console.log("ERROR");
+      }
+    }
+
     alert("글이 작성되었습니다.");
 
     if (data?.notice) {

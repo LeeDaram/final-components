@@ -10,16 +10,15 @@ const Answer = () => {
 
   const [comment, setComment] = useState("");
   const [isEditingMain, setIsEditingMain] = useState(false); // 메인글 수정 상태
-  const [title, setTitle] = useState(""); //메인 제목내용
-  const [editingMain, setEditingMain] = useState(""); // 메인글 내용
+  const [editingMain, setEditingMain] = useState({}); // 메인글 제목, 내용
   const [comments, setComments] = useState([]); //코멘트 내용
   const [editingId, setEditingId] = useState(null);
   const [editingContent, setEditingContent] = useState(""); //답글 수정
   const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
-  // 첫로드시 클릭된 내용
 
+  // 첫로드시 클릭된 내용
   useEffect(() => {
     const getNoticeData = async () => {
       try {
@@ -66,7 +65,7 @@ const Answer = () => {
       //공지사항인지 qna인지 조건걸기
       const res = await axios.patch(
         `http://localhost:8080/notice/update/${data.id}`,
-        { title: title, content: editingMain }
+        { title: editingMain.title, content: editingMain.content }
       );
       setEditingMain(res.data);
     } catch (error) {
@@ -143,13 +142,17 @@ const Answer = () => {
               <textarea
                 className="w-full text-2xl p-3 border rounded h-15 resize-none"
                 value={editingMain.title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) =>
+                  setEditingMain({ ...editingMain, title: e.target.value })
+                }
               />
             ) : (
               <h2 className="text-2xl font-bold mb-2">{editingMain.title}</h2>
             )}
             <div className="border-b py-2">
-              <span className="text-gray-600 mr-5">회원ID</span>
+              <span className="text-gray-600 mr-5">
+                회원ID or 관리자 표시시
+              </span>
               <span className="text-gray-600 mt-2">
                 {editingMain.createdAt}
               </span>
@@ -160,7 +163,9 @@ const Answer = () => {
               <textarea
                 className="w-full p-3 border rounded h-24 resize-none"
                 value={editingMain.content}
-                onChange={(e) => setEditingMain(e.target.value)}
+                onChange={(e) =>
+                  setEditingMain({ ...editingMain, content: e.target.value })
+                }
               />
             ) : (
               <p className="mt-4 text-gray-700 leading-relaxed py-7">
