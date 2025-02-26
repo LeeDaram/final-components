@@ -7,6 +7,7 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 import axios from "axios";
+import MapComponent from "../../components/ui/StoreMap";
 
 // 체크박스 옵션
 const filterCheckboxes = [
@@ -30,10 +31,10 @@ function Store() {
    * Filters
    */
   const [sido, setSido] = useState([]); // 시도
-  const [selectSido, setSelectSido] = useState(""); // 선택된 시도
+  const [selectSido, setSelectSido] = useState(6); // 선택된 시도
 
   const [sigungu, setSigungu] = useState([]); // 시군구
-  const [selectSigungu, setSelectSigungu] = useState([]); // 선택된 시군구
+  const [selectSigungu, setSelectSigungu] = useState(66); // 선택된 시군구
 
   const [industry, setIndustry] = useState([]); // 업종
   const [selectIndustry, setSelectIndustry] = useState([]); // 선택된 업종
@@ -45,14 +46,22 @@ function Store() {
   const [rating, setRating] = useState(0); // 평점
   const [sort, setSort] = useState(0); // 추천순 혹은 평점순
 
-  const [coordinates, setCoordinates] = useState([]); // 좌표찍어서 담기
-  const [address, setAddress] = useState([]);
+  const [address, setAddress] = useState([]); // 주소
 
-  // 카카오맵 api
-  const script = document.createElement("script");
-  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_KEY}&libraries=services,clusterer`;
-  script.async = true;
-  document.head.appendChild(script);
+  const [defaultFilter, setDefaultFilter] = useState([]);
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/address`);
+        setAddress(res.data);
+        // console.log(res.data);
+      } catch (error) {
+        console.log("fetAddress erro", error);
+      }
+    };
+    fetchAddress();
+  }, []);
 
   // 체크박스 상태 관리
   const [filters, setFilters] = useState({
@@ -117,11 +126,12 @@ function Store() {
       console.log("서버 응답:", response.data);
       // console.log("현재페이지의 총 개수", response.data.page.totalPages);
       setTotalPages(response.data.page.totalPages);
-      setAddress(response.data.content.address);
-      console.log("주소", response.data.content);
+      setDefaultFilter(response.data.content);
+
+      for (let i = 0; (i = defaultFilter.length > 0); i++) {}
 
       if (response.data && response.data.content.length > 0) {
-        const isAnyFilterChecked = Object.values(filters).some(Boolean);
+        // const isAnyFilterChecked = Object.values(filters).some(Boolean);
 
         // console.log("필터 적용 여부:", isAnyFilterChecked);
         setStores(response.data.content);
@@ -214,11 +224,12 @@ function Store() {
       handleSearchClick(); // 검색 실행
     }
   };
-
   return (
     <>
       {/* 카카오 지도 api 넣을 곳 */}
-      <div className="w-full h-96 bg-current"></div>
+      <div className="w-full h-96 bg-current" id="map">
+        <MapComponent data={address} />
+      </div>
 
       {/* 옵션 관련 */}
       <div className="w-9/12 mx-auto">
@@ -230,7 +241,7 @@ function Store() {
               value={selectSido}
               onChange={(e) => setSelectSido(Number(e.target.value))}
             >
-              <option value="">전체</option>
+              <option value={selectSido}></option>
               {sido.map((value) => (
                 <option value={`${value.sidoId}`} key={`${value.sidoId}`}>
                   {value.sidoName}
