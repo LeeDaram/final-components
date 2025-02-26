@@ -16,7 +16,7 @@ const Write = () => {
   const [files, setFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
   const navigate = useNavigate();
-
+  // const user = "user124"; 현재 로그인 상태 id 가쟈와야함
   //넘어오는 페이지 별로 제목 수정
   const location = useLocation();
   const data = location.state;
@@ -41,6 +41,18 @@ const Write = () => {
           title: title,
           content: content,
           isMainNotice: isNotice,
+        });
+      } catch (error) {
+        console.log("ERROR");
+      }
+    }
+
+    if (data?.qna) {
+      try {
+        await axios.post(`http://localhost:8080/qna/create`, {
+          title: title,
+          content: content,
+          // userId: user, 위에 변수선언해둠
         });
       } catch (error) {
         console.log("ERROR");

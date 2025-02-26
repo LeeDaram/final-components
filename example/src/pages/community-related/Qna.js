@@ -64,7 +64,7 @@ const QnaPage = () => {
               {qnas.map((qna, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="p-3">{qna.questionId}</td>
-                  <Link to="/qna/answer" state={{ qna: "Q&A" }}>
+                  <Link to="/answer" state={{ qna: "Q&A", id: qna.questionId }}>
                     <div className="hover:underline">
                       <td className="p-3">{qna.title}</td>
                     </div>
@@ -72,7 +72,7 @@ const QnaPage = () => {
                   <td className="p-3">{qna.userId}</td>
                   <td className="p-3 text-center">{qna.createdAt}</td>
                   {/* 조인해서 다시 가져와야함 쿼리 수정 필요요 */}
-                  <td className="p-3 pl-8">{qna.attachment && "✅"}</td>
+                  <td className="p-3 pl-8">{qna.answers.content && "✅"}</td>
                   <td className="p-3">{qna.views}</td>
                 </tr>
               ))}
@@ -106,14 +106,14 @@ const QnaPage = () => {
             </button>
           </nav>
 
-          {/* admin 일때만만 글쓰기 버튼 */}
+          {/* admin & user 일때만 글쓰기 버튼 */}
           <div className="flex justify-end mt-6">
             <Link
               to="/components/community-related/write"
               state={{ qna: "Q&A" }}
             >
               <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-700">
-                글쓰기 USER_ROLE에 따라서 컨트롤
+                글쓰기 USER_ROLE admin, user일때만 가동
               </button>
             </Link>
           </div>

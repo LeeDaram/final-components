@@ -11,47 +11,59 @@ const Answer = () => {
   const [comment, setComment] = useState("");
   const [isEditingMain, setIsEditingMain] = useState(false); // 메인글 수정 상태
   const [editingMain, setEditingMain] = useState({}); // 메인글 제목, 내용
-  const [comments, setComments] = useState([]); //코멘트 내용
-  const [editingId, setEditingId] = useState(null);
-  const [editingContent, setEditingContent] = useState(""); //답글 수정
+  const [comments, setComments] = useState([]); // 답글(댓글) 내용; 배열로 관리
+  const [isEditingComment, setIsEditingComment] = useState(false); // 답글 수정 모드 상태
+  const [editingContent, setEditingContent] = useState(""); // 수정 중인 답글 내용
   const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
 
-  // 첫로드시 클릭된 내용
+  // 페이지 첫 로드 시 공지사항 또는 Q&A 데이터 가져오기
   useEffect(() => {
-    const getNoticeData = async () => {
+    const getData = async () => {
       try {
-        //공지사항인지 qna인지 조건걸기기
-        const res = await axios.get(
-          `http://localhost:8080/notice/main/${data.id}`
-        );
-        setEditingMain(res.data);
+        if (data.notice === "공지사항") {
+          const res = await axios.get(
+            `http://localhost:8080/notice/main/${data.id}`
+          );
+          setEditingMain(res.data);
+        }
+        if (data.qna === "Q&A") {
+          const res = await axios.get(
+            `http://localhost:8080/qna/main/${data.id}`
+          );
+          setEditingMain(res.data);
+          console.log(res.data, "@@@");
+          // API가 answer 객체를 반환하면 배열에 담아 저장 (없으면 빈 배열)
+          setComments(res.data.answers);
+        }
       } catch (error) {
-        console.log("ERROR");
+        console.log("ERROR", error);
       }
     };
-    getNoticeData();
-  }, []);
+    getData();
+  }, [data, comment]);
 
-  console.log(editingMain);
+  // console.log(comments, "@@@");
 
-  // 답글 등록
-  const handleCommentSubmit = () => {
+  // Qna 답글 등록 (DB 통신)
+  const handleCommentSubmit = async () => {
     if (!comment.trim()) {
       alert("내용을 입력해주세요");
       return;
     }
-    setComments([
-      {
-        id: comments.length + 1,
-        author: "관리자",
+    try {
+      // Q&A 답글 등록 (POST)
+      const res = await axios.post(`http://localhost:8080/qna/create/answer`, {
+        questionId: data.id,
         content: comment,
-        date: "2025.02.19",
-      },
-      ...comments, // 최신 답글이 위에 오도록 설정
-    ]);
-    setComment("");
+      });
+
+      alert("등록되었습니다");
+      setComment("");
+    } catch (error) {
+      console.log("ERROR", error);
+    }
   };
 
   // 메인글 수정 시작
@@ -62,14 +74,14 @@ const Answer = () => {
   // 메인글 저장
   const handleSaveMain = async () => {
     try {
-      //공지사항인지 qna인지 조건걸기
+      //notice qna로직 구분분
       const res = await axios.patch(
         `http://localhost:8080/notice/update/${data.id}`,
         { title: editingMain.title, content: editingMain.content }
       );
       setEditingMain(res.data);
     } catch (error) {
-      console.log("ERROR");
+      console.log("ERROR", error);
     }
     setIsEditingMain(false);
     alert("완료되었습니다");
@@ -81,34 +93,49 @@ const Answer = () => {
     setIsEditingMain(false);
   };
 
-  // 메인글 삭제
+  // 메인글 삭제 (모달 통해 처리)
   const handleDeleteMain = () => {
     setIsModalOpen(true);
   };
 
   // 답글 삭제
-  const handleDelete = (id) => {
-    // 이것도 바로 삭제되면 안됨 키벨류로 넣어서 모달에서 판단해보자
-    setIsModalOpen(true);
-    setComments(comments.filter((c) => c.id !== id));
-  };
+  // const handleDelete = async () => {
+  //   try {
+  //     //Q&A 답글 삭제 (DELETE)
+  //     await axios.delete(`http://localhost:8080/qna/answer/${data.id}`);
+  //     setComments([]);
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
 
   // 답글 수정 모드 활성화
-  const handleEdit = (id, content) => {
-    setEditingId(id);
+  const handleEdit = (content) => {
+    setIsEditingComment(true);
     setEditingContent(content);
   };
 
   // 답글 수정 저장
-  const handleSaveEdit = (id) => {
-    setComments(
-      comments.map((c) => (c.id === id ? { ...c, content: editingContent } : c))
-    );
-    setEditingId(null);
-    setEditingContent("");
+  const handleSaveEdit = async () => {
+    // try {
+    //   // Q&A 답글 수정 (PATCH)
+    //   const res = await axios.patch(
+    //     `http://localhost:8080/qna/answer/${data.id}`,
+    //     {
+    //       content: editingContent,
+    //     }
+    //   );
+    //   setComments([res.data]);
+    //   setIsEditingComment(false);
+    //   setEditingContent("");
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
   };
-  //qna 글 삭제
+
+  // Q&A 글 삭제 (모달 통해 처리)
   const handleDeletQna = () => {
+    // delete
     setIsModalOpen(true);
   };
 
@@ -130,7 +157,13 @@ const Answer = () => {
             </h1>
             <button
               className="text-sm text-gray-600 hover:underline"
-              onClick={() => navigate("/community-related/notice")}
+              onClick={() => {
+                if (data.qna === "Q&A") {
+                  navigate("/community-related/qna");
+                } else if (data.notice === "공지사항") {
+                  navigate("/community-related/notice");
+                }
+              }}
             >
               ☰ 목록가기
             </button>
@@ -141,7 +174,7 @@ const Answer = () => {
             {isEditingMain ? (
               <textarea
                 className="w-full text-2xl p-3 border rounded h-15 resize-none"
-                value={editingMain.title}
+                value={editingMain.title || ""}
                 onChange={(e) =>
                   setEditingMain({ ...editingMain, title: e.target.value })
                 }
@@ -151,18 +184,16 @@ const Answer = () => {
             )}
             <div className="border-b py-2">
               <span className="text-gray-600 mr-5">
-                회원ID or 관리자 표시시
+                {data?.notice ? "관리자" : editingMain.userId}
               </span>
               <span className="text-gray-600 mt-2">
                 {editingMain.createdAt}
               </span>
             </div>
-
-            {/* 본 내용 수정 모드일 때 textarea 표시 아닐 때 기존 내용 표시 */}
             {isEditingMain ? (
               <textarea
                 className="w-full p-3 border rounded h-24 resize-none"
-                value={editingMain.content}
+                value={editingMain.content || ""}
                 onChange={(e) =>
                   setEditingMain({ ...editingMain, content: e.target.value })
                 }
@@ -174,7 +205,7 @@ const Answer = () => {
             )}
           </div>
 
-          {/* 관리자가 쓴 공지사항일 때만 수정 & 삭제 버튼 표시 */}
+          {/* 관리자가 쓴 공지사항: 수정 & 삭제 버튼 */}
           {data?.notice && USER_ROLE === "admin" && (
             <div className="flex justify-center space-x-4 mt-6 mb-6">
               {isEditingMain ? (
@@ -211,7 +242,7 @@ const Answer = () => {
             </div>
           )}
 
-          {/* 회원 본인이 쓴 글일때만 표시 id확인해서 일치할때만 띄우기 */}
+          {/* 버튼을 회원 본인이 쓴 글일때만 표시 id확인해서 일치할때만 띄우기 */}
           {data?.qna && USER_ROLE === "user" && (
             <div className="flex justify-end space-x-4 mt-6">
               <button
@@ -223,8 +254,8 @@ const Answer = () => {
             </div>
           )}
 
-          {/* qna일때는 모두 답변가능*/}
-          {data?.qna && (USER_ROLE === "admin" || USER_ROLE === "user") && (
+          {/* Q&A: 관리자만 답글 등록 */}
+          {data?.qna && USER_ROLE === "admin" && (
             <div className="mb-6">
               <textarea
                 value={comment}
@@ -243,29 +274,29 @@ const Answer = () => {
             </div>
           )}
 
-          {/* 관리자 답변 목록 */}
+          {/* 답변 목록 */}
           {data?.qna && <h2 className="text-xl font-semibold mb-4">답변</h2>}
           {data?.qna &&
             comments.map((c) => (
               <div
-                key={c.id}
+                key={c.questionId}
                 className="border p-4 mb-3 rounded-lg bg-gray-50 relative"
               >
                 <div className="flex justify-between">
                   <span className="font-semibold">관리자</span>
-                  <div>
-                    {USER_ROLE === "admin" ? (
-                      editingId === c.id ? (
+                  {USER_ROLE === "admin" && (
+                    <div>
+                      {isEditingComment ? (
                         <>
                           <button
                             className="text-sm text-green-600 hover:underline mr-2"
-                            onClick={() => handleSaveEdit(c.id)}
+                            onClick={handleSaveEdit}
                           >
                             저장
                           </button>
                           <button
                             className="text-sm text-red-600 hover:underline"
-                            onClick={() => setEditingId(null)}
+                            onClick={() => setIsEditingComment(false)}
                           >
                             취소
                           </button>
@@ -274,23 +305,22 @@ const Answer = () => {
                         <>
                           <button
                             className="text-sm text-gray-600 hover:underline mr-2"
-                            onClick={() => handleEdit(c.id, c.content)}
+                            onClick={() => handleEdit(c.content)}
                           >
                             수정
                           </button>
                           <button
                             className="text-sm text-gray-600 hover:underline"
-                            onClick={() => handleDelete(c.id)}
+                            onClick={handleDeleteMain}
                           >
                             삭제
                           </button>
                         </>
-                      )
-                    ) : null}{" "}
-                  </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-
-                {editingId === c.id ? (
+                {isEditingComment ? (
                   <textarea
                     className="w-full p-2 border rounded h-20 my-3"
                     value={editingContent}
@@ -299,7 +329,6 @@ const Answer = () => {
                 ) : (
                   <p className="text-gray-700 mt-5">{c.content}</p>
                 )}
-
                 <p className="text-gray-500 text-sm absolute right-4 bottom-2">
                   {c.date}
                 </p>
@@ -307,11 +336,26 @@ const Answer = () => {
             ))}
         </div>
       </div>
+
+      {/* {isModalOpen && (
+        <DeletModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          {if(data.notice === "공지사항"){notice={{ page: "notice", id: data.id }}}
+          if(data.qna === "Q&A"){qna ={{ page: "qna", id: data.id }}}
+        }
+          
+        />
+      )} */}
+
       {isModalOpen && (
         <DeletModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          notice={{ page: "notice", id: data.id }}
+          {...(data.notice === "공지사항"
+            ? { notice: { page: "notice", id: data.id } }
+            : {})}
+          {...(data.qna === "Q&A" ? { qna: { page: "qna", id: data.id } } : {})}
         />
       )}
     </>

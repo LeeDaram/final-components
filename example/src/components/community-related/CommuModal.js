@@ -60,16 +60,24 @@ export function CommuModal({ isOpen, onClose }) {
   );
 }
 
-export default function DeletModal({ isOpen, onClose, notice }) {
+export default function DeletModal({ isOpen, onClose, notice, qna }) {
   console.log(notice, "@@");
   const navigate = useNavigate();
-  const handleDeleteMain = async () => {
+  const handleDeleteNoticeMain = async () => {
     try {
       await axios.delete(`http://localhost:8080/notice/delete/${notice.id}`);
     } catch (error) {
       console.log("ERROR");
     }
-    navigate("/community-related/notice");
+  };
+
+  const handleDeleteQnaMain = async () => {
+    try {
+      // 현재 id 체크 후 작성자가 날려야함
+      await axios.delete(`http://localhost:8080/qna/delete/${qna.id}`);
+    } catch (error) {
+      console.log("ERROR");
+    }
   };
 
   // 모달이 열려 있을 때만 적용시키기기
@@ -104,12 +112,16 @@ export default function DeletModal({ isOpen, onClose, notice }) {
               color="failure"
               onClick={() => {
                 onClose();
-                if (notice.page === "notice") {
-                  handleDeleteMain();
+                if (notice?.page === "notice") {
+                  handleDeleteNoticeMain();
+                  alert("공지사항이 삭제되었습니다");
+                  navigate("/community-related/notice");
                 }
-                alert("삭제되었습니다");
-                // navigate notice qna판단로직직
-                navigate("/community-related/notice");
+                if (qna?.page === "qna") {
+                  handleDeleteQnaMain();
+                  alert("댓글이 삭제되었습니다");
+                  // navigate("/community-related/qna");
+                }
               }}
             >
               {"확인"}
