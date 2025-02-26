@@ -2,11 +2,30 @@ import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
+// import axios from "axios";
 
 // 로컬 이미지 경로 예시 (프로젝트 상황에 맞게 수정하세요)
 import Main1 from "../../../assets/images/Guide/Main1.png";
 import Main2 from "../../../assets/images/Guide/Main2.png";
 import Main3 from "../../../assets/images/Guide/Main3.png";
+
+// const Guide = () => {
+//   const [guides, setGuides] = useState([]); // ✅ API 데이터 저장
+//   const [activeStep, setActiveStep] = useState(1);
+//   const [sidebarTop, setSidebarTop] = useState(150);
+//   const [modal, setModal] = useState(null);
+
+//   // ✅ Spring Boot API에서 가이드 데이터 불러오기
+//   useEffect(() => {
+//     axios
+//       .get("http://localhost:8080/guides") // Spring Boot의 GuideController에서 데이터 가져옴
+//       .then((response) => {
+//         setGuides(response.data); // 응답 데이터를 상태로 저장
+//       })
+//       .catch((error) => {
+//         console.error("API 호출 오류:", error);
+//       });
+//   }, []); };
 
 // 가이드 개별 섹션 내용
 const GuideContent = ({ step }) => {
