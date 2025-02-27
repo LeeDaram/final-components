@@ -32,6 +32,10 @@ export const AuthProvider = ({ children }) => {
 
     // OAuth 로그인 후 사용자 정보 가져오기
     const fetchOAuthUser = async () => {
+        if (!token) {
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:8080/api/users/oauth2/me', {
                 method: 'GET',

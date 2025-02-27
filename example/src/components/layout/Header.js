@@ -260,7 +260,7 @@ function Header() {
                                                 </div>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="#">
+                                                <a className="dropdown-item" href="#">
                                                     마이페이지
                                                 </a>
                                             </li>
