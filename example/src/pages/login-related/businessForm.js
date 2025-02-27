@@ -96,10 +96,21 @@ function BusinessForm() {
         open({ onComplete: handleComplete });
     };
 
+    // 툴팁 상태
     const toggleTooltip = () => {
         setTooltipVisible(!tooltipVisible);
     };
+
     const closeTooltip = () => {
+        setTooltipVisible(false);
+    };
+
+    const handleReset = () => {
+        setFile(null); // 선택된 파일 초기화
+        setPreview(null); // 미리보기 초기화
+        setIsUploaded(false); // 업로드 상태 초기화
+        setFormData({ ...formData, businessRegistrationNumber: '' }); // 사업자등록번호 초기화
+        // 툴팁 닫기
         setTooltipVisible(false);
     };
 
@@ -498,7 +509,9 @@ function BusinessForm() {
                                         <button className="btn btn-outline btn-accent" onClick={closeTooltip}>
                                             취소
                                         </button>
-                                        <button className="btn bg-accent text-white shadow-none">초기화</button>
+                                        <button className="btn bg-accent text-white shadow-none" onClick={handleReset}>
+                                            초기화
+                                        </button>
                                     </div>
                                 </div>
                             )}
