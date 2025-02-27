@@ -12,11 +12,12 @@ const Answer = () => {
   const [isEditingMain, setIsEditingMain] = useState(false); // 메인글 수정 상태
   const [editingMain, setEditingMain] = useState({}); // 메인글 제목, 내용
   const [comments, setComments] = useState([]); // 답글(댓글) 내용; 배열로 관리
-  const [isEditingComment, setIsEditingComment] = useState(false); // 답글 수정 모드 상태
+  const [editingAnswerId, setEditingAnswerId] = useState(null); // 답글이 있으면 수정 아니면 냅두기
   const [editingContent, setEditingContent] = useState(""); // 수정 중인 답글 내용
   const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+  const [deleteAnswerId, setDeleteAnswerId] = useState(null); // 삭제할 답글 아이디
 
   // 페이지 첫 로드 시 공지사항 또는 Q&A 데이터 가져오기
   useEffect(() => {
@@ -42,9 +43,9 @@ const Answer = () => {
       }
     };
     getData();
-  }, [data, comment]);
+  }, [data, comment, editingContent, isModalOpen]);
 
-  // console.log(comments, "@@@");
+  console.log(comments, "@@@");
 
   // Qna 답글 등록 (DB 통신)
   const handleCommentSubmit = async () => {
@@ -98,7 +99,7 @@ const Answer = () => {
     setIsModalOpen(true);
   };
 
-  // 답글 삭제
+  // 답글 삭제 모달로 처리함함
   // const handleDelete = async () => {
   //   try {
   //     //Q&A 답글 삭제 (DELETE)
@@ -110,32 +111,34 @@ const Answer = () => {
   // };
 
   // 답글 수정 모드 활성화
-  const handleEdit = (content) => {
-    setIsEditingComment(true);
+  const handleEdit = (answerId, content) => {
+    setEditingAnswerId(answerId);
     setEditingContent(content);
   };
 
   // 답글 수정 저장
   const handleSaveEdit = async () => {
-    // try {
-    //   // Q&A 답글 수정 (PATCH)
-    //   const res = await axios.patch(
-    //     `http://localhost:8080/qna/answer/${data.id}`,
-    //     {
-    //       content: editingContent,
-    //     }
-    //   );
-    //   setComments([res.data]);
-    //   setIsEditingComment(false);
-    //   setEditingContent("");
-    // } catch (error) {
-    //   console.log("ERROR", error);
-    // }
+    try {
+      const res = await axios.patch(
+        `http://localhost:8080/qna/update/answer/${editingAnswerId}`,
+        { content: editingContent }
+      );
+      // 해당 answerId에 해당하는 답글만 업데이트
+      setComments((prevComments) =>
+        prevComments.map((c) => (c.answerId === editingAnswerId ? res.data : c))
+      );
+      alert("수정되었습니다");
+      setEditingAnswerId(null);
+      setEditingContent("");
+    } catch (error) {
+      console.log("ERROR", error);
+    }
   };
 
   // Q&A 글 삭제 (모달 통해 처리)
   const handleDeletQna = () => {
-    // delete
+    // delete 완료
+    setDeleteAnswerId(null);
     setIsModalOpen(true);
   };
 
@@ -277,16 +280,18 @@ const Answer = () => {
           {/* 답변 목록 */}
           {data?.qna && <h2 className="text-xl font-semibold mb-4">답변</h2>}
           {data?.qna &&
-            comments.map((c) => (
+            comments.length > 0 &&
+            comments[0].content &&
+            comments.map((c, index) => (
               <div
-                key={c.questionId}
+                key={c.answerId ? c.answerId : index}
                 className="border p-4 mb-3 rounded-lg bg-gray-50 relative"
               >
                 <div className="flex justify-between">
                   <span className="font-semibold">관리자</span>
                   {USER_ROLE === "admin" && (
                     <div>
-                      {isEditingComment ? (
+                      {editingAnswerId === c.answerId ? (
                         <>
                           <button
                             className="text-sm text-green-600 hover:underline mr-2"
@@ -296,7 +301,7 @@ const Answer = () => {
                           </button>
                           <button
                             className="text-sm text-red-600 hover:underline"
-                            onClick={() => setIsEditingComment(false)}
+                            onClick={() => setEditingAnswerId(null)}
                           >
                             취소
                           </button>
@@ -305,13 +310,16 @@ const Answer = () => {
                         <>
                           <button
                             className="text-sm text-gray-600 hover:underline mr-2"
-                            onClick={() => handleEdit(c.content)}
+                            onClick={() => handleEdit(c.answerId, c.content)}
                           >
                             수정
                           </button>
                           <button
                             className="text-sm text-gray-600 hover:underline"
-                            onClick={handleDeleteMain}
+                            onClick={() => {
+                              handleDeleteMain();
+                              setDeleteAnswerId(c.answerId);
+                            }}
                           >
                             삭제
                           </button>
@@ -320,7 +328,7 @@ const Answer = () => {
                     </div>
                   )}
                 </div>
-                {isEditingComment ? (
+                {editingAnswerId === c.answerId ? (
                   <textarea
                     className="w-full p-2 border rounded h-20 my-3"
                     value={editingContent}
@@ -336,18 +344,6 @@ const Answer = () => {
             ))}
         </div>
       </div>
-
-      {/* {isModalOpen && (
-        <DeletModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          {if(data.notice === "공지사항"){notice={{ page: "notice", id: data.id }}}
-          if(data.qna === "Q&A"){qna ={{ page: "qna", id: data.id }}}
-        }
-          
-        />
-      )} */}
-
       {isModalOpen && (
         <DeletModal
           isOpen={isModalOpen}
@@ -355,7 +351,15 @@ const Answer = () => {
           {...(data.notice === "공지사항"
             ? { notice: { page: "notice", id: data.id } }
             : {})}
-          {...(data.qna === "Q&A" ? { qna: { page: "qna", id: data.id } } : {})}
+          {...(data.qna === "Q&A"
+            ? {
+                qna: {
+                  page: "qna",
+                  id: data.id,
+                  deleteAnswerId: deleteAnswerId,
+                },
+              }
+            : {})}
         />
       )}
     </>

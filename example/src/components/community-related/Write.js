@@ -52,7 +52,8 @@ const Write = () => {
         await axios.post(`http://localhost:8080/qna/create`, {
           title: title,
           content: content,
-          // userId: user, 위에 변수선언해둠
+          userId: "user124",
+          // 위에 변수선언해둠
         });
       } catch (error) {
         console.log("ERROR");

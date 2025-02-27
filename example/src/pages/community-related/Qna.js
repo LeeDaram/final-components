@@ -113,7 +113,7 @@ const QnaPage = () => {
               state={{ qna: "Q&A" }}
             >
               <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-700">
-                글쓰기 USER_ROLE admin, user일때만 가동
+                글쓰기 USER_ROLE user일때만 가동
               </button>
             </Link>
           </div>

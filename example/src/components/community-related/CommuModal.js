@@ -80,6 +80,18 @@ export default function DeletModal({ isOpen, onClose, notice, qna }) {
     }
   };
 
+  const handleDeleteAnswer = async () => {
+    console.log("답글삭제");
+    try {
+      // 현재 id 체크 후 작성자가 날려야함
+      await axios.delete(
+        `http://localhost:8080/qna/delete/answer/${qna.deleteAnswerId}`
+      );
+    } catch (error) {
+      console.log("ERROR");
+    }
+  };
+
   // 모달이 열려 있을 때만 적용시키기기
   useEffect(() => {
     if (isOpen) {
@@ -116,16 +128,21 @@ export default function DeletModal({ isOpen, onClose, notice, qna }) {
                   handleDeleteNoticeMain();
                   alert("공지사항이 삭제되었습니다");
                   navigate("/community-related/notice");
-                }
-                if (qna?.page === "qna") {
-                  handleDeleteQnaMain();
-                  alert("댓글이 삭제되었습니다");
-                  // navigate("/community-related/qna");
+                } else if (qna?.page === "qna") {
+                  if (qna?.deleteAnswerId) {
+                    handleDeleteAnswer();
+                    alert("답글이 삭제되었습니다");
+                  } else {
+                    handleDeleteQnaMain();
+                    alert("Qna가 삭제되었습니다");
+                    navigate("/community-related/qna");
+                  }
                 }
               }}
             >
-              {"확인"}
+              확인
             </Button>
+
             <Button color="gray" onClick={onClose}>
               취소
             </Button>
