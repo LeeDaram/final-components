@@ -16,6 +16,7 @@ import BusinessForm from './pages/login-related/businessForm';
 import FindUserId from './pages/login-related/findUserId';
 import FindUserPassword from './pages/login-related/findUserPassword';
 import { AuthProvider } from './pages/login-related/AuthContext';
+import UserAccount from './pages/mypage-related/user/userAccount';
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
                             <Route path="/business-form" element={<BusinessForm />} />
                             <Route path="/find-id" element={<FindUserId />} />
                             <Route path="/find-password" element={<FindUserPassword />} />
+                            <Route path="/userAccount" element={<UserAccount />} />
                         </Routes>
                     </main>
                 </div>

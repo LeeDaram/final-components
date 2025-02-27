@@ -7,7 +7,7 @@ function FindUserPassword() {
 
                 <p className="text-base font-semibold mb-5">회원정보에 등록된 정보로 비밀번호를 찾을 수 있습니다.</p>
 
-                {/* 아이디디 */}
+                {/* 아이디 */}
                 <div className="relative mb-3">
                     <label className="label label-text text-base font-semibold " for="userName">
                         아이디
