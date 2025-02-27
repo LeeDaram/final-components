@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import {
   Map,
   MapMarker,
@@ -6,70 +7,77 @@ import {
   MapTypeControl,
 } from "react-kakao-maps-sdk";
 
-export const MapComponent = () => {
-  // 대전 시청 좌표
-  const [center, setCenter] = useState({
-    lat: 36.3504119,
-    lng: 127.3845475,
-  });
+const center = {
+  lat: 36.326784862,
+  lng: 127.40783579,
+};
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+function StoreMap() {
+  const [address, setAddress] = useState([]); // 주소
+  const [targets, setTargets] = useState([]); // 마커 상태 관리
 
-  // SDK 로드 함수 추가
+  // 주소 데이터 fetch
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/address`);
+        setAddress(res.data); // 주소 데이터 업데이트
+      } catch (error) {
+        console.log("fetAddress error", error);
+      }
+    };
+    fetchAddress();
+  }, []);
+
+  // 마커 클릭 처리 함수 최적화
+  const handleMarkerClick = useCallback(() => {
+    console.log("마커 클릭됨");
+  }, []);
+
+  // 마커 데이터 업데이트 함수
+  useEffect(() => {
+    if (!address || address.length === 0) return; // address가 없으면 종료
+
+    // address가 변경될 때마다 필터링된 마커를 업데이트
+    const filteredTargets = address
+      .map((building) => {
+        if (building.lat && building.lng) {
+          return {
+            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+            lat: building.lat,
+            lng: building.lng,
+          };
+        }
+        return null; // lat, lng가 없는 데이터는 무시
+      })
+      .filter(Boolean); // null 값 필터링
+
+    setTargets(filteredTargets); // 상태 업데이트
+  }, [address]); // address가 변경될 때마다 실행
+
+  // 카카오 맵 SDK 로드
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_KEY}&autoload=false`;
     script.async = true;
-
     script.onload = () => {
       window.kakao.maps.load(() => {
         console.log("카카오맵 SDK 로드 완료");
-        setIsScriptLoaded(true);
       });
     };
-
     document.head.appendChild(script);
-
     return () => {
       document.head.removeChild(script);
     };
   }, []);
 
-  // 디버깅을 위한 로그
-  useEffect(() => {
-    console.log("카카오맵 SDK 상태:", window.kakao);
-    console.log("카카오맵 maps 객체:", window.kakao?.maps);
-    console.log("스크립트 로드 상태:", isScriptLoaded);
-  }, [isScriptLoaded]);
-
-  if (!isScriptLoaded) {
-    return <div>카카오맵 로딩중...</div>;
-  }
-
-  console.log("렌더링 시 center 좌표:", center);
-
   return (
-    <div className="w-full h-screen p-4">
+    <div className="w-full h-full">
       <Map
         center={center}
-        style={{
-          // 지도 크기 설정
-          width: "100%",
-          height: "600px",
-          borderRadius: "12px", // 모서리 둥글게
-        }}
+        className="w-full h-full"
         level={3} // 지도 확대 레벨
-        onTileLoaded={() => {
-          console.log("지도 타일 로딩 완료");
-          setIsLoading(false);
-        }}
-        onCreate={(map) => {
-          console.log("지도 인스턴스 생성:", map);
-        }}
-        onCenterChanged={(map) =>
-          console.log("지도 중심 좌표:", map.getCenter().toString())
-        }
+        minLevel={10} // 클러스터 할 최소 지도 레벨
       >
         {/* 줌 컨트롤러 추가 */}
         <ZoomControl
@@ -83,27 +91,32 @@ export const MapComponent = () => {
         <MapTypeControl position={"TOPRIGHT"} />
 
         {/* 마커 추가 */}
+        {targets.map((d, i) => (
+          <MapMarker
+            key={i}
+            position={{ lat: d.lat, lng: d.lng }}
+            image={{
+              src: d.src,
+              size: { width: 24, height: 35 },
+            }}
+            onLoad={() => console.log("마커 로드 완료")}
+            onClick={handleMarkerClick} // 최적화된 클릭 핸들러 사용
+          />
+        ))}
+
+        {/* 기준좌표 마커 */}
         <MapMarker
           position={center}
           image={{
             src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-            size: { width: 64, height: 69 },
+            size: { width: 24, height: 35 },
           }}
           onLoad={() => console.log("마커 로드 완료")}
-          onClick={() => console.log("마커 클릭됨")}
-        >
-          <div style={{ padding: "5px", color: "#000" }}>대전광역시청</div>
-        </MapMarker>
+          onClick={handleMarkerClick} // 기준좌표 마커도 클릭 핸들러 최적화
+        />
       </Map>
-
-      {/* 로딩 인디케이터 */}
-      {isLoading && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-        </div>
-      )}
     </div>
   );
-};
+}
 
-export default MapComponent;
+export default StoreMap;
