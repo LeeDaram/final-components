@@ -1,20 +1,107 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiAlertCircle } from 'react-icons/fi';
+import { useDaumPostcodePopup } from 'react-daum-postcode';
 
 function BusinessForm() {
-    // 툴팁
+    // 주소 지도
+    const scriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    const open = useDaumPostcodePopup(scriptUrl);
+    const [addressData, setAddressData] = useState({ sido: '', sigungu: '' });
+
+    // 파입업로드 툴팁 상태
     const [tooltipVisible, setTooltipVisible] = useState(false);
+
+    // 파일 업로드
+    const [file, setFile] = useState(null); // 선택된 파일 상태
+    const [preview, setPreview] = useState(null); // 파일 미리보기 상태
+    const [isUploaded, setIsUploaded] = useState(false); // 파일 업로드 상태
+
+    // 화면이동
+    const navigate = useNavigate();
+
+    // 정규식
+    const businessNumberRegex = /^\d{10}$/;
+    const businessNameRegex = /^.{1,300}$/;
+    const addressRegex = /^.{1,500}$/;
+    const idRegex = /^[a-zA-Z0-9]{5,20}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;
+    const birthRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const phoneRegex = /^\d{11}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // 이메일 인증
+    const [isLoading, setIsLoading] = useState(false); // 로딩상태
+    const [isVerified, setIsVerified] = useState(false); // 인증여부
+    const [timer, setTimer] = useState(180); // 인증 제한 시간
+    const [isTimerRunning, setIsTimerRunning] = useState(false); // 타이머 동작 여부
+    const timerRef = useRef(null);
+
+    // 중복확인
+    const [isDuplicate, setIsDuplicate] = useState(false);
+
+    // 입력값 관리
+    const [formData, setFormData] = useState({
+        businessRegistrationNumber: '',
+        businessName: '',
+        businessAddress: '',
+        userId: '',
+        userPassword: '',
+        confirmPassword: '',
+        userName: '',
+        userBirth: '',
+        userPhone: '',
+        userEmail: '',
+        verificationCode: '',
+    });
+
+    // 입력값 오류
+    const [formErrors, setFormErrors] = useState({});
+
+    // 약관상태 관리
+    const [terms, setTerms] = useState([]); // 약관 목록
+    const [checkedItems, setCheckedItems] = useState({}); // 체크 상태
+    const [openItem, setOpenItem] = useState({}); // 펼치기 상태
+    const [isAllChecked, setIsAllChecked] = useState(false); // 전체 동의 상태
+
+    // 값 입력 업데이트
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+
+        // 오류 메시지 제거
+        setFormErrors((prev) => ({ ...prev, [id]: '' }));
+    };
+
+    // 주소 api
+    const handleComplete = (data) => {
+        let fullAddress = data.address;
+        let extraAddress = '';
+
+        if (data.addressType === 'R') {
+            if (data.bname !== '') {
+                extraAddress += data.bname;
+            }
+            if (data.buildingName !== '') {
+                extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+            }
+            fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+        }
+
+        setFormData({ ...formData, businessAddress: fullAddress });
+        setAddressData({ sido: data.sido, sigungu: data.sigungu });
+    };
+
+    const handleClick = () => {
+        open({ onComplete: handleComplete });
+    };
+
     const toggleTooltip = () => {
         setTooltipVisible(!tooltipVisible);
     };
     const closeTooltip = () => {
         setTooltipVisible(false);
     };
-
-    // 파일 업로드
-    const [file, setFile] = useState(null); // 선택된 파일 상태
-    const [preview, setPreview] = useState(null); // 파일 미리보기 상태
-    const [isUploaded, setIsUploaded] = useState(false); // 파일 업로드 상태
 
     // 파일이 선택되었을 때
     const handleFileChange = (e) => {
@@ -28,58 +115,344 @@ function BusinessForm() {
             };
             reader.readAsDataURL(selectedFile);
 
-            // 파일 자동 업로드 (실제 API를 호출할 수 있습니다)
+            // 파일 자동 업로드
             handleUpload(selectedFile);
         }
     };
 
-    // 자동 업로드 (여기서는 파일을 바로 처리하는 로직을 작성합니다)
+    // 자동 업로드
     const handleUpload = (selectedFile) => {
         console.log('자동 업로드 중...', selectedFile);
-        // 실제 업로드 API 호출을 여기에 넣을 수 있습니다.
-        // 예시: axios.post('/upload', formData);
-
+        // 실제 업로드 API 호출
         // 업로드 완료 후 상태 변경
         setIsUploaded(true);
     };
 
-    // 약관 열고닫기 상태값
-    const [openItem, setOpenItem] = useState('');
-    const toggleItem = (itemId) => {
-        setOpenItem(openItem === itemId ? null : itemId); // 클릭하면 열리거나 닫힘
-    };
+    // 약관 가져오기
+    useEffect(() => {
+        const fetchTerms = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/users/terms');
+                if (!response.ok) throw new Error('서버 응답 오류');
 
-    const [allChecked, setAllChecked] = useState(false);
-    const [checkedItems, setCheckedItems] = useState({
-        terms1: false,
-        terms2: false,
-    });
+                const data = await response.json();
+                const termsData = data.map((term) => ({
+                    termsId: term.termsId,
+                    title: term.title,
+                    content: term.content,
+                    isRequired: term.isRequired,
+                }));
 
-    // 전체동의 체크박스 변경
-    const handleAllChange = (e) => {
-        const checked = e.target.checked;
-        setAllChecked(checked);
-        setCheckedItems({
-            terms1: checked,
-            terms2: checked,
+                setTerms(termsData);
+
+                const initialCheckedState = {};
+                const initialOpenState = {};
+                termsData.forEach((term) => {
+                    initialCheckedState[term.termsId] = false;
+                    initialOpenState[term.termsId] = false;
+                });
+
+                setCheckedItems(initialCheckedState);
+                setOpenItem(initialOpenState);
+            } catch (error) {
+                console.error('약관을 불러오는 중 오류 발생:', error);
+            }
+        };
+
+        fetchTerms();
+    }, []);
+
+    // 개별 체크박스 상태 변경
+    const handleCheckboxChange = (termsId) => {
+        setCheckedItems((prev) => {
+            const updatedCheckedItems = { ...prev, [termsId]: !prev[termsId] };
+            const allChecked = Object.values(updatedCheckedItems).every(Boolean);
+            setIsAllChecked(allChecked);
+            setFormErrors((prev) => ({ ...prev, terms: '' }));
+            return updatedCheckedItems;
         });
     };
 
-    // 개별 약관 체크박스 변경
-    const handleItemChange = (e, key) => {
-        const checked = e.target.checked;
-        setCheckedItems((prev) => {
-            const updatedItems = {
-                ...prev,
-                [key]: checked,
+    // 전체 동의 체크박스 변경
+    const handleAllChange = (e) => {
+        const isChecked = e.target.checked;
+        const newCheckedState = {};
+
+        terms.forEach((term) => {
+            newCheckedState[term.termsId] = isChecked;
+        });
+
+        setCheckedItems(newCheckedState);
+        setIsAllChecked(isChecked);
+
+        setFormErrors((prev) => ({ ...prev, terms: '' }));
+    };
+
+    // 약관 펼치기/접기 상태 변경
+    const toggleItem = (termsId) => {
+        setOpenItem((prev) => ({
+            ...prev,
+            [termsId]: !prev[termsId],
+        }));
+    };
+
+    // 타이머 형식
+    const timeFormatter = useCallback((param) => {
+        const min = String(Math.floor(param / 60)).padStart(2, '0');
+        const sec = String(param % 60).padStart(2, '0');
+        return `${min}:${sec}`;
+    }, []);
+
+    // 타이머 시작 함수
+    const startTimer = () => {
+        setTimer(180);
+        setIsTimerRunning(true);
+        clearInterval(timerRef.current);
+        timerRef.current = setInterval(() => {
+            setTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    setIsTimerRunning(false);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
+
+    // 타이머 정리
+    useEffect(() => {
+        return () => clearInterval(timerRef.current);
+    }, []);
+
+    // 인증코드 전송
+    const handleSendCode = async () => {
+        if (!formData.userEmail) {
+            setFormErrors({ userEmail: '이메일을 입력하세요.' });
+            return;
+        }
+
+        setIsLoading(true); // 로딩 시작
+
+        try {
+            const response = await fetch('http://localhost:8080/api/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.userEmail }),
+            });
+
+            const data = await response.json();
+            alert(data.message);
+
+            setTimeout(() => {
+                setIsLoading(false);
+                startTimer();
+            }, 1000);
+        } catch (error) {
+            console.error('Error sending verification code', error);
+            setIsLoading(false);
+        }
+    };
+
+    // 이메일 인증번호 확인 요청
+    const handleVerifyCode = async () => {
+        if (!formData.verificationCode) {
+            setFormErrors({ verificationCode: '인증번호를 입력하세요.' });
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/email/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: formData.userEmail, verificationCode: formData.verificationCode }),
+            });
+
+            const isValid = await response.json();
+            if (isValid) {
+                alert('이메일 인증 성공!');
+                setIsVerified(true);
+                clearInterval(timerRef.current); // 타이머 정지
+            } else {
+                alert('인증번호가 올바르지 않거나 만료되었습니다.');
+            }
+        } catch (error) {
+            console.error('Error verifying code', error);
+        }
+    };
+
+    // 인증번호 재전송
+    const handleResendCode = () => {
+        handleSendCode();
+    };
+
+    // 아이디 중복확인
+    const checkDuplicate = async () => {
+        if (!formData.userId || !idRegex.test(formData.userId)) {
+            alert('아이디는 5~20자리 영문, 숫자를 포함해야 합니다');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/${formData.userId}`);
+
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+
+            const text = await response.text();
+            const data = text ? JSON.parse(text) : null;
+
+            if (!data || Object.keys(data).length === 0) {
+                setIsDuplicate(true); // 아이디 사용 가능
+                alert('사용 가능한 아이디입니다');
+            } else {
+                setIsDuplicate(false); // 아이디가 이미 존재
+                alert('사용할 수 없는 아이디입니다');
+            }
+        } catch (error) {
+            console.error('중복확인 중 오류 발생: ', error);
+            setIsDuplicate(null);
+        }
+    };
+
+    // 유효성 검사
+    const validateForm = () => {
+        let errors = {};
+
+        // 사업자 등록번호
+        if (!formData.businessRegistrationNumber) {
+            errors.businessRegistrationNumber = '사업자 등록번호를 입력해주세요';
+        } else if (!businessNumberRegex.test(formData.businessRegistrationNumber)) {
+            errors.businessRegistrationNumber = '사업자 등록번호는 숫자 10자리여야 합니다';
+        }
+
+        // 업소명
+        if (!formData.businessName) {
+            errors.businessName = '업소명을 입력해주세요';
+        } else if (!businessNameRegex.test(formData.businessName)) {
+            errors.businessName = '업소명은 최대 300자까지 입력할 수 있습니다';
+        }
+
+        // 주소
+        if (!formData.businessAddress) {
+            errors.businessAddress = '주소를 입력해주세요';
+        } else if (!addressRegex.test(formData.businessAddress)) {
+            errors.businessAddress = '주소는 최대 500자까지 입력할 수 있습니다';
+        }
+
+        // 아이디
+        if (!isDuplicate) {
+            errors.userId = '아이디 중복검사를 진행해주세요';
+        } else if (!formData.userId || !idRegex.test(formData.userId)) {
+            errors.userId = '아이디는 5~20자리 영문, 숫자를 포함해야 합니다';
+        }
+
+        // 비밀번호
+        if (!formData.userPassword) {
+            errors.userPassword = '비밀번호를 입력해주세요';
+        } else if (!passwordRegex.test(formData.userPassword)) {
+            errors.userPassword = '비밀번호는 8~16자리, 영문/숫자/특수기호를 포함해야 합니다';
+        }
+
+        // 비밀번호 확인
+        if (!formData.confirmPassword) {
+            errors.confirmPassword = '비밀번호확인을 입력해주세요요';
+        } else if (formData.userPassword !== formData.confirmPassword) {
+            errors.confirmPassword = '비밀번호가 일치하지 않습니다';
+        }
+
+        // 이름
+        if (!formData.userName) {
+            errors.userName = '이름을 입력해주세요';
+        }
+
+        // 생일
+        const today = new Date().setHours(0, 0, 0, 0);
+        const selectedDate = new Date(formData.userBirth).setHours(0, 0, 0, 0);
+        if (formData.userBirth && !birthRegex.test(formData.userBirth)) {
+            errors.userBirth = '생년월일은 YYYY-MM-DD 형식이어야 합니다';
+        } else if (selectedDate > today) {
+            errors.userBirth = '생년월일은 오늘 날짜 이전이어야 합니다.';
+        }
+
+        // 휴대폰번호
+        if (formData.userPhone && !phoneRegex.test(formData.userPhone)) {
+            errors.userPhone = '휴대폰 번호는 9자리 숫자여야 합니다';
+        }
+
+        // 이메일
+        if (!formData.userEmail) {
+            errors.userEmail = '이메일을 입력해주세요';
+        } else if (!emailRegex.test(formData.userEmail)) {
+            errors.userEmail = '올바른 이메일 형식이 아닙니다';
+        }
+
+        // 이메일 인증
+        if (!formData.verificationCode) {
+            errors.verificationCode = '이메일 인증을 완료해주세요';
+        }
+
+        // 약관
+        const requiredTerms = terms.filter((t) => t.isRequired === 'T');
+        const allRequiredChecked = requiredTerms.every((term) => checkedItems[term.termsId]);
+        if (!allRequiredChecked) {
+            errors.terms = '필수 약관에 동의해야 합니다';
+        }
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // 회원가입 함수
+    const handleSubmit = async () => {
+        try {
+            const optionalTerms =
+                terms.filter((term) => term.isRequired === 'F').map((term) => checkedItems[term.termsId] === true)[0] ||
+                false;
+
+            const bodyData = {
+                businessRegNo: formData.businessRegistrationNumber,
+                storeName: formData.businessName,
+                address: formData.businessAddress,
+                userId: formData.userId,
+                password: formData.userPassword,
+                name: formData.userName,
+                email: formData.userEmail,
+                isAgree: optionalTerms,
+                sidoName: addressData.sido,
+                sigunguName: addressData.sigungu,
             };
 
-            // 전체 선택 상태 업데이트
-            const allSelected = Object.values(updatedItems).every((item) => item);
-            setAllChecked(allSelected);
+            if (formData.userBirth) {
+                bodyData.birthDate = formData.userBirth;
+            }
+            if (formData.userPhone) {
+                bodyData.phoneNumber = formData.userPhone;
+            }
 
-            return updatedItems;
-        });
+            const response = await fetch('http://localhost:8080/api/users/sign-up/biz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData),
+            });
+
+            if (!response.ok) throw new Error('회원가입 실패');
+
+            alert('회원가입 완료 : 로그인해주세요');
+            navigate('/login');
+        } catch (error) {
+            console.error('회원가입 실패', error);
+        }
+    };
+
+    // 회원가입
+    const joinUser = () => {
+        if (validateForm()) {
+            handleSubmit();
+        } else {
+            alert('회원가입 오류 : 입력란을 모두 입력해주세요');
+        }
     };
 
     return (
@@ -163,13 +536,13 @@ function BusinessForm() {
                     {/* 업로드 완료 후 새로운 안내 문구 표시 */}
                     {isUploaded && (
                         <div
-                            class="alert alert-success flex items-center gap-4 bg-accent-content text-accent"
+                            className="alert alert-success flex items-center gap-4 bg-accent-content text-accent"
                             role="alert"
                         >
-                            <span class="icon-[tabler--circle-check] size-6"></span>
+                            <span className="icon-[tabler--circle-check] size-6"></span>
                             <p>
-                                <span class="text-lg font-semibold">파일 업로드 성공 : </span> AI가 인식한 정보가 하단에
-                                보여질거예요
+                                <span className="text-lg font-semibold">파일 업로드 성공 : </span> AI가 인식한 정보가
+                                하단에 보여질거예요
                             </p>
                         </div>
                     )}
@@ -177,64 +550,80 @@ function BusinessForm() {
 
                 {/* 사업자등록번호 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold" for="storeName">
-                        사업자등록번호
+                    <label className="label label-text text-base font-semibold" htmlFor="businessRegistrationNumber">
+                        사업자등록번호<span className="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         placeholder="인식된 사업자등로번호가 들어갑니다"
                         className="input h-12 border-gray-300 "
-                        id="storeName"
-                        disabled
+                        id="businessRegistrationNumber"
+                        value={formData.businessRegistrationNumber}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setIsDuplicate(false);
+                        }}
                     />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">비밀번호를 입력해주세요</span>
+                        {formErrors.businessRegistrationNumber && (
+                            <span className="text-red-500">{formErrors.businessRegistrationNumber}</span>
+                        )}
                     </span>
                 </div>
 
                 {/* 업소명 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold" for="storeName">
-                        업소명
+                    <label className="label label-text text-base font-semibold" htmlFor="businessName">
+                        업소명<span className="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
                         placeholder="인식된 상호명이 들어갑니다"
                         className="input h-12 border-gray-300 "
-                        id="storeName"
-                        disabled
+                        id="businessName"
+                        value={formData.businessName}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setIsDuplicate(false);
+                        }}
                     />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">비밀번호를 입력해주세요</span>
+                        {formErrors.businessName && <span className="text-red-500">{formErrors.businessName}</span>}
                     </span>
                 </div>
 
                 {/* 주소 (사업자소재지) */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold" for="userAddress">
-                        주소(사업자소재지)
+                    <label className="label label-text text-base font-semibold" htmlFor="userAddress">
+                        주소(사업자소재지)<span className="text-red-500">*</span>
                     </label>
                     <div className="join w-full">
                         <input
                             type="text"
                             className="input h-12 border-gray-300 join-item "
                             id="userAddress"
-                            placeholder="업소 주소를 검색해 입력해주세요"
+                            placeholder="업소 주소를 검색하세요"
+                            value={formData.businessAddress}
                             disabled
                         />
-                        <button className="h-12 btn join-item w-3/12 bg-gray-300 text-gray-500 border-gray-300 hover:text-white hover:bg-gray-500 hover:border-gray-500">
+                        <button
+                            onClick={handleClick}
+                            className="h-12 btn join-item w-3/12 bg-gray-300 text-gray-500 border-gray-300 hover:text-white hover:bg-gray-500 hover:border-gray-500"
+                        >
                             검색
                         </button>
                     </div>
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">주소를 입력해주세요</span>
+                        {formErrors.businessAddress && (
+                            <span className="text-red-500">{formErrors.businessAddress}</span>
+                        )}
                     </span>
                 </div>
 
                 {/* 아이디 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold" for="userId">
-                        아이디
+                    <label className="label label-text text-base font-semibold" htmlFor="userId">
+                        아이디<span className="text-red-500">*</span>
                     </label>
                     <div className="join w-full">
                         <input
@@ -242,29 +631,39 @@ function BusinessForm() {
                             className="input h-12 border-gray-300 join-item "
                             id="userId"
                             placeholder="5~20자리 / 영문, 숫자 포함"
+                            value={formData.userId}
+                            onChange={(e) => {
+                                handleChange(e);
+                                setIsDuplicate(false);
+                            }}
                         />
-                        <button className="h-12 btn join-item w-3/12 bg-gray-300 text-gray-500 border-gray-300 hover:text-white hover:bg-gray-500 hover:border-gray-500">
+                        <button
+                            className="h-12 btn join-item w-3/12 bg-gray-300 text-gray-500 border-gray-300 hover:text-white hover:bg-gray-500 hover:border-gray-500"
+                            onClick={checkDuplicate}
+                        >
                             중복확인
                         </button>
                     </div>
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">아이디를 입력해주세요</span>
+                        {formErrors.userId && <span className="text-red-500">{formErrors.userId}</span>}
                     </span>
                 </div>
 
                 {/* 비밀번호 */}
                 <div className="relative">
-                    <label className="label label-text text-base font-semibold" for="userPassword">
-                        비밀번호
+                    <label className="label label-text text-base font-semibold" htmlFor="userPassword">
+                        비밀번호<span className="text-red-500">*</span>
                     </label>
                     <input
                         type="password"
                         placeholder="8~16자리 / 영문, 숫자, 특수기호 포함 "
                         className="input h-12 border-gray-300 "
                         id="userPassword"
+                        value={formData.userPassword}
+                        onChange={handleChange}
                     />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">비밀번호를 입력해주세요</span>
+                        {formErrors.userPassword && <span className="text-red-500">{formErrors.userPassword}</span>}
                     </span>
                 </div>
 
@@ -272,28 +671,40 @@ function BusinessForm() {
                 <div className="relative mb-3">
                     <input
                         type="password"
+                        id="confirmPassword"
                         placeholder="비밀번호를 한 번 더 입력해 주세요"
                         className="input h-12 border-gray-300 "
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
                     />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">비밀번호 확인을 입력해주세요</span>
+                        {formErrors.confirmPassword && (
+                            <span className="text-red-500">{formErrors.confirmPassword}</span>
+                        )}
                     </span>
                 </div>
 
                 {/* 이름 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold " for="userName">
-                        이름
+                    <label className="label label-text text-base font-semibold " htmlFor="userName">
+                        이름<span className="text-red-500">*</span>
                     </label>
-                    <input type="text" placeholder="실명" className="input h-12 border-gray-300  " id="userName" />
+                    <input
+                        type="text"
+                        placeholder="실명"
+                        className="input h-12 border-gray-300  "
+                        id="userName"
+                        value={formData.userName}
+                        onChange={handleChange}
+                    />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">이름을 입력해주세요</span>
+                        {formErrors.userName && <span className="text-red-500">{formErrors.userName}</span>}
                     </span>
                 </div>
 
                 {/* 생년월일 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold" for="userBirth">
+                    <label className="label label-text text-base font-semibold" htmlFor="userBirth">
                         생년월일
                     </label>
                     <input
@@ -301,15 +712,17 @@ function BusinessForm() {
                         placeholder="숫자 8자리 / 예 : 20021001"
                         className="input h-12 border-gray-300 "
                         id="userBirth"
+                        value={formData.userBirth}
+                        onChange={handleChange}
                     />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">생년월일을 입력해주세요</span>
+                        {formErrors.userBirth && <span className="text-red-500">{formErrors.userBirth}</span>}
                     </span>
                 </div>
 
                 {/* 휴대폰 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold" for="userPhone">
+                    <label className="label label-text text-base font-semibold" htmlFor="userPhone">
                         휴대폰
                     </label>
                     <input
@@ -317,16 +730,18 @@ function BusinessForm() {
                         placeholder="01012345678"
                         className="input h-12 border-gray-300 "
                         id="userPhone"
+                        value={formData.userPhone}
+                        onChange={handleChange}
                     />
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">휴대폰번호를 입력해주세요</span>
+                        {formErrors.userPhone && <span className="text-red-500">{formErrors.userPhone}</span>}
                     </span>
                 </div>
 
-                {/* 이메일 */}
+                {/* 이메일 입력 */}
                 <div className="relative">
-                    <label className="label label-text text-base font-semibold" for="userEmail">
-                        이메일
+                    <label className="label label-text text-base font-semibold" htmlFor="userEmail">
+                        이메일<span className="text-red-500">*</span>
                     </label>
                     <div className="join w-full">
                         <input
@@ -334,13 +749,26 @@ function BusinessForm() {
                             className="h-12 input join-item border-gray-300"
                             id="userEmail"
                             placeholder="email@goodprice.com"
+                            value={formData.userEmail}
+                            onChange={handleChange}
+                            disabled={isVerified} // 인증 완료 시 입력 비활성화
                         />
-                        <button className="h-12 btn join-item w-3/12 bg-gray-300 text-gray-500 border-gray-300 hover:text-white hover:bg-gray-500 hover:border-gray-500">
-                            인증번호 전송
+                        <button
+                            className="h-12 btn join-item w-3/12 bg-gray-300 text-gray-500 border-gray-300 hover:text-white hover:bg-gray-500 hover:border-gray-500"
+                            onClick={handleSendCode}
+                            disabled={isLoading || isTimerRunning}
+                        >
+                            {isLoading ? (
+                                <span className="loading loading-spinner loading-sm"></span>
+                            ) : isTimerRunning ? (
+                                `${timeFormatter(timer)}`
+                            ) : (
+                                '인증번호 전송'
+                            )}
                         </button>
                     </div>
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">이메일 주소를 입력해주세요</span>
+                        {formErrors.userEmail && <span className="text-red-500">{formErrors.userEmail}</span>}
                     </span>
                 </div>
 
@@ -351,32 +779,48 @@ function BusinessForm() {
                             <input
                                 type="text"
                                 placeholder="인증번호 입력"
-                                className="h-12 input join-item w-full border-gray-300 "
-                                id="helperTextInput"
+                                className="h-12 input join-item w-full border-gray-300"
+                                id="verificationCode"
+                                value={formData.verificationCode}
+                                onChange={handleChange}
+                                disabled={isVerified}
                             />
-                            <button className="h-12 btn join-item w-3/12 border-gray-300 text-gray-500 bg-white hover:text-white hover:bg-gray-500 hover:border-gray-500">
+                            <button
+                                className="h-12 btn join-item w-3/12 border-gray-300 text-gray-500 bg-white hover:text-white hover:bg-gray-500 hover:border-gray-500"
+                                onClick={handleVerifyCode}
+                                disabled={isVerified}
+                            >
                                 확인
                             </button>
                         </div>
-                        <button className="h-12 btn border-gray-300 text-gray-500 bg-white hover:text-white hover:bg-gray-500 hover:border-gray-500 shadow-none">
-                            인증번호 재전송 (<span id="timer">60</span>초)
+                        <button
+                            className="h-12 btn border-gray-300 text-gray-500 bg-white hover:text-white hover:bg-gray-500 hover:border-gray-500 shadow-none"
+                            onClick={handleResendCode}
+                            disabled={isTimerRunning}
+                        >
+                            인증번호 재전송
                         </button>
                     </div>
                     <span className="label">
-                        <span className="label-text-alt text-red-500 hidden">인증번호를 입력해주세요</span>
+                        {formErrors.verificationCode && (
+                            <span className="text-red-500">{formErrors.verificationCode}</span>
+                        )}
                     </span>
                 </div>
 
                 {/* 약관 */}
-                <label className="label label-text text-base font-semibold" for="userName">
-                    약관
+                <label className="label label-text text-base font-semibold" htmlFor="userName">
+                    약관<span className="text-red-500">*</span>
                 </label>
+                <span className="label">
+                    {formErrors.terms && <span className="text-red-500">{formErrors.terms}</span>}
+                </span>
                 <div className="accordion divide-neutral/20 divide-y rounded border p-5 mb-10">
                     {/* 전체약관 동의 */}
                     <div className="space-y-2 mb-5">
                         <label className="flex items-center">
                             <input
-                                checked={allChecked}
+                                checked={isAllChecked}
                                 onChange={handleAllChange}
                                 type="checkbox"
                                 className="w-5 h-5 rounded border-gray-300 text-blue-600 "
@@ -384,102 +828,66 @@ function BusinessForm() {
                             <span className="ml-2 font-semibold text-lg">전체동의</span>
                         </label>
                         <p className="text-sm text-gray-500 ml-7">
-                            위치기반 서비스 이용약관(선택), 마케팅 정보 수신 동의 (이메일,SMS/MMS)(선택) 동의를
-                            포함합니다.
+                            실명 인증된 아이디로 가입, 위치기반서비스 이용약관(필수), 이벤트・혜택 정보 수신(선택)
+                            동의를 포함합니다.
                         </p>
                     </div>
 
-                    {/* 첫번째 약관 */}
-                    <div className={`accordion-item ${openItem === 'terms1' ? 'active' : ''}`} id="terms1">
-                        <label className="flex items-center justify-between w-full cursor-pointer py-2">
-                            <div className="flex items-center">
-                                <input
-                                    checked={checkedItems.terms1}
-                                    onChange={(e) => handleItemChange(e, 'terms1')}
-                                    type="checkbox"
-                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 "
-                                />
-                                <span className="ml-2 font-semibold text-lg">(필수) 개인회원 약관에 동의</span>
-                            </div>
-
-                            <button
-                                className="accordion-toggle w-0"
-                                onClick={() => toggleItem('terms1')}
-                                aria-controls="terms1-collapse"
-                                aria-expanded={openItem === 'terms1'}
-                            >
-                                <span
-                                    className={`icon-[tabler--chevron-right] size-5 shrink-0 transition-transform duration-300 ${
-                                        openItem === 'terms1' ? 'rotate-90' : 'rotate-0'
-                                    }`}
-                                ></span>
-                            </button>
-                        </label>
-                        {openItem === 'terms1' && (
-                            <div
-                                id="terms1-collapse"
-                                className="accordion-content w-full overflow-hidden transition-[height] duration-300"
-                            >
-                                <div className="px-5 pb-4">
-                                    <p className="text-base-content/80 font-normal">
-                                        본 약관은 ㈜착한가격업소 (이하 "회사"라 합니다)이 운영하는 웹사이트(이하
-                                        “사이트”라 합니다) 및 모바일 애플리케이션(이하 “애플리케이션”이라 하며, 사이트와
-                                        애플리케이션을 총칭하여 “사이트 등”이라 합니다)을 통해 서비스를 제공함에 있어
-                                        회사와 이용자의 이용조건 및 제반 절차, 기타 필요한 사항의 규정을 목적으로
-                                        합니다.
-                                    </p>
+                    {terms.map((term) => (
+                        <div
+                            key={term.termsId}
+                            className={`accordion-item ${openItem[term.termsId] ? 'active' : ''}`}
+                            id={term.termsId}
+                        >
+                            <label className="flex items-center justify-between w-full cursor-pointer py-2">
+                                <div className="flex items-center">
+                                    <input
+                                        checked={checkedItems[term.termsId] || false}
+                                        onChange={() => handleCheckboxChange(term.termsId)}
+                                        type="checkbox"
+                                        className="w-5 h-5 rounded border-gray-300 text-blue-600"
+                                    />
+                                    <span
+                                        className={`ml-2 text-lg ${
+                                            term.isRequired === 'T' ? 'font-semibold' : 'font-medium'
+                                        }`}
+                                    >
+                                        {term.title}
+                                    </span>
                                 </div>
-                            </div>
-                        )}
-                    </div>
 
-                    {/* 두번째 약관 */}
-                    <div className={`accordion-item ${openItem === 'terms2' ? 'active' : ''}`} id="terms2">
-                        <label className="flex items-center justify-between w-full cursor-pointer py-2">
-                            <div className="flex items-center">
-                                <input
-                                    checked={checkedItems.terms2}
-                                    onChange={(e) => handleItemChange(e, 'terms2')}
-                                    type="checkbox"
-                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 "
-                                />
-                                <span className="ml-2 font-medium text-lg">(선택) 마케팅 정보 수신 동의 - 이메일</span>
-                            </div>
-
-                            <button
-                                className="accordion-toggle w-0"
-                                onClick={() => toggleItem('terms2')}
-                                aria-controls="terms2-collapse"
-                                aria-expanded={openItem === 'terms2'}
-                            >
-                                <span
-                                    className={`icon-[tabler--chevron-right] size-5 shrink-0 transition-transform duration-300 ${
-                                        openItem === 'terms2' ? 'rotate-90' : 'rotate-0'
-                                    }`}
-                                ></span>
-                            </button>
-                        </label>
-                        {openItem === 'terms2' && (
-                            <div
-                                id="terms2-collapse"
-                                className="accordion-content w-full overflow-hidden transition-[height] duration-300"
-                            >
-                                <div className="px-5 pb-4">
-                                    <p className="text-base-content/80 font-normal">
-                                        본 약관은 ㈜착한가격업소 (이하 "회사"라 합니다)이 운영하는 웹사이트(이하
-                                        “사이트”라 합니다) 및 모바일 애플리케이션(이하 “애플리케이션”이라 하며, 사이트와
-                                        애플리케이션을 총칭하여 “사이트 등”이라 합니다)을 통해 서비스를 제공함에 있어
-                                        회사와 이용자의 이용조건 및 제반 절차, 기타 필요한 사항의 규정을 목적으로
-                                        합니다.
-                                    </p>
+                                <button
+                                    className="accordion-toggle w-0"
+                                    onClick={() => toggleItem(term.termsId)}
+                                    aria-controls={`${term.termsId}-collapse`}
+                                    aria-expanded={openItem[term.termsId]}
+                                >
+                                    <span
+                                        className={`icon-[tabler--chevron-right] size-5 shrink-0 transition-transform duration-300 ${
+                                            openItem[term.termsId] ? 'rotate-90' : 'rotate-0'
+                                        }`}
+                                    ></span>
+                                </button>
+                            </label>
+                            {openItem[term.termsId] && (
+                                <div
+                                    id={`${term.termsId}-collapse`}
+                                    className="accordion-content w-full overflow-hidden transition-[height] duration-300"
+                                >
+                                    <div className="px-5 pb-4">
+                                        <p className="text-base-content/80 font-normal">{term.content}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
 
                 {/* 회원가입 버튼 */}
-                <button className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700">
+                <button
+                    className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700"
+                    onClick={joinUser}
+                >
                     회원가입 하기
                 </button>
             </div>

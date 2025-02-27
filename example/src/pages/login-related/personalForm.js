@@ -271,8 +271,12 @@ function PersonalForm() {
         }
 
         // 생일
+        const today = new Date().setHours(0, 0, 0, 0);
+        const selectedDate = new Date(formData.userBirth).setHours(0, 0, 0, 0);
         if (formData.userBirth && !birthRegex.test(formData.userBirth)) {
             errors.userBirth = '생년월일은 YYYY-MM-DD 형식이어야 합니다';
+        } else if (selectedDate > today) {
+            errors.userBirth = '생년월일은 오늘 날짜 이전이어야 합니다.';
         }
 
         // 휴대폰번호
@@ -354,9 +358,6 @@ function PersonalForm() {
             <div className="flex mx-auto max-w-xl flex-col">
                 {/* 폼 제목 */}
                 <p className="text-2xl font-bold mt-24 mb-8 text-center">착한업소 솔루션 개인 회원가입</p>
-                <p className="text-sm text-gray-500 mb-3 text-right">
-                    <span className="text-red-500 ">*</span>는 필수 입력 항목입니다
-                </p>
 
                 {/* 아이디 */}
                 <div className="relative mb-3">
