@@ -4,50 +4,11 @@ import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
 import axios from "axios";
 
-// 로컬 이미지 경로 예시 (프로젝트 상황에 맞게 수정하세요)
-//사진은 하드코딩 하자
-import Main1 from "../../../assets/images/Guide/Main1.png";
-import Main2 from "../../../assets/images/Guide/Main2.png";
-import Main3 from "../../../assets/images/Guide/Main3.png";
-
-const GuideContent = ({ step }) => {
-  const [data, setData] = useState([]);
-
-  // 첫 로드시 DB에 저장된 데이터 가져오기
-  useEffect(() => {
-    const guideMainData = async () => {
-      try {
-        const res = await axios.get("http://localhost:8080/guides/all");
-        setData(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    guideMainData();
-  }, []);
-
-  // 데이터베이스에서 가져온 데이터를 기반으로 guideData 생성
-  const guideData = data.reduce((acc, item, index) => {
-    const icons = [
-      <CiSearch size={30} />,
-      <IoDocuments size={30} />,
-      <HiMiniPencil size={30} />,
-    ];
-    acc[index + 1] = {
-      id: `content${index + 1}`,
-      icon: icons[index % icons.length],
-      title: item.title,
-      subtitle: item.subtitle,
-      description: item.description,
-    };
-    return acc;
-  }, {});
-
+const GuideContent = ({ step, guideData }) => {
   const { id, icon, title, subtitle, description } = guideData[step] || {};
 
   if (!id) {
     return <div>Loading...</div>;
-    // 데이터가 로드되지 않았을 때 로딩 상태 표시
   }
 
   return (
@@ -71,48 +32,47 @@ const GuideContent = ({ step }) => {
 };
 
 const Guide = () => {
+  const [data, setData] = useState([]);
   const [activeStep, setActiveStep] = useState(1);
   const [sidebarTop, setSidebarTop] = useState(150);
   const [modal, setModal] = useState(null);
 
-  // 스크롤 시 사이드바 위치 동적 조정
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const maxSidebarTop = windowHeight - 150;
-      // 최대 높이 제한 (헤더와 겹치지 않도록 설정)
-
-      // 100 ~ maxSidebarTop 범위 안에서 위치가 고정되도록
-      setSidebarTop(Math.min(Math.max(100, scrollY + 50), maxSidebarTop));
+    const fetchGuides = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/guides/all");
+        console.log("API Response:", res.data);
+        setData(res.data);
+      } catch (error) {
+        console.error("Error fetching guide data:", error);
+      }
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    fetchGuides();
   }, []);
 
-  // 특정 섹션으로 부드럽게 스크롤
-  const scrollToSection = (id) => {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "center" });
-      // 살짝 보정하기 위해 타이머 사용
-      setTimeout(() => {
-        window.scrollBy(0, -36);
-      }, 200);
-    }
+  const guideData = data.reduce((acc, item, index) => {
+    const icons = [
+      <CiSearch size={30} />,
+      <IoDocuments size={30} />,
+      <HiMiniPencil size={30} />,
+    ];
+    acc[index + 1] = {
+      id: `content${index + 1}`,
+      icon: icons[index % icons.length],
+      title: item.title,
+      subtitle: item.subtitle,
+      description: item.description,
+      imageUrl: `http://localhost:8080/uploads/Guide${index + 1}.png`,
+    };
+    return acc;
+  }, {});
+
+  const openModal = (id) => {
+    setModal(id);
   };
-
-  // 모달 열기/닫기
-  const openModal = (id) => setModal(id);
-  const closeModal = () => setModal(null);
-
-  const images = [Main1, Main2, Main3];
 
   return (
     <div className="bg-white min-h-screen w-full flex flex-col items-center py-12">
-      {/* 메인 레이아웃 (사이드바 + 가이드 콘텐츠) */}
-      {/* 부모 컨테이너의 최대 폭을 늘리기 위해 max-w-screen-2xl로 변경 */}
       <div className="w-full max-w-screen-2xl p-6 flex flex-wrap">
         {/* 사이드바 */}
         <div
@@ -123,21 +83,25 @@ const Guide = () => {
             overflowY: "auto",
           }}
         >
-          {/* 불필요한 음수 마진 제거 */}
           <ul className="space-y-40">
             {["검색 가이드", "리뷰 가이드", "공지사항"].map((text, index) => (
               <li
                 key={index}
-                className={`flex items-center gap-x-2 cursor-pointer py-2 ${
-                  activeStep === index + 1 ? "text-blue-500" : "text-gray-600"
-                }`}
+                className={`flex items-center gap-x-2 cursor-pointer py-2 
+                  ${
+                    activeStep === index + 1 ? "text-blue-500" : "text-gray-600"
+                  }`}
                 onClick={() => {
                   setActiveStep(index + 1);
-                  scrollToSection(`content${index + 1}`);
+                  document
+                    .getElementById(`content${index + 1}`)
+                    ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  setTimeout(() => window.scrollBy(0, -36), 200);
                 }}
               >
                 <span
-                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
+                  className={`w-8 h-8 flex items-center justify-center rounded-full font-bold 
+                  ${
                     activeStep === index + 1
                       ? "bg-blue-500 text-white"
                       : "border border-gray-300"
@@ -152,24 +116,28 @@ const Guide = () => {
         </div>
 
         {/* 가이드 콘텐츠 */}
-        <div className="w-[70%] space-y-16">
-          {[1, 2, 3].map((step, index) => (
+        <div className="w-[70%] space-y-64">
+          {[1, 2, 3].map((step) => (
             <div
               key={step}
               className="flex flex-col md:flex-row-reverse items-center gap-x-16"
             >
-              <GuideContent step={step} />
-              <img
-                src={images[index]}
-                alt={`Guide ${step}`}
-                className="w-full max-w-[350px] h-auto object-cover rounded-lg"
-              />
+              <GuideContent step={step} guideData={guideData} />
+              {/* GuideContent 바깥에서 이미지 렌더링 */}
+              {guideData[step]?.imageUrl && (
+                <img
+                  src={guideData[step].imageUrl}
+                  alt={`Guide ${step}`}
+                  className="w-full max-w-[350px] h-auto object-cover rounded-lg"
+                  onError={(e) =>
+                    (e.target.src = "http://localhost:8080/uploads/default.png")
+                  }
+                />
+              )}
             </div>
           ))}
         </div>
       </div>
-
-      {/* 하단 도움말 섹션 */}
       <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg mt-16">
         <div className="relative mt-12 p-6 border border-gray-300 rounded-lg bg-white">
           <p className="text-gray-800 text-lg font-semibold">
@@ -202,9 +170,15 @@ const Guide = () => {
       </div>
 
       {/* 모달 창 */}
-      {modal && modal !== "videoModal" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm">
+      {modal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+          onClick={() => setModal(null)} // 배경 클릭 시 닫기
+        >
+          <div
+            className="bg-white p-8 rounded-lg shadow-lg max-w-sm"
+            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫히지 않도록
+          >
             <h2 className="text-lg font-semibold mb-4">
               {modal === "helpModal" ? "도움말" : "SNS"}
             </h2>
@@ -215,7 +189,7 @@ const Guide = () => {
             </p>
             <div className="flex justify-center mt-8">
               <button
-                onClick={closeModal}
+                onClick={() => setModal(null)}
                 className="px-6 py-3 bg-gray-300 rounded-md"
               >
                 닫기
