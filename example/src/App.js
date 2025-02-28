@@ -14,6 +14,7 @@ import Header from "./components/layout/Header";
 import Service from "./pages/guide-related/intro/g-service";
 import Site from "./pages/guide-related/intro/site";
 import Brand from "./pages/guide-related/intro/brand";
+import HeroSection from "./pages/guide-related/intro/herosection";
 
 function App() {
   return (
@@ -37,6 +38,10 @@ function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/guide-related/intro/site" element={<Site />} />
             <Route path="/guide-related/intro/brand" element={<Brand />} />
+            <Route
+              path="/guide-related/intro/herosection"
+              element={<HeroSection />}
+            />
           </Routes>
         </main>
       </div>
