@@ -31,15 +31,10 @@ const ChartComponent = () => {
       .then((result) => {
         console.log("API 데이터:", result);
 
-        const formattedData = result.map((item, index) => {
-          const assignedColor = COLORS[index % COLORS.length];
-          console.log(`업종: ${item.industry_name}, 색상: ${assignedColor}`);
-          return {
-            name: item.industry_name,
-            value: item.count,
-            color: assignedColor,
-          };
-        });
+        const formattedData = result.map((item, index) => ({
+          name: item.industryName,
+          value: item.count,
+        }));
 
         setData(formattedData);
         setLoading(false);
@@ -57,22 +52,17 @@ const ChartComponent = () => {
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-lg font-bold mb-4">업종별 착한가격업소 현황</h2>
-      <PieChart width={400} height={400}>
+      <PieChart width={450} height={450}>
         <Pie
           data={data}
           cx="50%"
           cy="40%"
           outerRadius={120}
           dataKey="value"
-          label
+          label={false} // 숫자 라벨 숨김
         >
-          {data.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={entry.color || "#000000"}
-              stroke="#ffffff"
-              strokeWidth={2}
-            />
+          {data.map((_, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip />
