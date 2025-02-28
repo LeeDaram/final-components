@@ -38,26 +38,52 @@ const HeroSection = () => {
       {/* 메인 콘텐츠 영역 */}
       <div className="flex-grow flex flex-col items-center justify-center px-6 bg-white">
         {/* About Section */}
-        <section className="flex flex-col items-center w-full px-6 text-black py-16">
-          <div className="w-full flex justify-center text-center">
-            <div>
-              <h2 className="text-3xl font-bold mt-4 mb-6 leading-tight">
+        <section className="flex flex-col lg:flex-row items-center justify-center w-full px-6 text-black py-24">
+          <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl w-full gap-16">
+            {/* 텍스트 컨텐츠 */}
+            <div className="lg:w-1/2 w-full text-left">
+              <h2 className="text-4xl font-extrabold mt-4 mb-6 leading-relaxed">
                 소비자를 위한 <br /> 착한가격 업소 가이드
               </h2>
-              <hr className="border-blue-500 w-[10%] mx-auto align-middle mb-7" />
-              <p className="mb-6 text-lg text-gray-700">
+              <hr className="border-blue-500 w-16 mb-7" />
+              <p className="mb-6 text-lg text-gray-700 leading-relaxed">
                 정부와 지방자치단체가 지정한 물가안정 모범업소로 소비자에게{" "}
                 <br />
                 저렴한 가격과 우수한 서비스를 제공합니다.
               </p>
+
+              {/* CTA 버튼 */}
+              <div className="mt-6">
+                <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-md hover:bg-blue-700 transition">
+                  착한가격 업소 찾기
+                </button>
+              </div>
+
+              {/* 통계 정보 */}
+              <div className="mt-10 flex flex-wrap gap-6">
+                <div className="p-6 bg-gray-100 rounded-lg shadow-md text-center">
+                  <h3 className="text-3xl font-bold text-blue-600">5,000+</h3>
+                  <p className="text-gray-700 text-sm">전국 업소 수</p>
+                </div>
+                <div className="p-6 bg-gray-100 rounded-lg shadow-md text-center">
+                  <h3 className="text-3xl font-bold text-blue-600">90%</h3>
+                  <p className="text-gray-700 text-sm">소비자 만족도</p>
+                </div>
+                <div className="p-6 bg-gray-100 rounded-lg shadow-md text-center">
+                  <h3 className="text-3xl font-bold text-blue-600">200+</h3>
+                  <p className="text-gray-700 text-sm">지정된 지역</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="w-full flex justify-center mt-8">
-            <img
-              src={HmImg0}
-              alt="About"
-              className="w-full max-w-[705px] rounded-none transform transition duration-500 hover:scale-105"
-            />
+
+            {/* 이미지 */}
+            <div className="lg:w-1/2 w-full flex justify-center lg:justify-end">
+              <img
+                src={HmImg0}
+                alt="About"
+                className="w-full max-w-[480px] rounded-lg drop-shadow-lg transform transition duration-500 hover:scale-105"
+              />
+            </div>
           </div>
         </section>
 
