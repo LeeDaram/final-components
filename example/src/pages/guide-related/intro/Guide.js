@@ -38,7 +38,7 @@ const GuideContent = ({ data }) => {
   return (
     <div
       id={id}
-      className="p-6 border-4 border-blue-400 rounded-xl bg-white flex flex-col justify-center min-h-[300px] w-[1000px]" // 🔹 너비 고정
+      className="p-6 border-4 border-blue-400 rounded-xl bg-white flex flex-col justify-center min-h-[300px] w-[1000px]"
     >
       <div className="text-left">
         <div className="flex items-center mb-3">
@@ -111,9 +111,9 @@ const Guide = () => {
     <div className="bg-white min-h-screen w-full flex flex-col items-center">
       <HeroSection />
 
-      <div className="w-full max-w-screen-2xl p-6 flex flex-wrap">
+      <div className="w-full max-w-screen-2xl p-7 flex flex-wrap">
         <div
-          className="w-1/4 pr-6 sticky top-8 self-start"
+          className="w-1/6 ml-[1px] pr-0 sticky top-8 self-start"
           style={{
             maxHeight: "calc(100vh - 100px)",
             overflowY: "auto",
@@ -145,52 +145,95 @@ const Guide = () => {
           </ul>
         </div>
 
+        {/*
+         */}
         <div className="w-[70%]">
           {GUIDE_SUBJECTS.map((text, index) => (
-            <div
-              key={text}
-              ref={(el) => (sectionRefs.current[index] = el)}
-              data-index={index}
-              className="flex flex-row justify-center items-center min-h-[400px] max-w-[1000px] w-full mx-auto gap-x-8 mt-[100px]"
-            >
-              {data && (
-                <>
-                  {data[index]?.imageUrl && (
-                    <img
-                      src={data[index].imageUrl}
-                      alt={`Guide ${index}`}
-                      className="w-[400px] h-auto rounded-lg"
-                      onError={(e) =>
-                        (e.target.src =
-                          "http://localhost:8080/uploads/default.png")
-                      }
-                    />
-                  )}
-                  <GuideContent data={data[index]} />
-                </>
+            <React.Fragment key={text}>
+              <div
+                ref={(el) => (sectionRefs.current[index] = el)}
+                data-index={index}
+                className="flex flex-row justify-center items-center min-h-[400px] max-w-[1000px] w-full mx-auto gap-x-8"
+              >
+                {data && (
+                  <>
+                    {data[index]?.imageUrl && (
+                      <img
+                        src={data[index].imageUrl}
+                        alt={`Guide ${index}`}
+                        className="w-[400px] h-auto rounded-lg"
+                        onError={(e) =>
+                          (e.target.src =
+                            "http://localhost:8080/uploads/default.png")
+                        }
+                      />
+                    )}
+                    <GuideContent data={data[index]} />
+                  </>
+                )}
+              </div>
+
+              {/* 🔹 검색 가이드, 리뷰 가이드, 공지사항 사이에 구분선 추가 */}
+              {index < GUIDE_SUBJECTS.length - 1 && (
+                <hr className="border-gray-300 my-16 w-full max-w-[1000px] mx-auto" />
               )}
-            </div>
+            </React.Fragment>
           ))}
         </div>
       </div>
 
+      {/* 🔹 FAQ & 모달 섹션 */}
+      <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg mt-16">
+        <div className="relative mt-12 p-6 border border-gray-300 rounded-lg bg-white">
+          <p className="text-gray-800 text-lg font-semibold">
+            착한가격업소, 무엇이 더 궁금하신가요?
+          </p>
+          <p className="text-gray-500 text-sm mt-4">
+            전화상담을 원할 시 010-1111-1111으로 연락주세요.
+          </p>
+          <div className="flex justify-center space-x-6 mt-8">
+            {[
+              { id: "helpModal", icon: "❓", label: "도움말" },
+              { id: "videoModal", icon: "▶️", label: "영상보기" },
+              { id: "snsModal", icon: "📷", label: "SNS" },
+            ].map(({ id, icon, label }) => (
+              <button
+                key={id}
+                onClick={() =>
+                  id === "videoModal"
+                    ? window.open("https://www.youtube.com", "_blank")
+                    : openModal(id)
+                }
+                className="flex items-center border border-gray-300 rounded-md px-6 py-3"
+              >
+                <span className="text-black text-lg">{icon}</span>
+                <span className="ml-4 text-gray-700">{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 🔹 모달 창 */}
       {modal && modal !== "videoModal" && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold mb-4">
               {modal === "helpModal" ? "도움말" : "SNS"}
             </h2>
             <p className="text-gray-600 mt-4">
               {modal === "helpModal"
-                ? "이곳에서 정보를 확인하세요."
-                : "SNS 소식을 확인하세요."}
+                ? "이곳에서 착한가격업소에 대한 정보를 확인하세요."
+                : "착한가격업소 관련 SNS 소식을 확인하세요."}
             </p>
-            <button
-              onClick={closeModal}
-              className="px-6 py-3 bg-gray-300 rounded-md"
-            >
-              닫기
-            </button>
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={closeModal}
+                className="px-6 py-3 bg-gray-300 rounded-md"
+              >
+                닫기
+              </button>
+            </div>
           </div>
         </div>
       )}
