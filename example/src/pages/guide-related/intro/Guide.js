@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
+// import { LuGuitar } from "react-icons/lu";
 import axios from "axios";
 import Banner from "../../../assets/images/Guide/Guide4.jpg";
 
@@ -16,7 +17,7 @@ const ICONS = [
   <CiSearch size={30} key="search" />,
   <IoDocuments size={30} key="docs" />,
   <HiMiniPencil size={30} key="pencil" />,
-  <HiMiniPencil size={30} key="pencil" />,
+  // <LuGuitar size={30} key="LuGuitar" />,
 ];
 
 const HeroSection = () => {
