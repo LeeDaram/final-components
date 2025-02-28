@@ -3,27 +3,50 @@ import { CiSearch } from "react-icons/ci";
 import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
 import axios from "axios";
+import Banner from "../../../assets/images/Guide/Guide4.jpg";
 
-const GUIDE_SUBJECTS = ["검색 가이드", "리뷰 가이드", "공지사항"];
+const GUIDE_SUBJECTS = [
+  "검색 가이드",
+  "리뷰 가이드",
+  "공지사항",
+  "기타 질문사항",
+];
 
 const ICONS = [
   <CiSearch size={30} key="search" />,
   <IoDocuments size={30} key="docs" />,
   <HiMiniPencil size={30} key="pencil" />,
+  <HiMiniPencil size={30} key="pencil" />,
 ];
 
 const HeroSection = () => {
   return (
-    <div className="w-screen bg-blue-600 py-14 flex flex-col items-center text-center">
-      <h1 className="text-3xl md:text-4xl font-bold text-white">
-        착한가격업소에 온걸 환영합니다!
-      </h1>
-      <p className="mt-4 text-lg text-white max-w-2xl">
-        이 페이지는 이용자 가이드 페이지입니다.
-      </p>
-      <button className="mt-6 px-6 py-3 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-white-600 transition">
-        기능 살펴보기
-      </button>
+    <div className="w-full bg-blue-500 py-14 flex justify-center px-6">
+      <div className="flex flex-col md:flex-row items-center max-w-5xl w-full">
+        {/* 왼쪽 텍스트 영역 */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2">
+          <h3 className="text-3xl md:text-3xl font-bold">
+            착한가격업소에 온걸 환영합니다!
+          </h3>
+          <p className="mt-4 text-lg max-w-lg">
+            이 페이지는 이용자 가이드 페이지입니다. 이 페이지는 이용자 가이드
+            페이지입니다. 이 페이지는 이용자 가이드 페이지입니다.
+          </p>
+
+          <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition">
+            기능 살펴보기
+          </button>
+        </div>
+
+        {/* 오른쪽 이미지 영역 */}
+        <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center">
+          <img
+            src={Banner}
+            alt="Guide"
+            className="w-64 md:w-80 object-cover rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
     </div>
   );
 };
@@ -38,16 +61,21 @@ const GuideContent = ({ data }) => {
   return (
     <div
       id={id}
-      className="p-6 border-4 border-blue-400 rounded-xl bg-white flex flex-col justify-center min-h-[300px] w-[1000px]"
+      className="p-6  bg-white flex flex-col justify-center min-h-[300px] w-[1000px]"
     >
-      <div className="text-left">
-        <div className="flex items-center mb-3">
+      <div className="">
+        <div className="flex items-left mb-3 ">
           {icon}
-          <h4 className="text-2xl font-bold ml-2">{title}</h4>
+          <h4 className="text-3xl font-bold text-gray-900 text-left pl-3  ">
+            {title}
+          </h4>
         </div>
-        <hr className="border-gray-300 mb-3 w-full" />
-        <h3 className="text-lg font-semibold mb-3">{subtitle}</h3>
-        <p className="text-base text-gray-600 leading-relaxed">{description}</p>
+        <h3 className="text-xl font-semibold text-black text-left">
+          {subtitle}
+        </h3>
+        <p className="text-base text-gray-600 leading-relaxed text-left ">
+          {description}
+        </p>
       </div>
     </div>
   );
@@ -113,7 +141,7 @@ const Guide = () => {
 
       <div className="w-full max-w-screen-2xl p-7 flex flex-wrap">
         <div
-          className="w-1/6 ml-[1px] pr-0 sticky top-8 self-start"
+          className="w-1/4 sticky top-8 self-start bg-white p-4 rounded-lg "
           style={{
             maxHeight: "calc(100vh - 100px)",
             overflowY: "auto",
@@ -123,7 +151,11 @@ const Guide = () => {
             {GUIDE_SUBJECTS.map((text, index) => (
               <li
                 key={text}
-                className="flex items-center gap-x-2 cursor-pointer p-3 rounded-lg transition-all duration-300"
+                className={`flex items-center gap-x-4 cursor-pointer p-4 rounded-lg transition-all duration-300 ${
+                  activeIndex === index
+                    ? "bg-blue-500 text-white "
+                    : "hover:bg-white text-gray-800"
+                }`}
                 onClick={() => {
                   setActiveIndex(index);
                   sectionRefs.current[index].scrollIntoView({
@@ -132,14 +164,10 @@ const Guide = () => {
                   });
                 }}
               >
-                <span
-                  className={`w-12 h-12 flex items-center justify-center rounded-full font-bold border border-black ${
-                    activeIndex === index && "bg-blue-500 text-white"
-                  }`}
-                >
-                  {index + 1}
+                <span className="w-10 h-10 flex items-center justify-center rounded-full font-bold">
+                  {ICONS[index]}
                 </span>
-                <span className="text-lg font-semibold pl-4">{text}</span>
+                <span className="text-lg font-semibold">{text}</span>
               </li>
             ))}
           </ul>
