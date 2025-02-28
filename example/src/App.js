@@ -9,6 +9,7 @@ import Features from "./pages/Features";
 import Login from "./pages/login-related/Login";
 import Join from "./pages/login-related/Join";
 import Store from "./pages/find-related/store";
+import StoreDetail from "./components/ui/StoreDetail";
 // import Header from "./pages/Header";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
@@ -30,6 +31,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
             <Route path="/find/map" element={<Store />} />
+            <Route path="/find/map/:storeName" element={<StoreDetail />} />
           </Routes>
         </main>
       </div>

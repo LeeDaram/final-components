@@ -34,7 +34,7 @@ function Store() {
   const [selectSido, setSelectSido] = useState(6); // 선택된 시도
 
   const [sigungu, setSigungu] = useState([]); // 시군구
-  const [selectSigungu, setSelectSigungu] = useState(67); // 선택된 시군구
+  const [selectSigungu, setSelectSigungu] = useState(0); // 선택된 시군구
 
   const [industry, setIndustry] = useState([]); // 업종
   const [selectIndustry, setSelectIndustry] = useState([]); // 선택된 업종
@@ -199,6 +199,11 @@ function Store() {
     });
   };
 
+  useEffect(() => {
+    console.log("선택된 시도", selectSido);
+    console.log("선택된 시군구", selectSigungu);
+  }, [selectSido, selectSigungu]);
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSearchClick(); // 검색 실행
@@ -236,8 +241,8 @@ function Store() {
             <label className="font-bold mr-2">시군구</label>
             <select
               className="border border-gray-400 px-4 py-2 rounded-md text-center sm:w-64 md:w-80 lg:w-96"
-              value={selectSigungu}
-              onChange={(e) => setSelectSigungu(e.target.value)}
+              // value={selectSigungu}
+              // onChange={(e) => setSelectSigungu(e.target.value)}
             >
               <option value="">전체</option>
               {filterSigungu.map((value) => (
@@ -356,7 +361,7 @@ function Store() {
         {/* 업소 목록 */}
         {isLoading ? (
           <div className="text-center py-6 font-bold text-gray-600">
-            Loading...
+            <span class="loading loading-spinner loading-lg"></span>
           </div>
         ) : (
           <div className="grid grid-cols-4 gap-6 p-6">
@@ -366,7 +371,7 @@ function Store() {
               ))
             ) : (
               <div className="col-span-4 text-center text-gray-500">
-                데이터가 없습니다.
+                <span class="loading loading-spinner loading-lg"></span>
               </div>
             )}
           </div>

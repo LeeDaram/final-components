@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Phone, Banknote } from "lucide-react";
 import { FaStar } from "react-icons/fa6";
+import StoreDetail from "./ui/StoreDetail";
+import { useNavigate } from "react-router-dom";
 
 function StoreComponent({ data }) {
+  const [isAdding, setIsAdding] = useState(false); // 새페이지
+  const navigate = useNavigate();
+
+  // 팝업창 클릭
+  const handleStoreDetail = () => {
+    navigate(`/find/map/${encodeURIComponent(data.storeName)}`, {
+      state: { storeData: data },
+    });
+  };
+
   return (
-    <div className="w-80 min-h-72 border rounded-lg shadow-lg overflow-hidden p-4 bg-white flex flex-col">
+    <div
+      className="w-80 min-h-72 border rounded-lg shadow-lg overflow-hidden p-4 bg-white flex flex-col cursor-pointer"
+      onClick={() => handleStoreDetail()}
+    >
       <div className="w-full h-48 bg-gray-300 flex items-center justify-center text-lg font-bold text-gray-700">
         <img
           src={data.storeImage}
@@ -43,6 +58,7 @@ function StoreComponent({ data }) {
           </div>
         </div>
       </div>
+      {isAdding && <StoreDetail data={data} />}
     </div>
   );
 }
