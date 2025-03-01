@@ -16,7 +16,18 @@ import BusinessForm from './pages/login-related/businessForm';
 import FindUserId from './pages/login-related/findUserId';
 import FindUserPassword from './pages/login-related/findUserPassword';
 import { AuthProvider } from './pages/login-related/AuthContext';
-import UserAccount from './pages/mypage-related/user/userAccount';
+import UserAccount from './pages/mypage-related/commonness/userAccount';
+import UserPassword from './pages/mypage-related/commonness/userPassword';
+import UserDelete from './pages/mypage-related/commonness/userDelete';
+import UserReviews from './pages/mypage-related/user/userReviews';
+import UserReservations from './pages/mypage-related/user/userReservations';
+import BusinessApply from './pages/mypage-related/business/businessApply';
+import BusinessRegister from './pages/mypage-related/business/businessRegister';
+import ApplyStatus from './pages/mypage-related/business/applyStatus';
+import BusinessEdit from './pages/mypage-related/business/businessEdit';
+import BusinessReservations from './pages/mypage-related/business/businessReservations';
+import AdminApproval from './pages/mypage-related/admin/adminApproval';
+import AdminDashboard from './pages/mypage-related/admin/adminDashboard';
 
 function App() {
     return (
@@ -39,7 +50,18 @@ function App() {
                             <Route path="/business-form" element={<BusinessForm />} />
                             <Route path="/find-id" element={<FindUserId />} />
                             <Route path="/find-password" element={<FindUserPassword />} />
-                            <Route path="/userAccount" element={<UserAccount />} />
+                            <Route path="/mypage/update/info" element={<UserAccount />} />
+                            <Route path="/mypage/update/password" element={<UserPassword />} />
+                            <Route path="/mypage/delete/account" element={<UserDelete />} />
+                            <Route path="/mypage/reviews" element={<UserReviews />} />
+                            <Route path="/mypage/reservations" element={<UserReservations />} />
+                            <Route path="/mypage/business/apply" element={<BusinessApply />} />
+                            <Route path="/mypage/business/register" element={<BusinessRegister />} />
+                            <Route path="/mypage/business/apply-status" element={<ApplyStatus />} />
+                            <Route path="/mypage/business/update-info" element={<BusinessEdit />} />
+                            <Route path="/mypage/business/reservations" element={<BusinessReservations />} />
+                            <Route path="/mypage/admin/approval" element={<AdminApproval />} />
+                            <Route path="/mypage/admin/dashboard" element={<AdminDashboard />} />
                         </Routes>
                     </main>
                 </div>

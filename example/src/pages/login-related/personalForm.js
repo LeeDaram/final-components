@@ -260,7 +260,7 @@ function PersonalForm() {
 
         // 비밀번호 확인
         if (!formData.confirmPassword) {
-            errors.confirmPassword = '비밀번호확인을 입력해주세요요';
+            errors.confirmPassword = '비밀번호확인을 입력해주세요';
         } else if (formData.userPassword !== formData.confirmPassword) {
             errors.confirmPassword = '비밀번호가 일치하지 않습니다';
         }
@@ -273,7 +273,9 @@ function PersonalForm() {
         // 생일
         const today = new Date().setHours(0, 0, 0, 0);
         const selectedDate = new Date(formData.userBirth).setHours(0, 0, 0, 0);
-        if (formData.userBirth && !birthRegex.test(formData.userBirth)) {
+        if (!formData.userBirth) {
+            errors.userBirth = '생년월일을 입력해주세요요';
+        } else if (formData.userBirth && !birthRegex.test(formData.userBirth)) {
             errors.userBirth = '생년월일은 YYYY-MM-DD 형식이어야 합니다';
         } else if (selectedDate > today) {
             errors.userBirth = '생년월일은 오늘 날짜 이전이어야 합니다.';
@@ -319,12 +321,10 @@ function PersonalForm() {
                 password: formData.userPassword,
                 name: formData.userName,
                 email: formData.userEmail,
+                birthDate: formData.userBirth,
                 isAgree: optionalTerms,
             };
 
-            if (formData.userBirth) {
-                bodyData.birthDate = formData.userBirth;
-            }
             if (formData.userPhone) {
                 bodyData.phoneNumber = formData.userPhone;
             }
@@ -444,7 +444,7 @@ function PersonalForm() {
                 {/* 생년월일 */}
                 <div className="relative mb-3">
                     <label className="label label-text text-base font-semibold" htmlFor="userBirth">
-                        생년월일
+                        생년월일<span className="text-red-500">*</span>
                     </label>
                     <input
                         type="date"

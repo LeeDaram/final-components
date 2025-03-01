@@ -47,7 +47,12 @@ export const AuthProvider = ({ children }) => {
             const decoded = jwtDecode(data.token);
 
             if (data) {
-                login(data.token, { id: decoded.sub, name: decoded.name, role: decoded.authorities });
+                login(data.token, {
+                    id: decoded.sub,
+                    name: decoded.name,
+                    role: decoded.authorities,
+                    loginType: decoded.loginType,
+                });
                 navigate('/');
             }
         } catch (error) {

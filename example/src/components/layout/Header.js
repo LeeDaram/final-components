@@ -89,7 +89,7 @@ function Header() {
             title: '마이페이지',
             link: '/team',
             subMenu: [
-                { title: '내 정보', link: '/mypage/info' },
+                { title: '내 정보', link: '/mypage/update/info' },
                 ...(userRole === 'user'
                     ? [
                           { title: '내가 쓴 후기', link: '/mypage/user/review' },
@@ -260,7 +260,7 @@ function Header() {
                                                 </div>
                                             </li>
                                             <li>
-                                                <a className="dropdown-item" href="#">
+                                                <a className="dropdown-item" href="/mypage/update/info">
                                                     마이페이지
                                                 </a>
                                             </li>

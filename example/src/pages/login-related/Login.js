@@ -44,7 +44,12 @@ function Login() {
 
             const data = await response.json();
             const decoded = jwtDecode(data.token);
-            login(data.token, { id: decoded.sub, name: decoded.name, role: decoded.authorities });
+            login(data.token, {
+                id: decoded.sub,
+                name: decoded.name,
+                role: decoded.authorities,
+                loginType: decoded.loginType,
+            });
 
             navigate('/');
         } catch (error) {
