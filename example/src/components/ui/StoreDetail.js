@@ -2,12 +2,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { TfiWrite } from "react-icons/tfi"; // 주요정보 아이콘
 import { GrMoney } from "react-icons/gr"; // 품목(가격) 아이콘
-import { FaCarSide, FaWifi } from "react-icons/fa"; // 자동차 아이콘, 와이파이 배달 아이콘
+import { FaCarSide, FaWifi, FaRegSmile } from "react-icons/fa"; // 자동차, 와이파이 배달, 총 평점 아이콘
 import {
   MdOutlineTakeoutDining,
   MdOutlineDeliveryDining,
 } from "react-icons/md"; // 포장 아이콘, 배달 아이콘
 import { FaDog, FaBaby } from "react-icons/fa6"; // 반려동물 아이콘, 유아시설 아이콘
+import { CiImageOn } from "react-icons/ci";
+
+// 카카오맵 SDK
+import {
+  Map,
+  MapMarker,
+  ZoomControl,
+  MapTypeControl,
+} from "react-kakao-maps-sdk";
 
 // material ui
 import Rating from "@mui/material/Rating";
@@ -19,6 +28,18 @@ const StoreDetail = () => {
   const store = state?.storeData; // 데이터 없을 경우 예외처리
   const [modalOn, setModalOn] = useState(false); // 모달창 표시
   const modalBackground = useRef(); // 콘텐츠 바깥 클릭 시 닫히게
+  const [images, setImages] = useState([]); // 업로드된 이미지 상태
+  const fileInputRef = useRef(null); // 파일 업로드 input 참조
+  const [rating, setRating] = useState(1); // 별점
+  const menu = useRef(null); // 이용메뉴
+  const cost = useRef(null); // 가격
+  const review = useRef(null); // 리뷰
+
+  const [isSdkLoaded, setIsSdkLoaded] = useState(false); // SDK 로드 상태
+  const storeCoord = {
+    lat: store.lat,
+    lng: store.lng,
+  };
 
   // 체크박스 옵션(나중에 filterChecking에 업뎃해줘야됨)
   const filterCheckboxes = [
@@ -34,10 +55,60 @@ const StoreDetail = () => {
     { icon: <FaBaby />, name: "유아시설", checking: store.kid },
   ];
 
+  const allFalse = filterCheckboxes.every((item) => item.checking === "F");
+  const result = allFalse ? true : false;
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_KEY}&libraries=clusterer&autoload=false`; // 📌 `libraries=clusterer` 추가
+    script.async = true;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        console.log("카카오맵 SDK 로드 완료");
+        setIsSdkLoaded(true); // SDK가 로드되면 true로 변경
+      });
+    };
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  // SDK가 로드되지 않으면 스피너 표시
+  if (!isSdkLoaded) {
+    return <span class="loading loading-spinner loading-lg" />;
+  }
+
   // 데이터 없을경우 화면 처리
   if (!store) return <span class="loading loading-spinner loading-lg"></span>;
 
   console.log(store);
+
+  // 파일 업로드 핸들러
+  const handlePhoto = (event) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const newImages = [
+      ...images,
+      ...Array.from(files).map((file) => URL.createObjectURL(file)),
+    ];
+
+    setImages(newImages);
+  };
+
+  // 사진 업로드 버튼 클릭
+  const triggerFileUpload = () => {
+    fileInputRef.current.click();
+  };
+
+  // 저장 버튼
+  const handleSubmit = () => {
+    console.log("메뉴확인", menu.current.value);
+    console.log("가격확인", cost.current.value);
+    console.log("리뷰확인", review.current.value);
+    setModalOn(false);
+  };
 
   return (
     <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
@@ -104,31 +175,58 @@ const StoreDetail = () => {
       </div>
 
       {/* 편의시설 및 카카오맵 */}
-      <div className="w-full h-full">
+      <div className="w-full h-36">
         {/* 편의시설 목록 */}
-        <div className="flex gap-4 mt-4 w-full h-full">
-          {filterCheckboxes
-            .filter((item) => item.checking === "T")
-            .map((item) => (
-              <div
-                key={item.name}
-                className="flex flex-col items-start text-sm w-1/2 h-1/2"
-              >
-                <div className="flex items-center justify-center bg-gray-300 w-12 h-12 rounded-full text-2xl">
-                  {item.icon}
+        <div className="flex gap-4 mt-4 w-full h-1/2">
+          {/*  */}
+          {result ? (
+            <div className="w-1/2">등록된 편의시설이 없습니다.</div>
+          ) : (
+            filterCheckboxes
+              .filter((item) => item.checking === "T")
+              .map((item) => (
+                <div
+                  key={item.name}
+                  className="flex flex-col items-start text-sm w-1/2 h-1/2"
+                >
+                  <div className="flex items-center justify-center bg-gray-300 w-12 h-12 rounded-full text-2xl">
+                    {item.icon}
+                  </div>
+                  <p className="mt-1">{item.name}</p>
                 </div>
-                <p className="mt-1">{item.name}</p>
-              </div>
-            ))}
+              ))
+          )}
           {/* 카카오 맵 */}
-          <div className="flex justify-around mt-4 w-1/2 h-1/2 bg-black"></div>
+          <div className="w-1/2">
+            <Map
+              center={storeCoord}
+              style={{ width: "100%", height: "140px" }}
+              className=""
+              level={3} // 지도 확대 레벨
+            >
+              {/* 줌 컨트롤러 추가 */}
+              {/* <ZoomControl position={"RIGHT"} /> */}
+
+              {/* 지도 타입 컨트롤러 추가 */}
+              {/* <MapTypeControl position={"TOPRIGHT"} /> */}
+
+              {/* 기준좌표 마커 */}
+              <MapMarker
+                position={storeCoord}
+                image={{
+                  src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+                  size: { width: 30, height: 35 },
+                }}
+              />
+            </Map>
+          </div>
         </div>
 
-        <div className=" w-1/2 border-t pt-4"></div>
+        <div className=" w-1/2 border-t pt-4 mt-2"></div>
 
         {/* 이용후기 모달 */}
         <button
-          className="w-1/2 h-1/2 border border-blue-500 bg-white text-blue-500 rounded-lg text-lg"
+          className="w-1/2 h-9 border border-blue-500 bg-white text-blue-500 rounded-lg text-lg"
           onClick={() => setModalOn(true)}
         >
           이용후기 작성하기
@@ -137,9 +235,8 @@ const StoreDetail = () => {
         {modalOn && (
           <div
             ref={modalBackground}
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
             onClick={(e) => {
-              // 클릭한 대상이 모달 배경(div) 자체라면 모달을 닫음
               if (e.target === modalBackground.current) {
                 setModalOn(false);
               }
@@ -148,19 +245,87 @@ const StoreDetail = () => {
             {/* 모달 내용 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <h2 className="text-2xl font-bold mb-4 ">이용후기</h2>
-              {/* 리뷰 작성 폼 등이 들어갈 수 있음 */}
-              <p className="text-blue-500 text-xl">별점</p>
-              <Rating name="size-medium" defaultValue={0} />
-              <div className="flex gap-2 mt-4">
+              {/* 별점*/}
+              <p className="text-blue-500 text-xl ">별점</p>
+              <Rating name="size-medium" defaultValue={1} />
+              {/* 사진 */}
+              <p className="text-blue-500 text-xl mt-4">사진</p>
+              <div className="flex items-center gap-3">
+                {/* 아이콘 클릭시 사진 업로드 실행 */}
+                <CiImageOn
+                  className="cursor-pointer"
+                  size={40}
+                  onClick={() => triggerFileUpload()}
+                />
+                {/* 숨겨진 파일 업로드 */}
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handlePhoto}
+                  className="hidden"
+                />
+
+                {/* 업로드된 이미지 미리보기 */}
+                <div className="flex items-center gap-2">
+                  {images.slice(0, 2).map((src, index) => (
+                    <img
+                      key={index}
+                      src={src}
+                      alt={`업로드된 이미지 ${index + 1}`}
+                      className="w-10 h-10 object-cover border rounded"
+                    />
+                  ))}
+
+                  {/* 추가된 이미지 개수 표시 */}
+                  {images.length > 2 && (
+                    <p className="text-base font-bold">+{images.length - 2}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* 이용메뉴 */}
+              <div className="flex w-full">
+                <div className="flex flex-col w-28 mr-3">
+                  <p className="w-full text-blue-500 text-xl mt-4">이용메뉴</p>
+                  <input
+                    type="text"
+                    className="w-full border border-blue-500 rounded"
+                    ref={menu}
+                  />
+                </div>
+                {/* 가격 */}
+                <div className="flex flex-col w-28">
+                  <p className="w-full text-blue-500 text-xl mt-4">가격</p>
+                  <div className="flex items-center border border-blue-500 rounded px-2">
+                    <input
+                      type="number"
+                      className="w-full border-none outline-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+                      ref={cost}
+                    />
+                    <span className="ml-2 text-gray-500">원</span>
+                  </div>
+                </div>
+              </div>
+              {/* 후기작성 */}
+              <p className="w-full text-blue-500 text-xl mt-4">후기작성</p>
+              <input
+                type="text"
+                className="w-full border border-blue-500 rounded"
+                ref={review}
+              />
+
+              <div className="w-full flex justify-between mt-3">
                 <button
-                  className="px-3 py-1 border border-blue-500 bg-white text-blue-500 rounded"
+                  className="w-1/2 px-3 py-1 border border-blue-500 bg-white text-blue-500 rounded"
                   onClick={() => setModalOn(false)}
                 >
                   닫기
                 </button>
                 <button
-                  className="px-3 py-1 bg-blue-500 text-white rounded"
-                  onClick={() => setModalOn(false)}
+                  className="w-1/2 px-3 py-1 bg-blue-500 text-white rounded mx-2"
+                  onClick={handleSubmit}
                 >
                   작성
                 </button>
@@ -168,18 +333,35 @@ const StoreDetail = () => {
             </div>
           </div>
         )}
-
         <div className="mt-4 border-t pt-4"></div>
       </div>
-      {/* 평점 */}
-      <div className="mt-6">
-        <p className="text-lg font-bold text-gray-800 flex items-center">
-          😊 총 리뷰수{" "}
-          <span className="ml-2 text-xl text-blue-500">4.93점</span>
-        </p>
-        <div className="flex mt-2 space-x-2 text-sm">
-          <span className="text-yellow-500">⭐⭐⭐⭐⭐</span>
-          <p className="text-gray-500">85%가 긍정적(파이썬)</p>
+
+      {/* 업소 평점 */}
+      <div className="flex w-full mt-6">
+        {/* 아이콘 및 퍼센트 비율 */}
+        <div className="w-1/2 flex flex-col items-center">
+          <p className="text-lg font-bold text-gray-800 flex items-center">
+            <FaRegSmile className="size-15" />
+          </p>
+          <div className="flex mt-2 space-x-2 font-medium">
+            <p className="text-gray-500">
+              전체후기의{" "}
+              <span className="text-blue-500">85%가 긍정적(파이썬)</span>
+            </p>
+          </div>
+        </div>
+        <div className="ml-4 border-l h-20"></div>
+        {/* 총 평점 */}
+        <div className="w-1/2 flex flex-col items-center">
+          <p className="text-sm font-bold text-gray-800 flex items-center">
+            총 리뷰수
+          </p>
+          <div className="flex mt-2 space-x-2 font-medium">
+            <p className="text-gray-500">
+              전체후기의{" "}
+              <span className="text-blue-500">85%가 긍정적(파이썬)</span>
+            </p>
+          </div>
         </div>
       </div>
 

@@ -58,7 +58,7 @@ function StoreMap() {
     script.onload = () => {
       window.kakao.maps.load(() => {
         console.log("카카오맵 SDK 로드 완료");
-        setIsSdkLoaded(true); // SDK가 로드되면 true로 변경경
+        setIsSdkLoaded(true); // SDK가 로드되면 true로 변경
       });
     };
     document.head.appendChild(script);
