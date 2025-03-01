@@ -34,7 +34,7 @@ const Answer = () => {
             `http://localhost:8080/qna/main/${data.id}`
           );
           setEditingMain(res.data);
-          console.log(res.data, "@@@");
+          console.log(res.data, "@@@@@");
           // API가 answer 객체를 반환하면 배열에 담아 저장 (없으면 빈 배열)
           setComments(res.data.answers);
         }

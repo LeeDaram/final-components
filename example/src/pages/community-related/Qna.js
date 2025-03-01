@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
+import { handleEnterKey, handleEscKey } from "../../utils/Keydown";
 import axios from "axios";
 
 const QnaPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 13;
   const [qnas, setQnas] = useState([]);
+  const [searchQna, setSearchQna] = useState("");
 
   useEffect(() => {
     const getQnaData = async () => {
@@ -19,6 +21,22 @@ const QnaPage = () => {
     };
     getQnaData();
   }, []);
+
+  // 검색시 제목, 내용에 있는 거 검색어 일치하는거 가져오기기
+  const handleSearch = () => {
+    console.log("enterKeydown");
+    const getNoticeData = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/qna/main/search/${searchQna}`
+        );
+        setQnas(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getNoticeData();
+  };
 
   console.log(qnas);
 
@@ -43,8 +61,15 @@ const QnaPage = () => {
                 type="text"
                 placeholder="제목 또는 내용을 입력해주세요"
                 className="p-2 w-64 border-none outline-none bg-white"
+                onChange={(e) => setSearchQna(e.target.value)}
+                onKeyDown={(e) => handleEnterKey(e, handleSearch)}
               />
-              <button className="bg-black text-white px-4 py-2">검색</button>
+              <button
+                className="bg-black text-white px-4 py-2"
+                onClick={handleSearch}
+              >
+                검색
+              </button>
             </div>
           </div>
 

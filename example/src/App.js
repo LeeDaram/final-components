@@ -17,6 +17,7 @@ import Faq from "./pages/community-related/Faq";
 import Answer from "./components/community-related/Answer";
 import QnaPage from "./pages/community-related/Qna";
 import { CommuModal } from "./components/community-related/CommuModal";
+import FileUpload from "./pages/community-related/Mfiletest";
 function App() {
   return (
     <Router>
@@ -41,6 +42,7 @@ function App() {
             <Route path="/community-related/qna" element={<QnaPage />} />
             <Route path="/community-related/faq" element={<Faq />} />
             <Route path="/answer" element={<Answer />} />
+            <Route path="/file" element={<FileUpload />} />
           </Routes>
         </main>
       </div>
