@@ -2,15 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
-// import { LuGuitar } from "react-icons/lu";
 import axios from "axios";
 import Banner from "../../../assets/images/Guide/Guide4.jpg";
+import ImchatBot from "./imchat.js/Imchatbot";
 
 const GUIDE_SUBJECTS = [
-  "검색 가이드",
-  "리뷰 가이드",
   "공지사항",
-  "기타 질문사항",
+  "마이 페이지(사업자)",
+  "마이 페이지(관리자)",
+  "업소찾기",
+  "고객 관리",
+  "고객 예약 챗봇",
+  "사업자 회원가입",
 ];
 
 const ICONS = [
@@ -21,32 +24,63 @@ const ICONS = [
 ];
 
 const HeroSection = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const onOpenChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
   return (
-    <div className="w-full bg-blue-500 py-14 flex justify-center px-6">
-      <div className="flex flex-col md:flex-row items-center max-w-5xl w-full">
-        {/* 왼쪽 텍스트 영역 */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2">
+    <div className="w-full bg-blue-500 py-14 flex justify-center px-6 gap-20">
+      {/* 왼쪽 텍스트 영역 */}
+      <div className="flex justify-end flex-col md:flex-row items-center max-w-5xl w-1/2">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2 ">
           <h3 className="text-3xl md:text-3xl font-bold">
             착한가격업소에 온걸 환영합니다!
           </h3>
           <p className="mt-4 text-lg max-w-lg">
-            이 페이지는 이용자 가이드 페이지입니다. 이 페이지는 이용자 가이드
-            페이지입니다. 이 페이지는 이용자 가이드 페이지입니다.
+            이 페이지는 이용자 가이드 페이지입니다. 챗봇을 이용하여 다양한
+            기능을 알 수 있습니다. 또한 밑에 스크롤을 내려서 다양한 기능을 볼수
+            있습니다.
           </p>
 
-          <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition">
-            기능 살펴보기
+          {/* 🔹 챗봇 열기 버튼 */}
+          <button
+            className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition"
+            onClick={onOpenChat}
+          >
+            챗봇 열기
           </button>
-        </div>
 
-        {/* 오른쪽 이미지 영역 */}
-        <div className="mt-10 md:mt-0 md:w-1/2 flex justify-center">
-          <img
-            src={Banner}
-            alt="Guide"
-            className="w-64 md:w-80 object-cover rounded-lg shadow-lg"
-          />
+          {/* 챗봇 모달 */}
+          {isChatOpen && (
+            <div className="fixed top-56 left-[1550px] items-center flex justify-end z-50 mr-8">
+              <div className="bg-white rounded-lg shadow-lg w-80 h-[500px] flex flex-col">
+                <div className="p-4 flex justify-between border-b">
+                  <h2 className="text-lg font-semibold">챗봇</h2>
+                  <button
+                    onClick={() => setIsChatOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ✖
+                  </button>
+                </div>
+                <div className="flex-1">
+                  <ImchatBot />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* 오른쪽 이미지 영역 */}
+      <div className="mt-10 md:mt-0 md:w-1/2">
+        <img
+          src={Banner}
+          alt="Guide"
+          className="w-64 md:w-80 object-cover rounded-lg shadow-lg"
+        />
       </div>
     </div>
   );
@@ -137,24 +171,24 @@ const Guide = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen w-full flex flex-col items-center">
+    <div className="bg-white min-h-screen w-full flex flex-col items-center z-10">
       <HeroSection />
 
       <div className="w-full max-w-screen-2xl p-7 flex flex-wrap">
         <div
-          className="w-1/4 sticky top-8 self-start bg-white p-4 rounded-lg "
+          className="w-1/5 sticky top-8 self-start bg-blue-50 p-4 rounded-lg "
           style={{
             maxHeight: "calc(100vh - 100px)",
-            overflowY: "auto",
+            overflowY: "hidden",
           }}
         >
-          <ul className="space-y-40">
+          <ul className="space-y-10 overflow-y-hidden scrollbar-hide">
             {GUIDE_SUBJECTS.map((text, index) => (
               <li
                 key={text}
                 className={`flex items-center gap-x-4 cursor-pointer p-4 rounded-lg transition-all duration-300 ${
                   activeIndex === index
-                    ? "bg-blue-500 text-white "
+                    ? "bg-blue-500 text-white"
                     : "hover:bg-white text-gray-800"
                 }`}
                 onClick={() => {
@@ -193,7 +227,7 @@ const Guide = () => {
                         className="w-[400px] h-auto rounded-lg"
                         onError={(e) =>
                           (e.target.src =
-                            "http://localhost:8080/uploads/default.png")
+                            "http://localhost:8080/uploads/default.jpg")
                         }
                       />
                     )}
@@ -210,17 +244,50 @@ const Guide = () => {
           ))}
         </div>
       </div>
-
       {/* 🔹 FAQ & 모달 섹션 */}
-      <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg mt-16">
-        <div className="relative mt-12 p-6 border border-gray-300 rounded-lg bg-white">
-          <p className="text-gray-800 text-lg font-semibold">
+      <div className="w-full bg-white p-10 rounded-lg mt-16">
+        <div className="relative mt-12 p-8 border border-gray-300 rounded-lg bg-white w-full">
+          <p className="text-gray-800 text-xl font-semibold text-left">
             착한가격업소, 무엇이 더 궁금하신가요?
           </p>
-          <p className="text-gray-500 text-sm mt-4">
+          <p className="text-gray-500 text-base mt-4 text-left">
             전화상담을 원할 시 010-1111-1111으로 연락주세요.
           </p>
-          <div className="flex justify-center space-x-6 mt-8">
+        </div>
+      </div>
+
+      {/* 🔹 모달 창 */}
+      {modal && modal !== "videoModal" && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-10 rounded-lg shadow-lg w-[500px]">
+            <h2 className="text-xl font-semibold mb-6 text-center">
+              {modal === "helpModal" ? "도움말" : "SNS"}
+            </h2>
+            <p className="text-gray-600 text-center">
+              {modal === "helpModal"
+                ? "이곳에서 착한가격업소에 대한 정보를 확인하세요."
+                : "착한가격업소 관련 SNS 소식을 확인하세요."}
+            </p>
+            <div className="flex justify-center mt-10">
+              <button
+                onClick={closeModal}
+                className="px-8 py-4 bg-gray-300 rounded-lg text-lg"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+{
+  /* 버튼 그룹 (수평 정렬) */
+}
+{
+  /* <div className="flex flex-row justify-between items-center w-full max-wxl mx-auto mt-10">
             {[
               { id: "helpModal", icon: "❓", label: "도움말" },
               { id: "videoModal", icon: "▶️", label: "영상보기" },
@@ -233,41 +300,13 @@ const Guide = () => {
                     ? window.open("https://www.youtube.com", "_blank")
                     : openModal(id)
                 }
-                className="flex items-center border border-gray-300 rounded-md px-6 py-3"
+                className="flex flex-row items-center border border-gray-300 rounded-lg px-4 py-2 w-40 justify-center"
               >
-                <span className="text-black text-lg">{icon}</span>
-                <span className="ml-4 text-gray-700">{label}</span>
+                <span className="text-black text-xl">{icon}</span>
+                <span className="ml-2 text-gray-700 text-sm">{label}</span>
               </button>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 🔹 모달 창 */}
-      {modal && modal !== "videoModal" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm">
-            <h2 className="text-lg font-semibold mb-4">
-              {modal === "helpModal" ? "도움말" : "SNS"}
-            </h2>
-            <p className="text-gray-600 mt-4">
-              {modal === "helpModal"
-                ? "이곳에서 착한가격업소에 대한 정보를 확인하세요."
-                : "착한가격업소 관련 SNS 소식을 확인하세요."}
-            </p>
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={closeModal}
-                className="px-6 py-3 bg-gray-300 rounded-md"
-              >
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+          </div> */
+}
 
 export default Guide;

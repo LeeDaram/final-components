@@ -13,6 +13,8 @@ import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
 import Brand from "./pages/guide-related/intro/Brand";
 import Guide from "./pages/guide-related/intro/Guide";
+import Imchat from "./pages/guide-related/intro/imchat.js/Imchatbot";
+
 function App() {
   return (
     <Router>
@@ -31,6 +33,7 @@ function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/guide-related/intro/brand" element={<Brand />} />
             <Route path="/guide-related/intro/guide" element={<Guide />} />
+            <Route path="/chatbot" element={<Imchat />} />
           </Routes>
         </main>
       </div>

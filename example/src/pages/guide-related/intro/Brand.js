@@ -10,7 +10,7 @@ import n1 from "../../../assets/images/Brand/n1.png";
 import n2 from "../../../assets/images/Brand/n2.png";
 import n3 from "../../../assets/images/Brand/n3.png";
 
-const ValueAndGoal = () => {
+const Brand = () => {
   const [modal, setModal] = useState(null);
 
   // 📌 더미 데이터 (추후 API 연결 시 대체)
@@ -187,4 +187,4 @@ const ValueAndGoal = () => {
   );
 };
 
-export default ValueAndGoal;
+export default Brand;
