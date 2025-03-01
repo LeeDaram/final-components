@@ -1,104 +1,115 @@
 import Sidebar from '../sidebar.js';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../../pages/login-related/AuthContext';
 
-function UserReservations() {
-    const [activeTab, setActiveTab] = useState('예약중');
+function Useritems() {
+    const { user } = useAuth();
+    const [userId, setUserId] = useState('');
+    const [activate, setActivate] = useState([]);
+    const [activeTab, setActiveTab] = useState('future');
+
+    useEffect(() => {
+        if (user?.id) {
+            setUserId(user.id);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (userId) {
+            fetchUserActivatePeriod(activeTab);
+        }
+    }, [userId, activeTab]);
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
+    };
+
+    const fetchUserActivatePeriod = async (period) => {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+        };
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/api/mypage/activate/${userId}/filter?period=${period}`,
+                { headers }
+            );
+            if (!response.ok) throw new Error('예약 조회 실패');
+            const activateData = await response.json();
+            setActivate(activateData);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+    const handleDeleteActivate = async (activateId) => {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/mypage/activate/delete/${activateId}`, {
+                method: 'DELETE',
+                headers,
+            });
+            if (!response.ok) throw new Error('예약 삭제 실패');
+            setActivate((prev) => prev.filter((item) => item.activateId !== activateId));
+        } catch (error) {
+            console.error(error.message);
+        }
     };
 
     return (
         <div className="bg-white sm:p-6 dark:bg-gray-800">
             <div className="mx-auto max-w-screen-xl">
                 <div className="md:flex md:justify-between">
-                    {/* 좌측 - 사이드바 */}
                     <div className="w-1/4">
                         <Sidebar />
                     </div>
-
-                    {/* 우측 - 내용 */}
                     <div className="w-3/4 pl-10 pt-10 border-l border-gray-200">
                         <h2 className="text-2xl font-bold mb-6">예약 현황</h2>
-
-                        <nav
-                            className="tabs tabs-bordered"
-                            aria-label="Tabs"
-                            role="tablist"
-                            aria-orientation="horizontal"
-                        >
-                            <button
-                                type="button"
-                                className={`tab ${activeTab === '예약중' ? 'tab-active font-extrabold' : ''}`}
-                                onClick={() => handleTabClick('예약중')}
-                                role="tab"
-                                aria-selected={activeTab === '예약중'}
-                            >
-                                예약중
-                            </button>
-                            <button
-                                type="button"
-                                className={`tab ${activeTab === '지난예약' ? 'tab-active font-extrabold' : ''}`}
-                                onClick={() => handleTabClick('지난예약')}
-                                role="tab"
-                                aria-selected={activeTab === '지난예약'}
-                            >
-                                지난예약
-                            </button>
+                        <nav className="tabs tabs-bordered" aria-label="Tabs">
+                            {['future', 'past'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    className={`tab ${activeTab === tab ? 'tab-active font-extrabold' : ''}`}
+                                    onClick={() => handleTabClick(tab)}
+                                >
+                                    {tab === 'future' ? '예약중' : '지난예약'}
+                                </button>
+                            ))}
                         </nav>
-
                         <div className="mt-3">
-                            {activeTab === '예약중' && (
-                                <>
-                                    <div className="grid grid-cols-3 gap-4">
-                                        {[...Array(9)].map((_, index) => (
-                                            <div
-                                                key={index}
-                                                className="border rounded-lg p-6 hover:bg-blue-100 h-52 flex flex-col justify-between"
+                            <div className="grid grid-cols-3 gap-4">
+                                {activate.map((item) => (
+                                    <div
+                                        key={item.activateId}
+                                        className="border rounded-lg p-6 hover:bg-blue-100 h-52 flex flex-col justify-between"
+                                    >
+                                        <div>
+                                            <p className="font-semibold text-lg mb-2">{item.storeName}</p>
+                                            <p className="text-gray-500 mb-4">{item.activateDate}</p>
+                                        </div>
+                                        {activeTab === 'future' && (
+                                            <button
+                                                className="bg-blue-600 text-white p-2 rounded-lg w-full"
+                                                onClick={() => handleDeleteActivate(item.activateId)}
                                             >
-                                                <div>
-                                                    <p className="font-semibold text-lg mb-2">업소이름</p>
-                                                    <p className="text-gray-500 mb-4">2025년 03월 12일</p>
-                                                </div>
-                                                <button className="bg-blue-600 text-white p-2 rounded-lg w-full">
-                                                    예약취소
-                                                </button>
-                                            </div>
-                                        ))}
+                                                예약취소
+                                            </button>
+                                        )}
                                     </div>
-                                    {/* 페이징 처리 */}
-                                    <Stack spacing={2} className="mt-8" alignItems="center">
-                                        <Pagination count={10} color="primary" />
-                                    </Stack>
-                                </>
-                            )}
-
-                            {activeTab === '지난예약' && (
-                                <>
-                                    <div className="grid grid-cols-3 gap-4">
-                                        {[...Array(9)].map((_, index) => (
-                                            <div
-                                                key={index}
-                                                className="border rounded-lg p-6 hover:bg-blue-100 h-52 flex flex-col justify-between"
-                                            >
-                                                <div>
-                                                    <p className="font-semibold text-lg mb-2">업소이름</p>
-                                                    <p className="text-gray-500 mb-4">2025년 03월 12일</p>
-                                                </div>
-                                                <button className="bg-gray-300 text-white p-2 rounded-lg w-full">
-                                                    예약취소
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    {/* 페이징 처리 */}
-                                    <Stack spacing={2} className="mt-8" alignItems="center">
-                                        <Pagination count={10} color="primary" />
-                                    </Stack>
-                                </>
-                            )}
+                                ))}
+                            </div>
+                            <Stack spacing={2} className="mt-8" alignItems="center">
+                                <Pagination count={10} color="primary" />
+                            </Stack>
                         </div>
                     </div>
                 </div>
@@ -107,4 +118,4 @@ function UserReservations() {
     );
 }
 
-export default UserReservations;
+export default Useritems;

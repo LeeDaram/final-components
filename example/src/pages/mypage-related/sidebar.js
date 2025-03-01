@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../pages/login-related/AuthContext';
 
 function Sidebar() {
-    // 로그인, 로그아웃
+    // 유저정보
     const { user } = useAuth();
 
     // 권한 상태값
