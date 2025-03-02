@@ -108,7 +108,9 @@ const NoticePage = () => {
                   </Link>
                   <td className="p-3">관리자</td>
                   <td className="p-3 text-center">{notice.createdAt}</td>
-                  <td className="p-3 pl-8">{notice.attachment && "📂"}</td>
+                  <td className="p-3 pl-8">
+                    {notice.attachments[0].attachmentId == 0 ? null : "📂"}
+                  </td>
                   <td className="p-3">{notice.views}</td>
                 </tr>
               ))}

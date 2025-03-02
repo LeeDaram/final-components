@@ -18,6 +18,7 @@ import Answer from "./components/community-related/Answer";
 import QnaPage from "./pages/community-related/Qna";
 import { CommuModal } from "./components/community-related/CommuModal";
 import FileUpload from "./pages/community-related/Mfiletest";
+import Ocrtest from "./pages/community-related/Ocrtest";
 function App() {
   return (
     <Router>
@@ -43,6 +44,7 @@ function App() {
             <Route path="/community-related/faq" element={<Faq />} />
             <Route path="/answer" element={<Answer />} />
             <Route path="/file" element={<FileUpload />} />
+            <Route path="/ocr" element={<Ocrtest />} />
           </Routes>
         </main>
       </div>
