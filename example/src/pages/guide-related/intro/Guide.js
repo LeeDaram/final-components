@@ -5,6 +5,10 @@ import { HiMiniPencil } from "react-icons/hi2";
 import axios from "axios";
 import Banner from "../../../assets/images/Guide/Guide4.jpg";
 import ImchatBot from "./imchat.js/Imchatbot";
+import { AiFillBell } from "react-icons/ai";
+import { AiFillCheckCircle } from "react-icons/ai";
+import { AiFillBuild } from "react-icons/ai";
+import { AiFillBook } from "react-icons/ai";
 
 const GUIDE_SUBJECTS = [
   "공지사항",
@@ -20,8 +24,14 @@ const ICONS = [
   <CiSearch size={30} key="search" />,
   <IoDocuments size={30} key="docs" />,
   <HiMiniPencil size={30} key="pencil" />,
-  // <LuGuitar size={30} key="LuGuitar" />,
+  <AiFillBell size={30} key="bell" />,
+  <AiFillCheckCircle size={30} key="ci" />,
+  <AiFillBuild size={30} key="build" />,
+  <AiFillBook size={30} key="book" />,
 ];
+{
+  /*아이콘: 사이드바 추가하면 자동으로 추가됨 */
+}
 
 const HeroSection = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -282,31 +292,5 @@ const Guide = () => {
     </div>
   );
 };
-
-{
-  /* 버튼 그룹 (수평 정렬) */
-}
-{
-  /* <div className="flex flex-row justify-between items-center w-full max-wxl mx-auto mt-10">
-            {[
-              { id: "helpModal", icon: "❓", label: "도움말" },
-              { id: "videoModal", icon: "▶️", label: "영상보기" },
-              { id: "snsModal", icon: "📷", label: "SNS" },
-            ].map(({ id, icon, label }) => (
-              <button
-                key={id}
-                onClick={() =>
-                  id === "videoModal"
-                    ? window.open("https://www.youtube.com", "_blank")
-                    : openModal(id)
-                }
-                className="flex flex-row items-center border border-gray-300 rounded-lg px-4 py-2 w-40 justify-center"
-              >
-                <span className="text-black text-xl">{icon}</span>
-                <span className="ml-2 text-gray-700 text-sm">{label}</span>
-              </button>
-            ))}
-          </div> */
-}
 
 export default Guide;
