@@ -75,9 +75,9 @@ function Header() {
       title: "커뮤니티",
       link: "/marketplace",
       subMenu: [
-        { title: "공지사항", link: "/community/notice" },
-        { title: "Q&A", link: "/community/qna" },
-        { title: "FAQ", link: "/community/faq" },
+        { title: "공지사항", link: "/community-related/notice" },
+        { title: "Q&A", link: "/community-related/qna" },
+        { title: "FAQ", link: "/community-related/faq" },
       ],
     },
     {

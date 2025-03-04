@@ -31,6 +31,14 @@ import BusinessEdit from "./pages/mypage-related/business/businessEdit";
 import BusinessReservations from "./pages/mypage-related/business/businessReservations";
 import AdminApproval from "./pages/mypage-related/admin/adminApproval";
 import AdminDashboard from "./pages/mypage-related/admin/adminDashboard";
+import NoticePage from "./pages/community-related/Notice";
+import Write from "./components/community-related/Write";
+import Faq from "./pages/community-related/Faq";
+import Answer from "./components/community-related/Answer";
+import QnaPage from "./pages/community-related/Qna";
+import { CommuModal } from "./components/community-related/CommuModal";
+import FileUpload from "./pages/community-related/Mfiletest";
+import Ocrtest from "./pages/community-related/Ocrtest";
 
 function App() {
   return (
@@ -94,6 +102,16 @@ function App() {
               />
               <Route path="/find/map" element={<Store />} />
               <Route path="/find/map/:storeName" element={<StoreDetail />} />
+              <Route path="/community-related/notice" element={<NoticePage />} />
+            <Route
+              path="/components/community-related/write"
+              element={<Write />}
+            />
+            <Route path="/community-related/qna" element={<QnaPage />} />
+            <Route path="/community-related/faq" element={<Faq />} />
+            <Route path="/answer" element={<Answer />} />
+            <Route path="/file" element={<FileUpload />} />
+            <Route path="/ocr" element={<Ocrtest />} />
             </Routes>
           </main>
         </div>
