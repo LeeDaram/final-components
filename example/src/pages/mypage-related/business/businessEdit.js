@@ -1,5 +1,4 @@
 import Sidebar from '../sidebar.js';
-import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle } from 'react-icons/fa';
 
 function BusinessEdit() {
     return (
@@ -41,21 +40,26 @@ function BusinessEdit() {
 
                             {/* 가격 */}
                             <div className="mb-6">
-                                <label className="text-gray-500">주소(사업자소재지)</label>
+                                <label className="text-gray-500">가격</label>
                                 <p className="block text-lg font-semibold mb-1">6000원</p>
                             </div>
 
-                            {/* 심사결과 */}
+                            {/* 예약 가능 여부 */}
                             <div className="mb-6 flex items-center justify-between">
                                 <div>
-                                    <label className="text-gray-500">예약 가능 여부</label>
+                                    <label className="text-gray-500" id="userReservation">
+                                        예약 가능 여부
+                                    </label>
                                     <p className="block text-lg font-semibold mb-1">
                                         사람들이 웹페이지를 통해 예약하고 방문할 수 있어요
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2 relative">
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" className="sr-only peer" />
+                                    <label
+                                        className="relative inline-flex items-center cursor-pointer"
+                                        id="userReservation"
+                                    >
+                                        <input type="checkbox" className="sr-only peer" htmlFor="userReservation" />
                                         <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
                                         <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white border rounded-full transition-transform peer-checked:translate-x-4"></div>
                                     </label>
