@@ -83,7 +83,6 @@ export default function DeletModal({ isOpen, onClose, notice, qna }) {
   const handleDeleteAnswer = async () => {
     console.log("답글삭제");
     try {
-      // 현재 id 체크 후 작성자가 날려야함
       await axios.delete(
         `http://localhost:8080/qna/delete/answer/${qna.deleteAnswerId}`
       );

@@ -30,6 +30,10 @@ function Ocrtest() {
           },
         }
       );
+      // 사등증 번호가 없을때 예외처리(사업자 등록증이 아닙니다) 있을때 정규식으로 자르기
+
+      // await axios 로 사업자 진위여부 판단 api날려서(필수값: 사업자번호, 개업일자, 대표자이름)
+      // 등록 완료 메세지 띄워주고 disabled에 값 날려주기기
       console.log(data.data, "@@@@@@@@@");
       return data.data;
     } catch (error) {

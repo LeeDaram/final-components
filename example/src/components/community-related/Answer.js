@@ -14,7 +14,7 @@ const Answer = () => {
   const [comments, setComments] = useState([]); // 답글(댓글) 내용; 배열로 관리
   const [editingAnswerId, setEditingAnswerId] = useState(null); // 답글이 있으면 수정 아니면 냅두기
   const [editingContent, setEditingContent] = useState(""); // 수정 중인 답글 내용
-  const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
+  const USER_ROLE = "user"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [deleteAnswerId, setDeleteAnswerId] = useState(null); // 삭제할 답글 아이디
