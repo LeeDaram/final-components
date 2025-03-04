@@ -2,14 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
-import axios from "axios";
-import Banner from "../../../assets/images/Guide/Guide4.jpg";
-import ImchatBot from "./imchat.js/Imchatbot";
 import { AiFillBell } from "react-icons/ai";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { AiFillBuild } from "react-icons/ai";
 import { AiFillBook } from "react-icons/ai";
-
+import axios from "axios";
+import Banner from "../../../assets/images/Guide/Guide4.jpg";
+import ImchatBot from "./imchat.js/Imchatbot";
+import { ImAddressBook } from "react-icons/im";
+import { ImBaffled2 } from "react-icons/im";
+import { ImBookmarks } from "react-icons/im";
+import { ImBullhorn } from "react-icons/im";
+import { ImCreditCard } from "react-icons/im";
+//나중에 사이드바 늘어나면 주석 풀것
 const GUIDE_SUBJECTS = [
   "공지사항",
   "마이 페이지(사업자)",
@@ -28,6 +33,11 @@ const ICONS = [
   <AiFillCheckCircle size={30} key="ci" />,
   <AiFillBuild size={30} key="build" />,
   <AiFillBook size={30} key="book" />,
+  <ImAddressBook size={30} key="address" />,
+  <ImBaffled2 size={30} key="affled2" />,
+  <ImBookmarks size={30} key="marks" />,
+  <ImBullhorn size={30} key="horn" />,
+  <ImCreditCard size={30} key="ard" />,
 ];
 {
   /*아이콘: 사이드바 추가하면 자동으로 추가됨 */
@@ -106,19 +116,27 @@ const GuideContent = ({ data }) => {
   return (
     <div
       id={id}
-      className="p-6  bg-white flex flex-col justify-center min-h-[300px] w-[1000px]"
+      // 전체 컨테이너: 상하좌우 여백(p-6)과 자식 요소 간의 간격(space-y-4) 지정
+      className="p-6 bg-white w-[1000px] min-h-[300px] flex flex-col justify-center space-y-4"
     >
-      <div className="">
-        <div className="flex items-left mb-3 ">
-          {icon}
-          <h4 className="text-3xl font-bold text-gray-900 text-left pl-3  ">
-            {title}
-          </h4>
+      {/* 아이콘 + 타이틀을 함께 배치하는 영역 */}
+      <div className="flex items-start gap-3">
+        {/* 아이콘(이미지) 영역을 고정된 크기로 감싸서 레이아웃이 흔들리지 않도록 처리 */}
+        <div className="w-12 h-12 flex-shrink-0 overflow-hidden">
+          {icon &&
+            React.cloneElement(icon, {
+              className: "w-full h-full object-contain",
+            })}
         </div>
+        <h4 className="text-3xl font-bold text-gray-900 text-left">{title}</h4>
+      </div>
+
+      {/* 서브타이틀 + 설명 */}
+      <div className="flex flex-col space-y-2">
         <h3 className="text-xl font-semibold text-black text-left">
           {subtitle}
         </h3>
-        <p className="text-base text-gray-600 leading-relaxed text-left ">
+        <p className="text-base text-gray-600 leading-relaxed text-left">
           {description}
         </p>
       </div>
@@ -186,7 +204,7 @@ const Guide = () => {
 
       <div className="w-full max-w-screen-2xl p-7 flex flex-wrap">
         <div
-          className="w-1/5 sticky top-8 self-start bg-blue-50 p-4 rounded-lg "
+          className="w-1/5 sticky top-8 self-start bg-blue-50 p-4 rounded-lg ml-[-10px]"
           style={{
             maxHeight: "calc(100vh - 100px)",
             overflowY: "hidden",
@@ -248,7 +266,7 @@ const Guide = () => {
 
               {/* 🔹 검색 가이드, 리뷰 가이드, 공지사항 사이에 구분선 추가 */}
               {index < GUIDE_SUBJECTS.length - 1 && (
-                <hr className="border-gray-300 my-16 w-full max-w-[1000px] mx-auto" />
+                <hr className="border-gray-200 my-16 w-full max-w-[1000px] mx-auto" />
               )}
             </React.Fragment>
           ))}
@@ -261,7 +279,7 @@ const Guide = () => {
             착한가격업소, 무엇이 더 궁금하신가요?
           </p>
           <p className="text-gray-500 text-base mt-4 text-left">
-            전화상담을 원할 시 010-1111-1111으로 연락주세요.
+            전화상담을 원할 시 010-8764-8222으로 연락주세요.
           </p>
         </div>
       </div>

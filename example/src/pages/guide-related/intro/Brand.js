@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import n1 from "../../../assets/images/Brand/n1.png";
@@ -8,12 +7,6 @@ import banner from "../../../assets/images/Brand/banner.png";
 import frontImage from "../../../assets/images/Brand/front.png";
 
 const HeroSection = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  const onOpenChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
-
   return (
     <div className="w-full bg-blue-500 py-14 flex justify-center px-6 gap-20">
       {/* 왼쪽 텍스트 영역 */}
@@ -31,8 +24,6 @@ const HeroSection = () => {
           <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition">
             자세히 보기{" "}
           </button>
-
-          {/* 챗봇 모달 */}
         </div>
       </div>
 
@@ -74,50 +65,53 @@ const GoalsSection = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center bg-white-100 w-full px-0">
-      {goalData.map((goal, index) => (
-        <div key={index} className="w-full">
-          <div
-            className={`flex flex-col md:flex-row items-center w-full my-0 ${
-              goal.reverse ? "md:flex-row-reverse" : ""
-            }`}
-          >
-            {/* 글 영역 (30%) */}
-            <div className="flex-[4] p-10 flex justify-center items-center bg-white">
-              <div className="max-w-lg">
-                <h2 className="text-4xl font-bold text-gray-900">
-                  {goal.title}
-                </h2>
-                <p className="mt-6 text-xl text-gray-700 leading-relaxed">
-                  {goal.description}
-                </p>
+    <>
+      <hr className="w-full border-white" style={{ borderTopWidth: "20px" }} />
+      <div className="flex flex-col items-center bg-white-100 w-full px-0">
+        {goalData.map((goal, index) => (
+          <div key={index} className="w-full">
+            <div
+              className={`flex flex-col md:flex-row items-center w-full my-0 ${
+                goal.reverse ? "md:flex-row-reverse" : ""
+              }`}
+            >
+              {/* 글 영역 (30%) */}
+              <div className="flex-[4] p-10 flex justify-center items-center bg-white">
+                <div className="max-w-lg">
+                  <h2 className="text-4xl font-bold text-gray-900">
+                    {goal.title}
+                  </h2>
+                  <p className="mt-6 text-xl text-gray-700 leading-relaxed">
+                    {goal.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* 이미지 영역 (70%) */}
+              <div className="flex-[6] flex justify-center">
+                <img
+                  src={goal.image}
+                  alt={goal.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
-            {/* 이미지 영역 (70%) */}
-            <div className="flex-[6] flex justify-center">
-              <img
-                src={goal.image}
-                alt={goal.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            {/* 구분선 (20px 두께) */}
+            <hr
+              className="w-full border-white"
+              style={{ borderTopWidth: "20px" }}
+            />
           </div>
-
-          {/* 구분선 (20px 두께) */}
-          <hr
-            className="w-full border-gray-200"
-            style={{ borderTopWidth: "20px" }}
-          />
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 };
 
 const PhilosophySection = () => {
   return (
-    <div className="py-16 flex flex-col items-center bg-white w-full px-0">
+    <div className="pt-16 flex flex-col items-center bg-white w-full px-0">
       <div className="flex flex-col md:flex-row items-center w-full">
         {/* 왼쪽: 철학 다이어그램 */}
         <div className="md:w-1/2 flex justify-center p-10">
@@ -177,7 +171,7 @@ const PhilosophySection = () => {
 
 const FinalSection = () => {
   return (
-    <div className="py-64 flex flex-col items-center bg-white w-full px-6">
+    <div className="py-32 flex flex-col items-center bg-white w-full px-6">
       <div className="w-full max-w-5xl flex justify-center mb-10">
         <img
           src={frontImage}
@@ -194,15 +188,16 @@ const FinalSection = () => {
     </div>
   );
 };
-
 const App = () => {
   return (
-    <div>
+    <>
       <HeroSection />
-      <GoalsSection />
-      <PhilosophySection />
-      <FinalSection />
-    </div>
+      <div className="w-9/12 mx-auto flex flex-col items-center">
+        <GoalsSection />
+        <PhilosophySection />
+        <FinalSection />
+      </div>
+    </>
   );
 };
 
