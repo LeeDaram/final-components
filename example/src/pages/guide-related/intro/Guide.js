@@ -245,8 +245,8 @@ const Guide = () => {
         </div>
       </div>
       {/* 🔹 FAQ & 모달 섹션 */}
-      <div className="w-full bg-white p-10 rounded-lg mt-16">
-        <div className="relative mt-12 p-8 border border-gray-300 rounded-lg bg-white w-full">
+      <div className="w-full bg-white rounded-lg flex justify-center">
+        <div className="  relative p-8 border border-gray-300 rounded-lg bg-white w-1/3 my-15">
           <p className="text-gray-800 text-xl font-semibold text-left">
             착한가격업소, 무엇이 더 궁금하신가요?
           </p>
