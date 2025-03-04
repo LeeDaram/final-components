@@ -84,6 +84,7 @@ function Store() {
     const params = {
       page,
       size: SIZE,
+      storeId: stores.storeId,
       sidoId: selectSido || null,
       sigunguId: selectSigungu || null,
       industryId: selectIndustry || null,

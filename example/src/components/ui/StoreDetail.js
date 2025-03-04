@@ -22,6 +22,9 @@ import {
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
 
+// 임시 유저
+const user = "user128";
+
 const StoreDetail = () => {
   const { storeName } = useParams(); // url에서 storeName 가져오기
   const { state } = useLocation(); // 전달된 state 데이터 가져오기
@@ -55,6 +58,15 @@ const StoreDetail = () => {
     { icon: <FaBaby />, name: "유아시설", checking: store.kid },
   ];
 
+  // 평점 그래프
+  const ratingData = [
+    { rt: 5, value: 20, width: "w-1/4" },
+    { rt: 4, value: 50, width: "w-1/2" },
+    { rt: 3, value: 70, width: "w-3/4" },
+    { rt: 2, value: 100, width: "w-full" },
+    { rt: 1, value: 100, width: "w-full" },
+  ];
+
   const allFalse = filterCheckboxes.every((item) => item.checking === "F");
   const result = allFalse ? true : false;
 
@@ -84,6 +96,14 @@ const StoreDetail = () => {
 
   console.log(store);
 
+  const handleReviewSubmit = () => {
+    if (!user) {
+      alert("로그인 후 이용하실 수 있습니다.");
+    } else {
+      setModalOn(true);
+    }
+  };
+
   // 파일 업로드 핸들러
   const handlePhoto = (event) => {
     const files = event.target.files;
@@ -106,7 +126,9 @@ const StoreDetail = () => {
   const handleSubmit = () => {
     console.log("메뉴확인", menu.current.value);
     console.log("가격확인", cost.current.value);
-    console.log("리뷰확인", review.current.value);
+    console.log("후기확인", review.current.value);
+    console.log("이미지 확인", images);
+    console.log("리뷰확인", rating);
     setModalOn(false);
   };
 
@@ -223,11 +245,10 @@ const StoreDetail = () => {
         </div>
 
         <div className=" w-1/2 border-t pt-4 mt-2"></div>
-
         {/* 이용후기 모달 */}
         <button
           className="w-1/2 h-9 border border-blue-500 bg-white text-blue-500 rounded-lg text-lg"
-          onClick={() => setModalOn(true)}
+          onClick={() => handleReviewSubmit()}
         >
           이용후기 작성하기
         </button>
@@ -247,7 +268,11 @@ const StoreDetail = () => {
               <h2 className="text-2xl font-bold mb-4 ">이용후기</h2>
               {/* 별점*/}
               <p className="text-blue-500 text-xl ">별점</p>
-              <Rating name="size-medium" defaultValue={1} />
+              <Rating
+                name="size-medium"
+                defaultValue={1}
+                onClick={(e) => setRating(e.target.value)}
+              />
               {/* 사진 */}
               <p className="text-blue-500 text-xl mt-4">사진</p>
               <div className="flex items-center gap-3">
@@ -304,7 +329,7 @@ const StoreDetail = () => {
                       className="w-full border-none outline-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
                       ref={cost}
                     />
-                    <span className="ml-2 text-gray-500">원</span>
+                    <span className="ml-2 text-black">원</span>
                   </div>
                 </div>
               </div>
@@ -340,7 +365,7 @@ const StoreDetail = () => {
       <div className="flex w-full mt-6">
         {/* 아이콘 및 퍼센트 비율 */}
         <div className="w-1/2 flex flex-col items-center">
-          <p className="text-lg font-bold text-gray-800 flex items-center">
+          <p className="text-lg font-bold text-gray-800 flex items-center p-5">
             <FaRegSmile className="size-15" />
           </p>
           <div className="flex mt-2 space-x-2 font-medium">
@@ -350,17 +375,46 @@ const StoreDetail = () => {
             </p>
           </div>
         </div>
-        <div className="ml-4 border-l h-20"></div>
-        {/* 총 평점 */}
-        <div className="w-1/2 flex flex-col items-center">
-          <p className="text-sm font-bold text-gray-800 flex items-center">
-            총 리뷰수
-          </p>
-          <div className="flex mt-2 space-x-2 font-medium">
-            <p className="text-gray-500">
-              전체후기의{" "}
-              <span className="text-blue-500">85%가 긍정적(파이썬)</span>
+        <div className="ml-4 border-l h-36"></div>
+
+        {/* 평점 비율1 */}
+        <div className="w-1/2 flex items-center">
+          <div className="flex flex-col items-center w-1/2">
+            <p className="text-sm font-bold text-gray-800 flex items-center">
+              총 리뷰수
             </p>
+            <p className="text-xl font-bold text-gray-800 flex items-center">
+              총 평점
+            </p>
+            <Rating
+              name="half-rating-read"
+              defaultValue={5}
+              precision={0.5}
+              readOnly
+            />
+          </div>
+          {/* 평점 비율2 */}
+          <div className="flex flex-col w-1/2 gap-2">
+            {ratingData.map((item) => (
+              <div className="flex items-center gap-2" key={`i-${item.value}`}>
+                <div
+                  className="progress h-4 flex-1 bg-gray-200 rounded-full"
+                  role="progressbar"
+                  aria-valuenow={item.value}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  <div
+                    className={`progress-bar ${item.width} bg-gray-800 text-white text-sm rounded-full px-2`}
+                  >
+                    {item.value}%
+                  </div>
+                </div>
+                <span className="text-gray-800 font-medium w-10 text-right">
+                  {item.rt}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -368,7 +422,7 @@ const StoreDetail = () => {
       {/* 리뷰 섹션 */}
       <div className="mt-6 space-y-6">
         {[1, 2].map((review) => (
-          <div key={review} className="border-t pt-4">
+          <div key={`review-${review}`} className="border-t pt-4">
             {/* 사용자 정보 */}
             <div className="flex items-center space-x-2">
               <p className="font-semibold text-gray-700">사용자 아이디</p>
@@ -399,7 +453,7 @@ const StoreDetail = () => {
       <div className="flex justify-center mt-6 space-x-2">
         {[1, 2, 3, 4, 5].map((num) => (
           <button
-            key={num}
+            key={`num-${num}`}
             className="px-3 py-1 bg-gray-200 rounded text-sm hover:bg-gray-300"
           >
             {num}
