@@ -135,7 +135,7 @@ function Header() {
             <img
               src="https://cdn-icons-png.flaticon.com/512/4766/4766832.png"
               className="mr-3 h-6 sm:h-9"
-              alt="Flowbite Logo"
+              alt="로고"
             />
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               착한업소 솔루션

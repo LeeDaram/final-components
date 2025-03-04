@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Home from "./pages/Home";
 import Team from "./pages/Team";
 import Contact from "./pages/Contact";
@@ -39,6 +40,8 @@ import QnaPage from "./pages/community-related/Qna";
 import { CommuModal } from "./components/community-related/CommuModal";
 import FileUpload from "./pages/community-related/Mfiletest";
 import Ocrtest from "./pages/community-related/Ocrtest";
+import SimpleSlider from "./components/ui/homeCarousel/HomeCarousel";
+
 
 function App() {
   return (
