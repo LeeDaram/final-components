@@ -55,7 +55,7 @@ const HeroSection = () => {
       {/* 왼쪽 텍스트 영역 */}
       <div className="flex justify-end flex-col md:flex-row items-center max-w-5xl w-1/2">
         <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2 ">
-          <h3 className="text-3xl md:text-3xl font-bold">
+          <h3 className="text-2xl md:text-3xl font-bold">
             착한가격업소에 온걸 환영합니다!
           </h3>
           <p className="mt-4 text-lg max-w-lg">
