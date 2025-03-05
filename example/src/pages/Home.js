@@ -54,13 +54,6 @@ function Home() {
         <div className="bg-blue-100 dark:bg-gray-700 py-20 text-left">
           {/* 검색 및 이동 */}
           <div className="flex items-center justify-end space-x-2 mb-6 mr-[20%]">
-            {/* <input
-            type="text"
-            placeholder="가게명 검색"
-            className="p-2 border border-gray-300 rounded"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          /> */}
             <div class="relative w-96">
               <input
                 type="text"
@@ -79,7 +72,9 @@ function Home() {
               onClick={handleSearch}
             >
               {/* 엔터키 함수로 따로 빼서 검색버튼 없애면 이쁠듯 */}
-              <Link to="/find/map">검색</Link>
+              <Link to={`/find/map?search=${encodeURIComponent(searchTerm)}`}>
+                검색
+              </Link>
             </button>
           </div>
           <div className="flex flex-wrap justify-start items-center mx-auto max-w-screen-xl">
