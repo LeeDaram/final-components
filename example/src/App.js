@@ -41,6 +41,9 @@ import { CommuModal } from "./components/community-related/CommuModal";
 import FileUpload from "./pages/community-related/Mfiletest";
 import Ocrtest from "./pages/community-related/Ocrtest";
 import SimpleSlider from "./components/ui/homeCarousel/HomeCarousel";
+import Brand from "./pages/guide-related/intro/Brand";
+import Guide from "./pages/guide-related/intro/Guide";
+import Imchat from "./pages/guide-related/intro/imchat.js/Imchatbot";
 
 
 function App() {
@@ -115,6 +118,9 @@ function App() {
             <Route path="/answer" element={<Answer />} />
             <Route path="/file" element={<FileUpload />} />
             <Route path="/ocr" element={<Ocrtest />} />
+            <Route path="/guide-related/intro/brand" element={<Brand />} />
+            <Route path="/guide-related/intro/guide" element={<Guide />} />
+            <Route path="/chatbot" element={<Imchat />} />
             </Routes>
           </main>
         </div>
