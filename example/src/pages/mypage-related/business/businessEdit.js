@@ -1,6 +1,90 @@
 import Sidebar from '../sidebar.js';
+import { useAuth } from '../../../pages/login-related/AuthContext';
+import { useState, useEffect } from 'react';
 
 function BusinessEdit() {
+    // 업소 정보
+    const [storeInfo, setStoreInfo] = useState({});
+    const [reservation, setReservation] = useState(storeInfo?.isActivate);
+
+    // 유저 정보
+    const { user, token } = useAuth();
+    const [userId, setUserId] = useState('');
+    const [userToken, setUserToken] = useState('');
+    useEffect(() => {
+        if (user?.id) {
+            setUserId(user?.id || '');
+        }
+        if (token) {
+            setUserToken(token || '');
+        }
+    }, [user, token]);
+
+    // 결과 상태값
+    useEffect(() => {
+        if (userId && token) {
+            fetchUserInfo();
+        }
+    }, [userId, token]);
+
+    // 유저 정보 가져오기
+    const fetchUserInfo = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/mypage/storeInfo/${userId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
+            }
+
+            const storeData = await response.json();
+            setStoreInfo(storeData);
+            setReservation(storeData.isActivate);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // 예약 가능 여부 수정
+    const fetchUpdateStoreInfo = async (newIsActivate) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/mypage/update/store/activation', {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    isActivate: newIsActivate,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('업소정보 변경 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const handleToggleActivate = async () => {
+        const newIsActivate = reservation === 'T' ? 'F' : 'T';
+        setReservation(newIsActivate);
+        setStoreInfo({ ...storeInfo, isActivate: newIsActivate });
+
+        try {
+            await fetchUpdateStoreInfo(newIsActivate);
+        } catch (error) {
+            console.error('예약 가능 여부 변경 중 오류 발생', error);
+            alert('예약 가능 여부 변경 중 오류가 발생했습니다.');
+        }
+    };
+
     return (
         <div className="bg-white sm:p-6 dark:bg-gray-800">
             <div className="mx-auto max-w-screen-xl">
@@ -17,31 +101,35 @@ function BusinessEdit() {
                             {/* 업소명(상호명) */}
                             <div className="mb-6">
                                 <label className="text-gray-500">업소명(상호명)</label>
-                                <p className="block text-lg font-semibold mb-1">기찬장어</p>
+                                <p className="block text-lg font-semibold mb-1">{storeInfo?.storeName || ''}</p>
                             </div>
 
-                            {/* 등록신청일자 */}
+                            {/* 사업자등록번호 */}
                             <div className="mb-6">
                                 <label className="text-gray-500">사업자등록번호</label>
-                                <p className="block text-lg font-semibold mb-1">123-45-67890</p>
+                                <p className="block text-lg font-semibold mb-1">
+                                    {storeInfo?.businessRegNo
+                                        ? String(storeInfo.businessRegNo).replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3')
+                                        : ''}
+                                </p>
                             </div>
 
                             {/* 주소(사업자소재지) */}
                             <div className="mb-6">
                                 <label className="text-gray-500">주소(사업자소재지)</label>
-                                <p className="block text-lg font-semibold mb-1">대전 용두동 희영빌딩</p>
+                                <p className="block text-lg font-semibold mb-1">{storeInfo?.address || ''}</p>
                             </div>
 
                             {/* 대표메뉴 */}
                             <div className="mb-6">
                                 <label className="text-gray-500">대표메뉴</label>
-                                <p className="block text-lg font-semibold mb-1">돈까스</p>
+                                <p className="block text-lg font-semibold mb-1">{storeInfo?.mainMenu || ''}</p>
                             </div>
 
                             {/* 가격 */}
                             <div className="mb-6">
                                 <label className="text-gray-500">가격</label>
-                                <p className="block text-lg font-semibold mb-1">6000원</p>
+                                <p className="block text-lg font-semibold mb-1">{storeInfo?.price || ''}원</p>
                             </div>
 
                             {/* 예약 가능 여부 */}
@@ -59,7 +147,13 @@ function BusinessEdit() {
                                         className="relative inline-flex items-center cursor-pointer"
                                         id="userReservation"
                                     >
-                                        <input type="checkbox" className="sr-only peer" htmlFor="userReservation" />
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only peer"
+                                            htmlFor="userReservation"
+                                            checked={storeInfo.isActivate === 'T'}
+                                            onClick={handleToggleActivate}
+                                        />
                                         <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
                                         <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white border rounded-full transition-transform peer-checked:translate-x-4"></div>
                                     </label>

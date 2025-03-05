@@ -5,8 +5,7 @@ import { useAuth } from '../../../pages/login-related/AuthContext';
 
 function BusinessApply() {
     // 정규식
-    const phoneRegex = /^\d{11}$/;
-    const priceRegex = /^[0-9]+$/;
+    const numberRegex = /^[0-9]+$/;
     const textRegex = /^.{2,}$/;
 
     // 유저 정보
@@ -38,6 +37,7 @@ function BusinessApply() {
         facilityWifi: false,
         facilityPet: false,
         facilityKids: false,
+        priceComparison: false,
     });
 
     // 입력값 오류
@@ -108,12 +108,20 @@ function BusinessApply() {
                 setPriceMessage(
                     `😊 ${userSido} 지역 ${userMenu} 평균 가격 ${averagePrice.toLocaleString()}원보다 ${percent}% 저렴해요 `
                 );
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    priceComparison: true,
+                }));
             } else if (percent < 0) {
                 setPriceMessage(
                     `🥺 ${userSido} 지역 ${userMenu} 평균 가격 ${averagePrice.toLocaleString()}원보다 ${Math.abs(
                         percent
                     )}% 비싸요`
                 );
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    priceComparison: false,
+                }));
             } else {
                 setPriceMessage(`✅ ${userSido} 지역 ${userMenu} 평균 가격과 동일합니다!`);
             }
@@ -224,15 +232,15 @@ function BusinessApply() {
         // 가격
         if (!formData.userPrice) {
             errors.userPrice = '대표메뉴 가격을 입력해주세요.';
-        } else if (!priceRegex.test(formData.userPrice)) {
+        } else if (!numberRegex.test(formData.userPrice)) {
             errors.userPrice = '가격은 숫자만 입력해주세요.';
         }
 
         // 전화번호
         if (!formData.userPhone) {
             errors.userPhone = '업소 전화번호를 입력해주세요.';
-        } else if (!phoneRegex.test(formData.userPhone)) {
-            errors.userPhone = '전화번호는 11자리 숫자로 입력해주세요.';
+        } else if (!numberRegex.test(formData.userPhone)) {
+            errors.userPhone = '전화번호는 숫자로만 입력해주세요.';
         }
 
         setFormErrors(errors);
