@@ -9,33 +9,60 @@ import n3 from "../../../assets/images/Brand/n3.png";
 import banner from "../../../assets/images/Brand/banner.png";
 import SECTION2 from "../../../assets/images/Brand/SECTION5.png";
 
+import ImchatBot from "./imchat.js/Imchatbot";
+
 import {
   FaQuestionCircle,
   FaPlayCircle,
   FaTimes,
   FaInstagramSquare,
 } from "react-icons/fa";
-
+// 1) HeroSection 서브 컴포넌트
 const SingleComponent = () => {
-  // 1) HeroSection 서브 컴포넌트
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const onOpenChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
   const HeroSection = () => {
     return (
       <div className="w-full bg-blue-500 py-14 flex justify-center px-6 gap-20">
         {/* 왼쪽 텍스트 영역 */}
         <div className="flex justify-end flex-col md:flex-row items-center max-w-5xl w-1/2">
           <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2 ">
-            <h3 className="text-3xl md:text-3xl font-bold">
+            <h3 className="text-2xl md:text-2xl font-bold">
               착한가격업소에 온걸 환영합니다!
             </h3>
             <p className="mt-4 text-lg max-w-lg">
-              이 페이지는 이용자 가이드 페이지입니다. 챗봇을 이용하여 다양한
-              기능을 알 수 있습니다. 또한 밑에 스크롤을 내려서 다양한 기능을 볼
-              수 있습니다.
+              이 페이지는 브랜드 가이드 영역입니다. 착한가격업소의 브랜드 가치
+              이 사업을 시작한 이유들을 소개하는 페이지입니다.
             </p>
 
-            <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition">
+            <a
+              className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition"
+              onClick={onOpenChat}
+            >
               자세히 보기{" "}
-            </button>
+            </a>
+            {isChatOpen && (
+              <div className="fixed top-56 left-[1550px] items-center flex justify-end z-50 mr-8">
+                <div className="bg-white rounded-lg shadow-lg w-80 h-[500px] flex flex-col">
+                  <div className="p-4 flex justify-between border-b">
+                    <h2 className="text-lg font-semibold">챗봇</h2>
+                    <button
+                      onClick={() => setIsChatOpen(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      ✖
+                    </button>
+                  </div>
+                  <div className="flex-1">
+                    <ImchatBot />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -44,7 +71,7 @@ const SingleComponent = () => {
           <img
             src={n1}
             alt="Guide"
-            className="w-64 md:w-80 object-cover rounded-lg shadow-lg"
+            className="w-64 md:w-80 object-cover rounded-xl shadow-lg "
           />
         </div>
       </div>
@@ -235,7 +262,7 @@ const SingleComponent = () => {
         <PhilosophySection />
         <WhyInfotech />
       </div>
-      {/* 맨 밑 부분 (중간 내용)*/}
+      {/* 맨 밑 부분 (가이드 페이지)*/}
       <HeaderSection />
     </>
   );

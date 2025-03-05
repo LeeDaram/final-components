@@ -134,27 +134,29 @@ const GuideContent = ({ data }) => {
   return (
     <div
       id={id}
-      // 전체 컨테이너: 상하좌우 여백(p-6)과 자식 요소 간의 간격(space-y-4) 지정
       className="p-6 bg-white w-[1000px] min-h-[300px] flex flex-col justify-center space-y-4"
     >
       {/* 아이콘 + 타이틀을 함께 배치하는 영역 */}
-      <div className="flex items-start gap-3">
-        {/* 아이콘(이미지) 영역을 고정된 크기로 감싸서 레이아웃이 흔들리지 않도록 처리 */}
-        <div className="w-12 h-12 flex-shrink-0 overflow-hidden">
+      <div className="flex items-center gap-3">
+        {/* 아이콘(이미지) 영역: 크기 고정 */}
+        <div className="w-12 h-12 flex-shrink-0">
           {icon &&
             React.cloneElement(icon, {
               className: "w-full h-full object-contain",
             })}
         </div>
-        <h4 className="text-3xl font-bold text-gray-900 text-left">{title}</h4>
+        {/* 타이틀: 아이콘 크기와 상관없이 동일한 너비 유지 */}
+        <h4 className="flex-1 text-3xl font-bold text-gray-900 text-left tracking-tight min-w-0">
+          {title}
+        </h4>
       </div>
 
       {/* 서브타이틀 + 설명 */}
-      <div className="flex flex-col space-y-2">
-        <h3 className="text-xl font-semibold text-black text-left">
+      <div className="flex flex-col space-y-2 w-full">
+        <h3 className="text-xl font-semibold text-black text-left tracking-normal">
           {subtitle}
         </h3>
-        <p className="text-base text-gray-600 leading-relaxed text-left">
+        <p className="text-base text-gray-600 leading-relaxed text-left tracking-wide">
           {description}
         </p>
       </div>
