@@ -7,7 +7,7 @@ import n1 from "../../../assets/images/Brand/n1.png";
 import n2 from "../../../assets/images/Brand/n2.png";
 import n3 from "../../../assets/images/Brand/n3.png";
 import banner from "../../../assets/images/Brand/banner.png";
-import SECTION2 from "../../../assets/images/Brand/SECTION2.png";
+import SECTION2 from "../../../assets/images/Brand/SECTION5.png";
 
 import {
   FaQuestionCircle,
@@ -242,14 +242,15 @@ const SingleComponent = () => {
 };
 
 const HeaderSection = () => {
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false); // 도움말 모달 상태
 
+  // 도움말 모달 열기/닫기 함수
   const toggleHelpModal = () => {
     setIsHelpOpen(!isHelpOpen);
   };
 
   return (
-    <div className="w-full bg-white py-8 mt-[100px] mb-[100px]">
+    <div className="w-full bg-white py-8 mt-[100px] mb-[100px] border border-gray-300 rounded-lg">
       <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
         {/* 왼쪽 텍스트 영역 */}
         <div className="flex items-center gap-4">
@@ -263,10 +264,15 @@ const HeaderSection = () => {
 
         {/* 오른쪽 아이콘 영역 */}
         <div className="flex items-center gap-6">
-          <button className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition">
+          <a
+            href="https://www.youtube.com/watch?v=kdqPw9kCth0"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
+          >
             <FaPlayCircle className="w-6 h-6" />
             <span className="text-lg font-semibold">가이드 영상 보기</span>
-          </button>
+          </a>
           <button
             className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
             onClick={toggleHelpModal}
@@ -303,17 +309,15 @@ const HeaderSection = () => {
 
             {/* 모달 내용 */}
             <div className="space-y-4">
-              <p className="text-gray-700">
-                여기에 도움말 내용을 입력하세요. 예를 들어, 자주 묻는 질문이나
-                사용 방법에 대한 안내를 제공할 수 있습니다.
-              </p>
-              <ul className="list-disc list-inside text-gray-700">
-                <li>자주 묻는 질문 1</li>
-                <li>자주 묻는 질문 2</li>
-                <li>자주 묻는 질문 3</li>
+              <p className="text-gray-700">무엇이 더 궁금하신가요?</p>
+              <ul className="list-disc list-inside text-gray-700 text-sm">
+                <li>자주 묻는 질문은 챗봇을 써 주시길 바랍니다</li>
+                <li>
+                  자세한 질문은 <span className="font-bold">010-1111-1111</span>
+                  로 연락주시길 바랍니다.
+                </li>
               </ul>
             </div>
-
             {/* 모달 푸터 */}
             <div className="mt-6 flex justify-end">
               <button

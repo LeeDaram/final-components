@@ -81,8 +81,8 @@ const ImchatBot = () => {
       9: "업소 리뷰를 확인하려면 해당 업소 페이지를 방문해 주세요. 😊",
       10: "예약 확인을 위해 로그인 후 '마이페이지'를 방문해 주세요.",
       11: "문의 사항은 '문의하기' 페이지를 통해 남겨주세요. 빠르게 답변 드리겠습니다.",
-      12: "이용약관은 [여기](/terms)에서 확인하실 수 있습니다.",
-      13: "개인정보처리방침은 [여기](/privacy)에서 확인하실 수 있습니다.",
+      12: "이용약관은 terms에서 확인하실 수 있습니다.",
+      13: "개인정보처리방침은 privacy에서 확인하실 수 있습니다.",
       // 명령어 숫자로 변환
 
       "/팀": "REDIRECT:/team",
@@ -117,7 +117,7 @@ const ImchatBot = () => {
   }, [messages]);
 
   return (
-    <div className="flex justify-center items-center h-full bg-gray-100">
+    <div className="flex justify-center items-center h-full bg-gray-100 ">
       <div className="w-96 h-[600px] rounded-lg bg-white flex flex-col shadow-lg">
         <div
           className="flex-1 p-3 overflow-y-auto border-b border-gray-300"
@@ -158,3 +158,10 @@ const ImchatBot = () => {
 };
 
 export default ImchatBot;
+
+/* <div class="mockup-phone">
+  <div class="camera !z-0"></div> 
+  <div class="display flex justify-center">
+    <div class="artboard artboard-demo phone-1"><img class="size-full object-cover" src="https://cdn.flyonui.com/fy-assets/components/iphone/image.png" alt="phone background" /></div>
+  </div>
+</div> */
