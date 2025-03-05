@@ -14,10 +14,11 @@ const Answer = () => {
   const [comments, setComments] = useState([]); // 답글(댓글) 내용; 배열로 관리
   const [editingAnswerId, setEditingAnswerId] = useState(null); // 답글이 있으면 수정 아니면 냅두기
   const [editingContent, setEditingContent] = useState(""); // 수정 중인 답글 내용
-  const USER_ROLE = "user"; // 현재 관리자 역할 (테스트용)
+  const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [deleteAnswerId, setDeleteAnswerId] = useState(null); // 삭제할 답글 아이디
+  const [files, setFiles] = useState([]); //각 공지사항의 첨부파일
 
   // 페이지 첫 로드 시 공지사항 또는 Q&A 데이터 가져오기
   useEffect(() => {
@@ -28,6 +29,10 @@ const Answer = () => {
             `http://localhost:8080/notice/main/${data.id}`
           );
           setEditingMain(res.data);
+          const attachments = await axios.get(
+            `http://localhost:8080/notice/attachment/${data.id}/download`
+          );
+          setFiles(attachments.data);
         }
         if (data.qna === "Q&A") {
           const res = await axios.get(
@@ -45,7 +50,8 @@ const Answer = () => {
     getData();
   }, [data, comment, editingContent, isModalOpen]);
 
-  console.log(comments, "@@@");
+  console.log(comments, "댓글댓글댓글댓글댓글댓글댓글댓글");
+  console.log(files, "파일파일파일파일파일파일파일파일");
 
   // Qna 답글 등록 (DB 통신)
   const handleCommentSubmit = async () => {
@@ -193,6 +199,47 @@ const Answer = () => {
                 {editingMain.createdAt}
               </span>
             </div>
+
+            <div>
+              {files.map((file) => (
+                <div key={file.attachmentId} style={{ marginBottom: "1rem" }}>
+                  <p>{file.originFilename}</p>
+                  {file.contentType.startsWith("image/") ? (
+                    <img
+                      src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                      alt={file.originFilename}
+                      style={{ maxWidth: "300px", display: "block" }}
+                    />
+                  ) : file.contentType === "application/pdf" ? (
+                    <iframe
+                      src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                      title={file.originFilename}
+                      width="600"
+                      height="400"
+                    />
+                  ) : file.contentType === "video/mp4" ? (
+                    <video controls width="600" height="400">
+                      <source
+                        src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                        type="video/mp4"
+                        style={{ maxWidth: "300px", display: "block" }}
+                      />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <p>미리보기를 지원하지 않는 파일입니다.</p>
+                  )}
+                  <a
+                    href={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                    download={file.storedFilename}
+                    style={{ display: "inline-block", marginTop: "0.5rem" }}
+                  >
+                    다운로드
+                  </a>
+                </div>
+              ))}
+            </div>
+
             {isEditingMain ? (
               <textarea
                 className="w-full p-3 border rounded h-24 resize-none"
