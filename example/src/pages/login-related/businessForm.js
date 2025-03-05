@@ -18,7 +18,7 @@ function BusinessForm() {
   // 파일 업로드
   const [file, setFile] = useState(null); // 선택된 파일 상태
   const [preview, setPreview] = useState(null); // 파일 미리보기 상태
-  // const [isUploaded, setIsUploaded] = useState(false); // 파일 업로드 상태
+  //   const [isUploaded, setIsUploaded] = useState(false); // 파일 업로드 상태
 
   // 화면이동
   const navigate = useNavigate();
@@ -143,6 +143,137 @@ function BusinessForm() {
   //     // 업로드 완료 후 상태 변경
   //     setIsUploaded(true);
   // };
+
+  const [imageFile, setImageFile] = useState([]);
+  // 파일 업로드
+
+  const [isUploaded, setIsUploaded] = useState(false); // 파일 업로드 상태
+  const [isTrueBiz, setIsTrueBiz] = useState([]);
+  const [bizInfo, setBizInfo] = useState([]);
+
+  const OcrFile = async (file) => {
+    try {
+      // orc필수 데이터 포멧
+      const formData = new FormData();
+      const message = {
+        version: "V2",
+        requestId: Math.random().toString(),
+        timestamp: dayjs().format("YYYYMMDDHHmmss"),
+        images: [{ format: "jpeg", name: file.name }],
+      };
+
+      formData.append("message", JSON.stringify(message));
+      formData.append("file", file);
+
+      // api로 ocr
+      const data = await axios.post(
+        process.env.REACT_APP_NAVER_OCR_INVOKE_URL || "",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-OCR-SECRET": process.env.REACT_APP_NAVER_X_OCR_SECRET,
+          },
+        }
+      );
+      setIsTrueBiz(data.data);
+      console.log(data.data, "사업자등록증OCR데이터");
+
+      setBizInfo(data.data.images[0].bizLicense.result);
+      console.log(
+        data.data.images[0].bizLicense.result,
+        "사업자등록증간편데이터@@@@@@"
+      );
+    } catch (error) {
+      console.log(error);
+      setIsUploaded(false);
+    }
+  };
+
+  // isTrueBiz에 값이 들어왔을때 검증로직 + 정규식으로 자르고
+  // 사등증 번호가 없을때 예외처리(사업자 등록증이 아닙니다) 있을때 정규식으로 자르기
+  // await axios 로 사업자 진위여부 판단 api날려서(필수값: 사업자번호, 개업일자, 대표자이름)
+  // 등록 완료 메세지 띄워주고 disabled에 값 날려주기기
+
+  useEffect(() => {
+    if (isTrueBiz?.images?.length > 0) {
+      if (isTrueBiz.images[0].bizLicense?.result === undefined) {
+        alert("사업자 등록증이 아닙니다. 사업자 등록증을 첨부해주세요");
+        setIsUploaded(false);
+        return;
+      }
+      const bizNumber = String(bizInfo.registerNumber[0].text).replace(
+        /\D/g,
+        ""
+      ); // 사업자등록번호
+      const bizopenDate = String(bizInfo.openDate[0].text).replace(/\D/g, ""); // 개업날짜
+      const bizName = bizInfo.repName[0].text; //사업자 이름
+      const bizShopName = bizInfo.companyName[0].text; //사업장 이름
+
+      console.log(
+        bizNumber,
+        bizopenDate,
+        bizName,
+        bizShopName,
+        "번호 날짜 이름 순"
+      );
+
+      const isBizEnter = async () => {
+        try {
+          //사업자 등록번호 진위확인
+          const res = await axios.post(
+            `http://api.odcloud.kr/api/nts-businessman/v1/validate?serviceKey=${process.env.REACT_APP_BIZ_KEY}`,
+            {
+              businesses: [
+                {
+                  b_no: bizNumber,
+                  start_dt: bizopenDate,
+                  p_nm: bizName,
+                },
+              ],
+            }
+          );
+          console.log(res.data.data[0].valid_msg, "사업자 진위여부확인");
+          //valid_msg 가 undefined면 사업자로 판단해도 될듯?
+          if (!res.data.data[0].valid_msg) {
+            alert("인증되었습니다");
+            //여기에 set bizNumber, bizopenDate, bizName이거 붙이기
+            setFormData({
+              ...formData,
+              businessRegistrationNumber: bizNumber,
+              businessName: bizShopName,
+            });
+            return;
+          } else {
+            alert("없는 사업자 번호입니다");
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      };
+      isBizEnter();
+    }
+  }, [isTrueBiz]);
+
+  // 파일이 선택되었을 때
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setImageFile([selectedFile]);
+      // 파일 자동 업로드
+      handleUpload(selectedFile);
+    }
+  };
+
+  // 자동 업로드
+  const handleUpload = (selectedFile) => {
+    console.log("자동 업로드 중...", selectedFile);
+
+    // 업로드 완료 후 상태 변경
+    setIsUploaded(true);
+    // 실제 업로드 API 호출
+    OcrFile(selectedFile);
+  };
 
   // 약관 가져오기
   useEffect(() => {
@@ -606,8 +737,9 @@ function BusinessForm() {
           <input
             type="text"
             placeholder="인식된 사업자등로번호가 들어갑니다"
-            className="input h-12 border-gray-300 "
+            className="input h-12 border-gray-300"
             id="businessRegistrationNumber"
+            disabled
             value={formData.businessRegistrationNumber}
             onChange={(e) => {
               handleChange(e);
@@ -633,6 +765,7 @@ function BusinessForm() {
           </label>
           <input
             type="text"
+            disabled
             placeholder="인식된 상호명이 들어갑니다"
             className="input h-12 border-gray-300 "
             id="businessName"
