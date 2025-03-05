@@ -1,20 +1,38 @@
 import React, { useState, useEffect, useRef } from "react";
-import { CiSearch } from "react-icons/ci";
-import { IoDocuments } from "react-icons/io5";
-import { HiMiniPencil } from "react-icons/hi2";
-import { AiFillBell } from "react-icons/ai";
-import { AiFillCheckCircle } from "react-icons/ai";
-import { AiFillBuild } from "react-icons/ai";
-import { AiFillBook } from "react-icons/ai";
+
 import axios from "axios";
 import Banner from "../../../assets/images/Guide/Guide4.jpg";
 import ImchatBot from "./imchat.js/Imchatbot";
-import { ImAddressBook } from "react-icons/im";
-import { ImBaffled2 } from "react-icons/im";
-import { ImBookmarks } from "react-icons/im";
-import { ImBullhorn } from "react-icons/im";
-import { ImCreditCard } from "react-icons/im";
-//나중에 사이드바 늘어나면 주석 풀것
+
+import {
+  ImAddressBook,
+  ImBaffled2,
+  ImBookmarks,
+  ImBullhorn,
+  ImCreditCard,
+} from "react-icons/im";
+//이모티콘 im
+import {
+  FaQuestionCircle,
+  FaPlayCircle,
+  FaTimes,
+  FaInstagramSquare,
+} from "react-icons/fa";
+//이모티콘 fa
+
+import {
+  AiFillCheckCircle,
+  AiFillBuild,
+  AiFillBook,
+  AiFillBell,
+} from "react-icons/ai";
+//이모티콘 ai
+
+import { CiSearch } from "react-icons/ci";
+import { IoDocuments } from "react-icons/io5";
+import { HiMiniPencil } from "react-icons/hi2";
+//이모티콘 기타
+
 const GUIDE_SUBJECTS = [
   "공지사항",
   "마이 페이지(사업자)",
@@ -24,6 +42,7 @@ const GUIDE_SUBJECTS = [
   "고객 예약 챗봇",
   "사업자 회원가입",
 ];
+//사이드바 늘릴시 react-icon에서 이모티콘 추가할것
 
 const ICONS = [
   <CiSearch size={30} key="search" />,
@@ -39,9 +58,8 @@ const ICONS = [
   <ImBullhorn size={30} key="horn" />,
   <ImCreditCard size={30} key="ard" />,
 ];
-{
-  /*아이콘: 사이드바 추가하면 자동으로 추가됨 */
-}
+
+/*아이콘: 사이드바 추가하면 자동으로 추가됨 */
 
 const HeroSection = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -110,7 +128,7 @@ const GuideContent = ({ data }) => {
   const { id, icon, title, subtitle, description } = data || {};
 
   if (!id) {
-    return <div>Loading...</div>;
+    return <div>데이터가 없습니다.</div>;
   }
 
   return (
@@ -144,9 +162,98 @@ const GuideContent = ({ data }) => {
   );
 };
 
+const HeaderSection = () => {
+  const [isHelpOpen, setIsHelpOpen] = useState(false); // 도움말 모달 상태
+
+  // 도움말 모달 열기/닫기 함수
+  const toggleHelpModal = () => {
+    setIsHelpOpen(!isHelpOpen);
+  };
+
+  return (
+    <div className="w-full bg-white py-8 mt-[100px] mb-[100px]">
+      <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
+        {/* 왼쪽 텍스트 영역 */}
+        <div className="flex items-center gap-4">
+          <div className="bg-blue-500 p-3 rounded-full shadow-lg">
+            <FaQuestionCircle className="text-white w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            착한가격업소, 무엇이 더 궁금하신가요?
+          </h2>
+        </div>
+
+        {/* 오른쪽 아이콘 영역 */}
+        <div className="flex items-center gap-6">
+          <button className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition">
+            <FaPlayCircle className="w-6 h-6" />
+            <span className="text-lg font-semibold">가이드 영상 보기</span>
+          </button>
+          <button
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
+            onClick={toggleHelpModal}
+          >
+            <FaQuestionCircle className="w-6 h-6" />
+            <span className="text-lg font-semibold">도움말</span>
+          </button>
+          <a
+            href="https://www.instagram.com/withyou3542/?utm_source=ig_embed&ig_rid=5a14ad0c-ea41-4cd1-b0c9-fc9ab905e1d4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
+          >
+            <FaInstagramSquare className="w-6 h-6" />
+            <span className="text-lg font-semibold">공식 인스타</span>
+          </a>
+        </div>
+      </div>
+
+      {/* 도움말 모달 */}
+      {isHelpOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            {/* 모달 헤더 */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">도움말</h3>
+              <button
+                onClick={toggleHelpModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <FaTimes className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* 모달 내용 */}
+            <div className="space-y-4">
+              <p className="text-gray-700">
+                여기에 도움말 내용을 입력하세요. 예를 들어, 자주 묻는 질문이나
+                사용 방법에 대한 안내를 제공할 수 있습니다.
+              </p>
+              <ul className="list-disc list-inside text-gray-700">
+                <li>자주 묻는 질문 1</li>
+                <li>자주 묻는 질문 2</li>
+                <li>자주 묻는 질문 3</li>
+              </ul>
+            </div>
+
+            {/* 모달 푸터 */}
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={toggleHelpModal}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Guide = () => {
   const [data, setData] = useState([]);
-  const [modal, setModal] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRefs = useRef([]);
 
@@ -190,14 +297,6 @@ const Guide = () => {
     return () => observer.disconnect();
   }, []);
 
-  const openModal = (id) => {
-    setModal(id);
-  };
-
-  const closeModal = () => {
-    setModal(null);
-  };
-
   return (
     <div className="bg-white min-h-screen w-full flex flex-col items-center z-10">
       <HeroSection />
@@ -236,8 +335,6 @@ const Guide = () => {
           </ul>
         </div>
 
-        {/*
-         */}
         <div className="w-[70%]">
           {GUIDE_SUBJECTS.map((text, index) => (
             <React.Fragment key={text}>
@@ -272,41 +369,9 @@ const Guide = () => {
           ))}
         </div>
       </div>
-      {/* 🔹 FAQ & 모달 섹션 */}
-      <div className="w-full bg-white rounded-lg flex justify-center">
-        <div className="  relative p-8 border border-gray-300 rounded-lg bg-white w-1/3 my-15">
-          <p className="text-gray-800 text-xl font-semibold text-left">
-            착한가격업소, 무엇이 더 궁금하신가요?
-          </p>
-          <p className="text-gray-500 text-base mt-4 text-left">
-            전화상담을 원할 시 010-8764-8222으로 연락주세요.
-          </p>
-        </div>
-      </div>
 
-      {/* 🔹 모달 창 */}
-      {modal && modal !== "videoModal" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg shadow-lg w-[500px]">
-            <h2 className="text-xl font-semibold mb-6 text-center">
-              {modal === "helpModal" ? "도움말" : "SNS"}
-            </h2>
-            <p className="text-gray-600 text-center">
-              {modal === "helpModal"
-                ? "이곳에서 착한가격업소에 대한 정보를 확인하세요."
-                : "착한가격업소 관련 SNS 소식을 확인하세요."}
-            </p>
-            <div className="flex justify-center mt-10">
-              <button
-                onClick={closeModal}
-                className="px-8 py-4 bg-gray-300 rounded-lg text-lg"
-              >
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 🔹 HeaderSection을 맨 아래로 이동 */}
+      <HeaderSection />
     </div>
   );
 };

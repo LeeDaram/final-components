@@ -1,17 +1,21 @@
-import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import React, { useState } from "react";
 
 // 이미지 임포트 (사용 중인 경로 그대로 유지)
 import n1 from "../../../assets/images/Brand/n1.png";
 import n2 from "../../../assets/images/Brand/n2.png";
 import n3 from "../../../assets/images/Brand/n3.png";
 import banner from "../../../assets/images/Brand/banner.png";
-import frontImage from "../../../assets/images/Brand/front.png";
 import SECTION2 from "../../../assets/images/Brand/SECTION2.png";
-import SECTION3 from "../../../assets/images/Brand/SECTION4.png";
 
-// 원하는 이름으로 통합 컴포넌트를 선언 (예: SingleComponent)
+import {
+  FaQuestionCircle,
+  FaPlayCircle,
+  FaTimes,
+  FaInstagramSquare,
+} from "react-icons/fa";
+
 const SingleComponent = () => {
   // 1) HeroSection 서브 컴포넌트
   const HeroSection = () => {
@@ -155,12 +159,13 @@ const SingleComponent = () => {
   const WhyInfotech = () => {
     return (
       <div className="bg-white w-full px-6 py-16">
-        <div className="md:w-1/2 mb-8 md:mb-0 md:mr-8">
-          <h3 className="text-blue-500 font-bold text-xl mb-2">착한가격업소</h3>
+        <div className="md:w-1/2 mb-8 md:mb-0 md:mr-8 ml-[550px]">
+          <h3 className="text-blue-500 font-bold text-xl mb-2 ml-[150px]">
+            착한가격업소
+          </h3>
           <h2 className="text-2xl font-semibold mb-4">
             소상공인들이 왜 이 사이트를 선택한 이유!
           </h2>
-          <p className="text-gray-700 mb-4">지금 확인하세요!</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ml-[100px]">
@@ -171,10 +176,13 @@ const SingleComponent = () => {
               alt="시작과 목적"
               className="mb-4 w-[243px] h-[209px] object-cover rounded-lg"
             />
-            <h3 className="text-xl font-semibold mb-2">시작과 목적</h3>
+            <h3 className="text-xl font-semibold mb-2">사용하기 쉬운 시스템</h3>
             <p className="text-gray-700 text-sm">
-              착한 업소 솔루션은 소상공인을 돕고, 소비자가 믿고 찾을 수 있는
-              공간을 만들기 위해 시작되었습니다.
+              직관적인 UI로 초보자도 쉽게 사용 가능
+            </p>
+            <p className="text-gray-700 text-sm">
+              {" "}
+              모바일 최적화로 어디서나 간편 관리.
             </p>
           </div>
 
@@ -185,10 +193,13 @@ const SingleComponent = () => {
               alt="핵심 가치"
               className="mb-4 w-[243px] h-[209px] object-cover rounded-lg"
             />
-            <h3 className="text-xl font-semibold mb-2">핵심 가치</h3>
+            <h3 className="text-xl font-semibold mb-2">운영 효율성</h3>
             <p className="text-gray-700 text-sm">
-              단순한 업소 추천을 넘어, 착한 소비 문화를 조성하며 지역 경제
-              활성화에 기여하고자 합니다.
+              저렴한 초기 비용 또는 무료 플랜 제공
+            </p>
+            <p className="text-gray-700 text-sm">
+              {" "}
+              마케팅 툴 지원으로 추가 비용 없이 매출 증가
             </p>
           </div>
 
@@ -199,10 +210,13 @@ const SingleComponent = () => {
               alt="앞으로의 목표"
               className="mb-4 w-[243px] h-[209px] object-cover rounded-lg"
             />
-            <h3 className="text-xl font-semibold mb-2">앞으로의 목표</h3>
+            <h3 className="text-xl font-semibold mb-2">신뢰할 수 있는 지원</h3>
             <p className="text-gray-700 text-sm">
-              앞으로도 소상공인과 소비자가 함께 성장하는 지속 가능한 플랫폼으로
-              발전해 나가겠습니다.
+              24시간 고객 지원 및 교육 자료 제공
+            </p>
+            <p className="text-gray-700 text-sm">
+              {" "}
+              제휴 및 홍보 기회로 고객 확보 가능
             </p>
           </div>
         </div>
@@ -210,19 +224,109 @@ const SingleComponent = () => {
     );
   };
 
-  // 여기서 "하나의 컴포넌트"로 전체 화면을 구성
   return (
     <>
-      {/* HeroSection (상단 배너) */}
+      {/* 맨 윗 부분 (헤더)*/}
       <HeroSection />
 
-      {/* 중앙 정렬 컨테이너 안에 3개 섹션 나열 */}
+      {/* 중간 부분 (메인 내용) */}
       <div className="w-9/12 mx-auto flex flex-col items-center">
         <GoalsSection />
         <PhilosophySection />
         <WhyInfotech />
       </div>
+      {/* 맨 밑 부분 (중간 내용)*/}
+      <HeaderSection />
     </>
+  );
+};
+
+const HeaderSection = () => {
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+  const toggleHelpModal = () => {
+    setIsHelpOpen(!isHelpOpen);
+  };
+
+  return (
+    <div className="w-full bg-white py-8 mt-[100px] mb-[100px]">
+      <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
+        {/* 왼쪽 텍스트 영역 */}
+        <div className="flex items-center gap-4">
+          <div className="bg-blue-500 p-3 rounded-full shadow-lg">
+            <FaQuestionCircle className="text-white w-8 h-8" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            착한가격업소, 무엇이 더 궁금하신가요?
+          </h2>
+        </div>
+
+        {/* 오른쪽 아이콘 영역 */}
+        <div className="flex items-center gap-6">
+          <button className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition">
+            <FaPlayCircle className="w-6 h-6" />
+            <span className="text-lg font-semibold">가이드 영상 보기</span>
+          </button>
+          <button
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
+            onClick={toggleHelpModal}
+          >
+            <FaQuestionCircle className="w-6 h-6" />
+            <span className="text-lg font-semibold">도움말</span>
+          </button>
+          <a
+            href="https://www.instagram.com/withyou3542/?utm_source=ig_embed&ig_rid=5a14ad0c-ea41-4cd1-b0c9-fc9ab905e1d4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
+          >
+            <FaInstagramSquare className="w-6 h-6" />
+            <span className="text-lg font-semibold">공식 인스타</span>
+          </a>
+        </div>
+      </div>
+
+      {/* 도움말 모달 */}
+      {isHelpOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            {/* 모달 헤더 */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">도움말</h3>
+              <button
+                onClick={toggleHelpModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <FaTimes className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* 모달 내용 */}
+            <div className="space-y-4">
+              <p className="text-gray-700">
+                여기에 도움말 내용을 입력하세요. 예를 들어, 자주 묻는 질문이나
+                사용 방법에 대한 안내를 제공할 수 있습니다.
+              </p>
+              <ul className="list-disc list-inside text-gray-700">
+                <li>자주 묻는 질문 1</li>
+                <li>자주 묻는 질문 2</li>
+                <li>자주 묻는 질문 3</li>
+              </ul>
+            </div>
+
+            {/* 모달 푸터 */}
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={toggleHelpModal}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
