@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import axios from "axios";
 import Banner from "../../../assets/images/Guide/Guide4.jpg";
 import ImchatBot from "./imchat.js/Imchatbot";
+
 import {
   ImAddressBook,
   ImBaffled2,
@@ -9,23 +11,28 @@ import {
   ImBullhorn,
   ImCreditCard,
 } from "react-icons/im";
+//이모티콘 im
 import {
   FaQuestionCircle,
   FaPlayCircle,
   FaTimes,
   FaInstagramSquare,
 } from "react-icons/fa";
+//이모티콘 fa
+
 import {
   AiFillCheckCircle,
   AiFillBuild,
   AiFillBook,
   AiFillBell,
 } from "react-icons/ai";
+//이모티콘 ai
+
 import { CiSearch } from "react-icons/ci";
 import { IoDocuments } from "react-icons/io5";
 import { HiMiniPencil } from "react-icons/hi2";
+//이모티콘 기타
 
-// 가이드 주제 및 아이콘 정의
 const GUIDE_SUBJECTS = [
   "공지사항",
   "마이 페이지(사업자)",
@@ -35,6 +42,7 @@ const GUIDE_SUBJECTS = [
   "고객 예약 챗봇",
   "사업자 회원가입",
 ];
+//사이드바 늘릴시 react-icon에서 이모티콘 추가할것
 
 const ICONS = [
   <CiSearch size={30} key="search" />,
@@ -51,32 +59,20 @@ const ICONS = [
   <ImCreditCard size={30} key="ard" />,
 ];
 
-// 로딩 스피너 컴포넌트
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center h-64">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
-);
+/*아이콘: 사이드바 추가하면 자동으로 추가됨 */
 
-// 에러 메시지 컴포넌트
-const ErrorMessage = ({ message }) => (
-  <div className="text-red-500 text-center py-4">{message}</div>
-);
+const HeroSection = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
-// 모달 관리 훅
-const useModal = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
-  return { isOpen, openModal, closeModal };
-};
+  const onOpenChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
 
-// HeroSection 컴포넌트
-const HeroSection = ({ onOpenChat }) => {
   return (
     <div className="w-full bg-blue-500 py-14 flex justify-center px-6 gap-20">
+      {/* 왼쪽 텍스트 영역 */}
       <div className="flex justify-end flex-col md:flex-row items-center max-w-5xl w-1/2">
-        <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left text-white md:w-1/2 ">
           <h3 className="text-2xl md:text-2xl font-bold">
             착한가격업소에 온걸 환영합니다!
           </h3>
@@ -85,14 +81,38 @@ const HeroSection = ({ onOpenChat }) => {
             기능을 알 수 있습니다. 또한 밑에 스크롤을 내려서 다양한 기능을 볼수
             있습니다.
           </p>
-          <button
+
+          {/* 🔹 챗봇 열기 버튼 */}
+          <a
             className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-md shadow-md hover:bg-blue-500 hover:text-white transition"
             onClick={onOpenChat}
           >
             챗봇 열기
-          </button>
+          </a>
+
+          {/* 챗봇 모달 */}
+          {isChatOpen && (
+            <div className="fixed top-56 left-[1550px] items-center flex justify-end z-50 mr-8">
+              <div className="bg-white rounded-lg shadow-lg w-80 h-[500px] flex flex-col">
+                <div className="p-4 flex justify-between border-b">
+                  <h2 className="text-lg font-semibold">챗봇</h2>
+                  <button
+                    onClick={() => setIsChatOpen(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    ✖
+                  </button>
+                </div>
+                <div className="flex-1">
+                  <ImchatBot />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* 오른쪽 이미지 영역 */}
       <div className="mt-10 md:mt-0 md:w-1/2">
         <img
           src={Banner}
@@ -104,27 +124,34 @@ const HeroSection = ({ onOpenChat }) => {
   );
 };
 
-// GuideContent 컴포넌트
 const GuideContent = ({ data }) => {
-  if (!data) return <ErrorMessage message="데이터가 없습니다." />;
+  const { id, icon, title, subtitle, description } = data || {};
 
-  const { id, icon, title, subtitle, description, imageUrl } = data;
+  if (!id) {
+    return <div>데이터가 없습니다.</div>;
+  }
 
   return (
     <div
       id={id}
       className="p-6 bg-white w-[1000px] min-h-[300px] flex flex-col justify-center space-y-4"
     >
+      {/* 아이콘 + 타이틀을 함께 배치하는 영역 */}
       <div className="flex items-center gap-3">
+        {/* 아이콘(이미지) 영역: 크기 고정 */}
         <div className="w-12 h-12 flex-shrink-0">
-          {React.cloneElement(icon, {
-            className: "w-full h-full object-contain",
-          })}
+          {icon &&
+            React.cloneElement(icon, {
+              className: "w-full h-full object-contain",
+            })}
         </div>
+        {/* 타이틀: 아이콘 크기와 상관없이 동일한 너비 유지 */}
         <h4 className="flex-1 text-3xl font-bold text-gray-900 text-left tracking-tight min-w-0">
           {title}
         </h4>
       </div>
+
+      {/* 서브타이틀 + 설명 */}
       <div className="flex flex-col space-y-2 w-full">
         <h3 className="text-xl font-semibold text-black text-left tracking-normal">
           {subtitle}
@@ -137,13 +164,18 @@ const GuideContent = ({ data }) => {
   );
 };
 
-// HeaderSection 컴포넌트
 const HeaderSection = () => {
-  const { isOpen, openModal, closeModal } = useModal();
+  const [isHelpOpen, setIsHelpOpen] = useState(false); // 도움말 모달 상태
+
+  // 도움말 모달 열기/닫기 함수
+  const toggleHelpModal = () => {
+    setIsHelpOpen(!isHelpOpen);
+  };
 
   return (
     <div className="w-full bg-white py-8 mt-[100px] mb-[100px] border border-gray-300 rounded-lg">
       <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
+        {/* 왼쪽 텍스트 영역 */}
         <div className="flex items-center gap-4">
           <div className="bg-blue-500 p-3 rounded-full shadow-lg">
             <FaQuestionCircle className="text-white w-8 h-8" />
@@ -152,6 +184,8 @@ const HeaderSection = () => {
             착한가격업소, 무엇이 더 궁금하신가요?
           </h2>
         </div>
+
+        {/* 오른쪽 아이콘 영역 */}
         <div className="flex items-center gap-6">
           <a
             href="https://www.youtube.com/watch?v=kdqPw9kCth0"
@@ -164,7 +198,7 @@ const HeaderSection = () => {
           </a>
           <button
             className="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition"
-            onClick={openModal}
+            onClick={toggleHelpModal}
           >
             <FaQuestionCircle className="w-6 h-6" />
             <span className="text-lg font-semibold">도움말</span>
@@ -182,18 +216,21 @@ const HeaderSection = () => {
       </div>
 
       {/* 도움말 모달 */}
-      {isOpen && (
+      {isHelpOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            {/* 모달 헤더 */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold">도움말</h3>
               <button
-                onClick={closeModal}
+                onClick={toggleHelpModal}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <FaTimes className="w-6 h-6" />
               </button>
             </div>
+
+            {/* 모달 내용 */}
             <div className="space-y-4">
               <p className="text-gray-700">무엇이 더 궁금하신가요?</p>
               <ul className="list-disc list-inside text-gray-700 text-sm">
@@ -204,9 +241,10 @@ const HeaderSection = () => {
                 </li>
               </ul>
             </div>
+            {/* 모달 푸터 */}
             <div className="mt-6 flex justify-end">
               <button
-                onClick={closeModal}
+                onClick={toggleHelpModal}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
               >
                 닫기
@@ -219,18 +257,10 @@ const HeaderSection = () => {
   );
 };
 
-// Guide 컴포넌트
 const Guide = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRefs = useRef([]);
-  const {
-    isOpen: isChatOpen,
-    openModal: openChat,
-    closeModal: closeChat,
-  } = useModal();
 
   useEffect(() => {
     const fetchGuides = async () => {
@@ -247,9 +277,7 @@ const Guide = () => {
           }))
         );
       } catch (error) {
-        setError("데이터를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching guide data:", error);
       }
     };
     fetchGuides();
@@ -264,7 +292,7 @@ const Guide = () => {
           }
         });
       },
-      { threshold: 0.5, rootMargin: "0px 0px -50% 0px" }
+      { threshold: 1 }
     );
 
     sectionRefs.current.forEach((el) => {
@@ -272,37 +300,19 @@ const Guide = () => {
     });
 
     return () => observer.disconnect();
-  }, [data]);
-
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} />;
+  }, []);
 
   return (
     <div className="bg-white min-h-screen w-full flex flex-col items-center z-10">
-      <HeroSection onOpenChat={openChat} />
-      {isChatOpen && (
-        <div className="fixed top-56 left-[1550px] items-center flex justify-end z-50 mr-8">
-          <div className="bg-white rounded-lg shadow-lg w-80 h-[500px] flex flex-col">
-            <div className="p-4 flex justify-between border-b">
-              <h2 className="text-lg font-semibold">챗봇</h2>
-              <button
-                onClick={closeChat}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✖
-              </button>
-            </div>
-            <div className="flex-1">
-              <ImchatBot />
-            </div>
-          </div>
-        </div>
-      )}
+      <HeroSection />
 
       <div className="w-full max-w-screen-2xl p-7 flex flex-wrap">
         <div
           className="w-1/5 sticky top-8 self-start bg-blue-50 p-4 rounded-lg ml-[-10px]"
-          style={{ maxHeight: "calc(100vh - 100px)", overflowY: "hidden" }}
+          style={{
+            maxHeight: "calc(100vh - 100px)",
+            overflowY: "hidden",
+          }}
         >
           <ul className="space-y-10 overflow-y-hidden scrollbar-hide">
             {GUIDE_SUBJECTS.map((text, index) => (
@@ -338,19 +348,25 @@ const Guide = () => {
                 data-index={index}
                 className="flex flex-row justify-center items-center min-h-[400px] max-w-[1000px] w-full mx-auto gap-x-8"
               >
-                {data[index]?.imageUrl && (
-                  <img
-                    src={data[index].imageUrl}
-                    alt={`Guide ${index}`}
-                    className="w-[500px] h-[600px] rounded-lg md:object-contain"
-                    onError={(e) =>
-                      (e.target.src =
-                        "http://localhost:8080/uploads/default.jpg")
-                    }
-                  />
+                {data && (
+                  <>
+                    {data[index]?.imageUrl && (
+                      <img
+                        src={data[index].imageUrl}
+                        alt={`Guide ${index}`}
+                        className="w-[400px] h-auto rounded-lg"
+                        onError={(e) =>
+                          (e.target.src =
+                            "http://localhost:8080/uploads/default.jpg")
+                        }
+                      />
+                    )}
+                    <GuideContent data={data[index]} />
+                  </>
                 )}
-                <GuideContent data={data[index]} />
               </div>
+
+              {/* 🔹 검색 가이드, 리뷰 가이드, 공지사항 사이에 구분선 추가 */}
               {index < GUIDE_SUBJECTS.length - 1 && (
                 <hr className="border-gray-200 my-16 w-full max-w-[1000px] mx-auto" />
               )}
@@ -359,6 +375,7 @@ const Guide = () => {
         </div>
       </div>
 
+      {/* 🔹 HeaderSection을 맨 아래로 이동 */}
       <HeaderSection />
     </div>
   );
