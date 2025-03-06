@@ -69,11 +69,12 @@ const ImchatBot = () => {
     const responses = {
       안녕: "안녕하세요! 착한가격 업소 챗봇입니다. 😊 무엇을 도와드릴까요?",
       잘가: "이용해 주셔서 감사합니다. 다음에 또 봐요! 👋",
-      1: "REDIRECT:/find",
-      2: "REDIRECT:/reservation",
-      3: "REDIRECT:/inquiry",
-      4: "REDIRECT:/notice",
-      5: "REDIRECT:/event",
+      //인사
+      1: "REDIRECT:/intro/site",
+      2: "REDIRECT:/intro/service",
+      3: "REDIRECT:/intro/brand",
+      4: "REDIRECT:/find/map",
+      5: "REDIRECT:/chat/room",
       //리다이렉트 명령어(1)
       6: `현재 추천 업소는 다음과 같습니다:\n1. 맛있는 식당\n2. 편안한 카페\n3. 합리적인 숙소`,
       7: `업소별 영업시간은 다음과 같습니다:\n- 맛있는 식당: 10:00 ~ 22:00\n- 편안한 카페: 08:00 ~ 20:00\n- 합리적인 숙소: 24시간`,
