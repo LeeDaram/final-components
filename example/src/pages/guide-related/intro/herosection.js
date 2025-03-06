@@ -3,11 +3,13 @@ import HmImg0 from "../../../assets/images/herosection/hm-0.png";
 import HmImg from "../../../assets/images/herosection/hm-1.png";
 import HmImg2 from "../../../assets/images/herosection/hm-2.png";
 import HmImg3 from "../../../assets/images/herosection/hm-3.png";
+import QR from "../../../assets/images/site/QR-1.png";
 
 const HeroSection = () => {
   const [showMore, setShowMore] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [expandedBoxes, setExpandedBoxes] = useState({});
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const images = [HmImg, HmImg2, HmImg3];
 
@@ -203,11 +205,16 @@ const HeroSection = () => {
           <div className="flex space-x-6">
             {[
               { label: "도움요청", icon: "fa-info-circle" },
-              { label: "챗봇문의", icon: "fa-video-camera" },
+              {
+                label: "챗봇문의",
+                icon: "fa-video-camera",
+                onClick: () => setIsChatbotOpen(true),
+              },
               { label: "전화상담", icon: "fa-phone" },
             ].map((item, index) => (
               <button
                 key={index}
+                onClick={item.onClick}
                 className="bg-white border border-gray-300 text-gray-800 flex flex-col items-center p-4 shadow-sm rounded-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 ease-in-out"
               >
                 <i className={`fa ${item.icon} text-3xl mb-2`}></i>
@@ -217,6 +224,32 @@ const HeroSection = () => {
           </div>
         </div>
       </section>
+
+      {/* 챗봇 팝업 */}
+      {isChatbotOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <button
+              onClick={() => setIsChatbotOpen(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 transition-all"
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold text-gray-800 text-center mb-4">
+              챗봇 문의
+            </h2>
+            <img
+              src={QR}
+              alt="챗봇 이미지"
+              className="mx-auto mb-4 w-32 h-32 rounded-lg shadow-md"
+            />
+            <p className="text-gray-600 text-center leading-relaxed">
+              스마트폰 카메라 및 QR스캐너를 이용하여 <br />
+              스캔하면 모바일 챗봇으로 연결됩니다.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

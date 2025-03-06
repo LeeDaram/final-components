@@ -5,6 +5,7 @@ import introduceImg4 from "../../../assets/images/site/intro-4.png";
 import introduceImg5 from "../../../assets/images/site/introduce-2.jpg";
 import introduceImg6 from "../../../assets/images/site/introduce-3.jpg";
 import group from "../../../assets/images/site/group-1.png";
+import QR from "../../../assets/images/site/QR-1.png";
 import React, { useState, useEffect } from "react";
 
 const Service = () => {
