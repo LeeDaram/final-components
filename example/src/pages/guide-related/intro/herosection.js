@@ -43,7 +43,7 @@ const HeroSection = () => {
             {/* 텍스트 컨텐츠 */}
             <div className="lg:w-1/2 w-full text-left">
               <h2 className="text-4xl font-extrabold mt-4 mb-6 leading-relaxed">
-                소비자를 위한 <br /> 착한가격 업소 가이드
+                소비자를 위한 <br /> 착한녀석들 가이드
               </h2>
               <hr className="border-blue-500 w-16 mb-7" />
               <p className="mb-6 text-lg text-gray-700 leading-relaxed">
@@ -54,24 +54,26 @@ const HeroSection = () => {
 
               {/* CTA 버튼 */}
               <div className="mt-6">
-                <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-md hover:bg-blue-700 transition">
-                  착한가격 업소 찾기
-                </button>
+                <a href="#" className="inline-block">
+                  <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-md hover:bg-blue-700 transition">
+                    착한가격 업소 찾기
+                  </button>
+                </a>
               </div>
 
               {/* 통계 정보 */}
               <div className="mt-10 flex flex-wrap gap-6">
                 <div className="p-6 bg-gray-100 rounded-lg shadow-md text-center">
-                  <h3 className="text-3xl font-bold text-blue-600">5,000+</h3>
-                  <p className="text-gray-700 text-sm">전국 업소 수</p>
+                  <h3 className="text-3xl font-bold text-blue-600 ">높음</h3>
+                  <p className="text-gray-700 text-sm mt-2">소비자들 만족</p>
                 </div>
                 <div className="p-6 bg-gray-100 rounded-lg shadow-md text-center">
-                  <h3 className="text-3xl font-bold text-blue-600">90%</h3>
-                  <p className="text-gray-700 text-sm">소비자 만족도</p>
+                  <h3 className="text-3xl font-bold text-blue-600">정상</h3>
+                  <p className="text-gray-700 text-sm mt-2">이용가능 녀부</p>
                 </div>
                 <div className="p-6 bg-gray-100 rounded-lg shadow-md text-center">
-                  <h3 className="text-3xl font-bold text-blue-600">200+</h3>
-                  <p className="text-gray-700 text-sm">지정된 지역</p>
+                  <h3 className="text-3xl font-bold text-blue-600">우수</h3>
+                  <p className="text-gray-700 text-sm mt-2">공공기관 평가</p>
                 </div>
               </div>
             </div>
@@ -192,7 +194,7 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto p-10 bg-white shadow-xl rounded-lg flex justify-between">
           <div className="flex-1">
             <h3 className="text-2xl font-bold mb-4 text-gray-800 text-left">
-              착한가격업소, 무엇이 더 궁금하신가요?
+              착한녀석들, 무엇이 더 궁금하신가요?
             </h3>
             <p className="text-left text-blue-500">
               전화상담 연결은 해당 업소 주문 관련 상담만 가능합니다.
@@ -201,7 +203,7 @@ const HeroSection = () => {
           <div className="flex space-x-6">
             {[
               { label: "도움요청", icon: "fa-info-circle" },
-              { label: "영상보기", icon: "fa-video-camera" },
+              { label: "챗봇문의", icon: "fa-video-camera" },
               { label: "전화상담", icon: "fa-phone" },
             ].map((item, index) => (
               <button

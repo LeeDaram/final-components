@@ -160,7 +160,6 @@ const Service = () => {
           </section>
         </div>
       </div>
-      {/* 헬프미 */}
       <section className="p-16 bg-white">
         <div className="max-w-4xl mx-auto p-10 bg-white shadow-xl rounded-lg flex justify-between">
           <div className="flex-1">
@@ -173,14 +172,19 @@ const Service = () => {
           </div>
           <div className="flex space-x-6">
             {[
-              { label: "도움요청", icon: "fa-info-circle" },
-              { label: "영상보기", icon: "fa-video-camera" },
+              { label: "도움요청", icon: "fa-info-circle", link: "#" },
+              { label: "챗봇문의", icon: "fa-video-camera" },
               { label: "전화상담", icon: "fa-phone" },
             ].map((item, index) => (
               <button
                 key={index}
                 className="bg-white border border-gray-300 text-gray-800 flex flex-col items-center p-4 shadow-sm rounded-lg
-                     hover:bg-gray-100 active:scale-95 transition-all duration-200 ease-in-out"
+               hover:bg-gray-100 active:scale-95 transition-all duration-200 ease-in-out"
+                onClick={() => {
+                  if (item.link) {
+                    window.location.href = item.link;
+                  }
+                }}
               >
                 <i className={`fa ${item.icon} text-3xl mb-2`}></i>
                 <span className="text-base font-medium">{item.label}</span>

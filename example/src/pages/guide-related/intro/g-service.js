@@ -81,8 +81,8 @@ const Service = () => {
         </div>
         <div className="w-full md:w-1/2 p-6">
           <h2 className="text-5xl font-bold mb-6 leading-tight">
-            <span className="text-yellow-300">착한가격업소</span>는 저렴한
-            가격과 <br />
+            <span className="text-yellow-300">착한녀석들</span>은 저렴한 가격과{" "}
+            <br />
             우수한 서비스를 제공합니다.
           </h2>
           <p className="mb-6 text-lg">
