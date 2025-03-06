@@ -76,7 +76,7 @@ function Brand() {
                 {
                   title: "시작과 목적",
                   description:
-                    "착한 업소 솔루션은 소상공인을 돕고, 소비자가 믿고 찾을 수 있는 공간을 위해 시작되었습니다.",
+                    "착한녀석들들은 소상공인을 돕고, 소비자가 믿고 찾을 수 있는 공간을 위해 시작되었습니다.",
                   image: Img1,
                 },
                 {
@@ -119,7 +119,7 @@ function Brand() {
         <div className="max-w-4xl mx-auto p-10 bg-white shadow-xl rounded-lg flex justify-between">
           <div className="flex-1">
             <h3 className="text-2xl font-bold mb-4 text-gray-800 text-left">
-              착한가격업소, 무엇이 더 궁금하신가요?
+              착한녀석들, 무엇이 더 궁금하신가요?
             </h3>
             <p className="text-left text-blue-500">
               전화상담 연결은 해당 업소 주문 관련 상담만 가능합니다.
@@ -128,7 +128,7 @@ function Brand() {
           <div className="flex space-x-6">
             {[
               { label: "도움요청", icon: "fa-info-circle" },
-              { label: "영상보기", icon: "fa-video-camera" },
+              { label: "챗봇문의", icon: "fa-video-camera" },
               { label: "전화상담", icon: "fa-phone" },
             ].map((item, index) => (
               <button
