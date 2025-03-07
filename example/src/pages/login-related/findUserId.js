@@ -16,6 +16,9 @@ function FindUserId() {
     // 입력값 오류
     const [formErrors, setFormErrors] = useState({});
 
+    // 로딩
+    const [isLoading, setIsLoading] = useState(false);
+
     // 값 입력 업데이트
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -47,6 +50,7 @@ function FindUserId() {
 
     // 아이디 찾기 API 출력
     const fetchUserId = async () => {
+        setIsLoading(true);
         try {
             const response = await fetch(
                 `http://localhost:8080/api/users/findUserId?name=${formData.userName}&email=${formData.userEmail}`,
@@ -56,7 +60,7 @@ function FindUserId() {
             );
 
             if (!response.ok) {
-                throw new Error('유저 아이디를 불러오는데 실패했습니다.');
+                throw new Error('아이디를 불러오는데 실패했습니다.');
             }
 
             const data = await response.json();
@@ -67,7 +71,10 @@ function FindUserId() {
                 userName: '',
                 userEmail: '',
             });
+
+            setIsLoading(false);
         } catch (err) {
+            setIsLoading(false);
             alert('사용자 정보가 존재하지 않습니다.');
             console.error(err.message);
         }
@@ -94,6 +101,14 @@ function FindUserId() {
                 {userId && (
                     <div className="text-center text-lg font-bold text-gray-700  mb-3 border border-blue-500 rounded-lg p-5 bg-blue-100">
                         회원님의 아이디는 <span className="text-blue-500">{userId} </span> 입니다.
+                    </div>
+                )}
+
+                {/* 아이디 찾는중 */}
+                {isLoading && (
+                    <div className="text-center text-lg font-bold text-gray-700 mb-3 border border-blue-500 rounded-lg p-5 bg-blue-100">
+                        <span class="loading loading-dots loading-xs text-blue-500"> </span> 아이디 찾는중{' '}
+                        <span class="loading loading-dots loading-xs text-blue-500"> </span>
                     </div>
                 )}
 

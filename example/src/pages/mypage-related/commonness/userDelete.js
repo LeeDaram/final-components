@@ -5,18 +5,7 @@ import { useAuth } from '../../../pages/login-related/AuthContext';
 
 function UserDelete() {
     // 로그인, 로그아웃
-    const { user, logout } = useAuth();
-
-    // 로그인 타입 상태값
-    const [userLoginType, setUserLoginType] = useState('');
-
-    useEffect(() => {
-        if (user?.loginType) {
-            setUserLoginType(user?.loginType);
-        } else {
-            setUserLoginType('');
-        }
-    }, [user]);
+    const { user, token, logout } = useAuth();
 
     // 페이지 이동
     const navigate = useNavigate();
@@ -64,21 +53,14 @@ function UserDelete() {
         return Object.keys(errors).length === 0;
     };
 
-    // 서버 : 비밀번호 변경
+    // 서버 : 회원탈퇴 (일반)
     const fetchUserrDelete = async () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userId = user?.id;
-
-        if (!userId) {
-            alert('사용자 정보가 없습니다.');
-            return;
-        }
-
         try {
-            const response = await fetch(`http://localhost:8080/api/users/delete/${userId}`, {
+            const response = await fetch(`http://localhost:8080/api/users/delete/${user.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     currentPassword: formData.userPassword,
@@ -99,19 +81,12 @@ function UserDelete() {
         }
     };
 
-    // 서버 : 비밀번호 변경(소셜)
+    // 서버 : 회원탈퇴 (소셜)
     const fetchUserrDeleteSocial = async () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userId = user?.id;
-
-        if (!userId) {
-            alert('사용자 정보가 없습니다.');
-            return;
-        }
-
         try {
-            const response = await fetch(`http://localhost:8080/api/users/social/delete/${userId}`, {
+            const response = await fetch(`http://localhost:8080/api/users/social/delete/${user.id}`, {
                 method: 'DELETE',
+                Authorization: `Bearer ${token}`,
             });
 
             if (!response.ok) {
@@ -158,7 +133,7 @@ function UserDelete() {
                             탈퇴 시 예약정보, 리뷰 등 회원님의 모든 정보가 삭제되며 복구가 불가능합니다.
                         </p>
 
-                        {!(userLoginType === 'SOCIAL') && (
+                        {!(user?.loginType === 'SOCIAL') && (
                             <>
                                 {/* 비밀번호 */}
                                 <div className="mt-6">
@@ -206,7 +181,7 @@ function UserDelete() {
                             >
                                 더 써볼래요
                             </button>
-                            {userLoginType === 'SOCIAL' ? (
+                            {user?.loginType === 'SOCIAL' ? (
                                 <button
                                     className="w-1/2 ml-1 h-14 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition"
                                     onClick={changePasswordSocial}

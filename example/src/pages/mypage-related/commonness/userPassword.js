@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../sidebar.js';
+import { useAuth } from '../../../pages/login-related/AuthContext';
 
 function UserPassword() {
+    // 유저 정보
+    const { user, token } = useAuth();
+
     // 정규식
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;
 
@@ -60,37 +64,28 @@ function UserPassword() {
 
     // 서버 : 비밀번호 변경
     const fetchPwSave = async () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const userId = user?.id;
-
-        if (!userId) {
-            alert('사용자 정보가 없습니다.');
-            return;
-        }
-
         try {
             const response = await fetch('http://localhost:8080/api/users/update/password', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    userId: userId,
+                    userId: user.id,
                     currentPassword: formData.currentPassword,
                     newPassword: formData.newPassword,
                 }),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                alert(errorData.error);
-            } else {
-                const responseData = await response.json();
-                alert(responseData.message);
+                alert('비밀번호 변경 중 오류가 발생했습니다.');
             }
+
+            alert('비밀번호가 변경되었습니다. ');
         } catch (error) {
             console.error('비밀번호 변경 중 오류가 발생했습니다.', error);
-            alert('비밀번호 변경 중 오류가 발생했습니다.', error);
+            alert('비밀번호 변경 중 오류가 발생했습니다.');
         }
     };
 

@@ -5,6 +5,9 @@ function FindUserPassword() {
     const idRegex = /^[a-zA-Z0-9]{5,20}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    // 로딩
+    const [isLoading, setIsLoading] = useState(false);
+
     // 입력값 관리
     const [formData, setFormData] = useState({
         userId: '',
@@ -54,8 +57,7 @@ function FindUserPassword() {
 
     // 비밀번호 찾기 API 통신
     const fetchUserPw = async () => {
-        console.log({ userId: formData.userId, name: formData.userName, email: formData.userEmail });
-
+        setIsLoading(true);
         try {
             const response = await fetch('http://localhost:8080/api/users/reset/password', {
                 method: 'POST',
@@ -70,10 +72,19 @@ function FindUserPassword() {
             }
 
             setSendEmail(true);
+
+            setFormData({
+                userId: '',
+                userName: '',
+                userEmail: '',
+            });
+
+            setIsLoading(false);
         } catch (error) {
             console.error('Error:', error);
             alert('이메일 전송에 실패했습니다. 입력값을 다시 확인해주세요.');
             setSendEmail(false);
+            setIsLoading(false);
         }
     };
 
@@ -97,8 +108,16 @@ function FindUserPassword() {
                 {/* 이메일 확인 안내 */}
                 {sendEmail && (
                     <div className="text-center text-lg font-bold text-gray-700 mb-3 border border-blue-500 rounded-lg p-5 bg-blue-100">
-                        비밀번호가 이메일로 발송되었습니다!{' '}
+                        비밀번호가 이메일로 발송되었습니다!
                         <span className="text-blue-500"> 이메일을 확인해주세요 </span>
+                    </div>
+                )}
+
+                {/* 이메일 전송중 */}
+                {isLoading && (
+                    <div className="text-center text-lg font-bold text-gray-700 mb-3 border border-blue-500 rounded-lg p-5 bg-blue-100">
+                        <span class="loading loading-dots loading-xs text-blue-500"> </span> 이메일 전송중{' '}
+                        <span class="loading loading-dots loading-xs text-blue-500"> </span>
                     </div>
                 )}
 

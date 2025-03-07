@@ -9,23 +9,14 @@ import { useState, useEffect } from 'react';
 
 function UserReviews() {
     // 유저 정보
-    const { user } = useAuth();
-    const [userId, setUserId] = useState('');
+    const { user, token } = useAuth();
+
+    // 리뷰 정보
     const [review, setReview] = useState([]);
+
+    // 사진 더보기
     const [open, setOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
-
-    useEffect(() => {
-        if (user?.id) {
-            setUserId(user.id);
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (userId) {
-            fetchUserReviewPeriod('all');
-        }
-    }, [userId]);
 
     // 기간 필터 버튼
     const [selectedPeriod, setSelectedPeriod] = useState('all');
@@ -39,6 +30,13 @@ function UserReviews() {
         { id: '3years', label: '3년' },
     ];
 
+    // 리뷰 불러오기
+    useEffect(() => {
+        if (user && token) {
+            fetchUserReviewPeriod('all');
+        }
+    }, [user, token]);
+
     // 사진 더보기 클릭
     const handleImageClick = (images) => {
         setSelectedImages(images);
@@ -51,33 +49,22 @@ function UserReviews() {
 
     // 리뷰 불러오기
     const fetchUserReviewPeriod = async (period) => {
-        const token = localStorage.getItem('token');
-        const headers = {
-            'Content-Type': 'application/json',
-        };
-
-        if (token) {
-            headers.Authorization = `Bearer ${token}`;
-        }
-
-        let url = `http://localhost:8080/api/mypage/review/${userId}/filter`;
-
-        url += `?period=${period}`;
-
         try {
-            const response = await fetch(url, {
+            const response = await fetch(`http://localhost:8080/api/mypage/review/${user.id}/filter?period=${period}`, {
                 method: 'GET',
-                headers: headers,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             if (!response.ok) {
-                throw new Error('리뷰 조회 실패');
+                throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
             }
 
             const reviewData = await response.json();
             setReview(reviewData);
-        } catch (error) {
-            console.error('리뷰 조회 실패: ', error);
+        } catch (err) {
+            console.error('리뷰 조회 실패: ', err);
         }
     };
 

@@ -1,43 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../pages/login-related/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 function Sidebar() {
-    // 유저정보
     const { user } = useAuth();
+    const location = useLocation();
 
-    // 권한 상태값
-    const [userRole, setUserRole] = useState('');
-
-    const roleMap = {
-        ROLE_USER: 'user',
-        ROLE_BIZ: 'business',
-        ROLE_ADMIN: 'admin',
-    };
-
-    // 로그인 타입 상태값
-    const [userLoginType, setUserLoginType] = useState('');
-
-    useEffect(() => {
-        if (user?.role) {
-            setUserRole(roleMap[user?.role] || '손님');
-        } else {
-            setUserRole('손님');
-        }
-        if (user?.loginType) {
-            setUserLoginType(user?.loginType);
-        } else {
-            setUserLoginType('');
-        }
-    }, [user]);
-
+    // 메뉴 구조
     const menuStructure =
-        userRole === 'user'
+        user?.role === 'ROLE_USER'
             ? [
                   {
                       name: '내정보관리',
                       link: '/mypage/update/info',
                       subMenu:
-                          userLoginType === 'SOCIAL'
+                          user?.loginType === 'SOCIAL'
                               ? [
                                     { name: '내정보수정', route: '/mypage/update/info' },
                                     { name: '회원탈퇴', route: '/mypage/delete/account' },
@@ -51,7 +28,7 @@ function Sidebar() {
                   { name: '작성한 리뷰', route: '/mypage/reviews' },
                   { name: '예약현황', route: '/mypage/reservations' },
               ]
-            : userRole === 'business'
+            : user?.role === 'ROLE_BIZ'
             ? [
                   {
                       name: '내정보관리',
@@ -74,7 +51,7 @@ function Sidebar() {
                   },
                   { name: '예약현황', route: '/mypage/business/reservations' },
               ]
-            : userRole === 'admin'
+            : user?.role === 'ROLE_ADMIN'
             ? [
                   {
                       name: '내정보관리',
@@ -89,37 +66,73 @@ function Sidebar() {
               ]
             : [];
 
+    const [activeMenu, setActiveMenu] = useState('');
+    const [activeSubMenu, setActiveSubMenu] = useState('');
+
+    useEffect(() => {
+        const activeSub = menuStructure
+            .flatMap((item) => item.subMenu || [])
+            .find((subItem) => subItem.route === location.pathname);
+
+        if (activeSub) {
+            setActiveSubMenu(activeSub.name);
+            setActiveMenu(activeSub.route);
+        } else {
+            const activeMainMenu = menuStructure.find(
+                (item) => item.link === location.pathname || item.route === location.pathname
+            );
+            if (activeMainMenu) {
+                setActiveMenu(activeMainMenu.route || activeMainMenu.link);
+            }
+        }
+    }, [location, menuStructure]);
+
     return (
-        <>
-            <div className="drawer-body px-2 pt-4 ">
-                <aside
-                    id="multilevel-with-separator"
-                    class="overlay sm:shadow-none overlay-open:translate-x-0  hidden max-w-64 sm:z-0 sm:flex sm:translate-x-0"
-                    tabindex="-1"
-                >
-                    <div class="drawer-body px-2 pt-4">
-                        <ul class="menu space-y-0.5 [&_.nested-collapse-wrapper]:space-y-0.5 [&_ul]:space-y-0.5 p-0">
-                            {menuStructure.map((item, index) => (
-                                <li class="space-y-0.5 " key={index}>
-                                    <a className="font-bold text-lg" href={item.link || item.route}>
-                                        {item.name}
-                                    </a>
-                                    {item.subMenu && (
-                                        <ul className="pl-4">
-                                            {item.subMenu.map((subItem, subIndex) => (
-                                                <li key={subIndex}>
-                                                    <a href={subItem.route}>{subItem.name}</a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </aside>
-            </div>
-        </>
+        <div className="drawer-body px-2 pt-4">
+            <aside
+                id="multilevel-with-separator"
+                className="overlay sm:shadow-none overlay-open:translate-x-0 hidden max-w-64 sm:z-0 sm:flex sm:translate-x-0"
+                tabIndex="-1"
+            >
+                <div className="drawer-body px-2 pt-4">
+                    <ul className="menu space-y-0.5 [&_.nested-collapse-wrapper]:space-y-0.5 [&_ul]:space-y-0.5 p-0">
+                        {menuStructure.map((item, index) => (
+                            <li className="space-y-0.5" key={index}>
+                                <a
+                                    className={`font-bold text-lg ${
+                                        activeMenu === item.link || activeMenu === item.route
+                                            ? 'text-blue-500 font-bold'
+                                            : ''
+                                    }`}
+                                    href={item.link || item.route}
+                                    onClick={() => setActiveMenu(item.route || item.link)}
+                                >
+                                    {item.name}
+                                </a>
+                                {item.subMenu && (
+                                    <ul className="pl-4">
+                                        {item.subMenu.map((subItem, subIndex) => (
+                                            <li key={subIndex}>
+                                                <a
+                                                    className={`${
+                                                        activeSubMenu === subItem.name ? 'text-blue-500 font-bold' : ''
+                                                    }`}
+                                                    href={subItem.route}
+                                                    onClick={() => setActiveSubMenu(subItem.name)}
+                                                >
+                                                    {subItem.name}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </aside>
+        </div>
     );
 }
+
 export default Sidebar;
