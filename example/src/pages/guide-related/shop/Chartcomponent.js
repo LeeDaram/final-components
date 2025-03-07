@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
 
 const COLORS = [
-  "#FF5733",
-  "#33FF57",
-  "#3357FF",
-  "#FF33A1",
-  "#FFD700",
-  "#00FFFF",
-  "#8A2BE2",
-  "#FF4500",
-  "#32CD32",
-  "#DC143C",
-  "#6495ED",
+  "#FF6B6B",
+  "#6BFFB3",
+  "#6B9EFF",
+  "#FF85C1",
+  "#FFD166",
+  "#73C2FB",
+  "#A29BFE",
+  "#FF9F43",
+  "#45D09E",
+  "#FF7F50",
+  "#1E90FF",
 ];
 
 const ChartComponent = () => {
@@ -31,10 +31,12 @@ const ChartComponent = () => {
       .then((result) => {
         console.log("API 데이터:", result);
 
-        const formattedData = result.map((item, index) => ({
-          name: item.industryName,
-          value: item.count,
-        }));
+        const formattedData = result
+          .map((item) => ({
+            name: item.industryName,
+            value: item.count,
+          }))
+          .sort((a, b) => b.value - a.value); // 값 기준 내림차순 정렬
 
         setData(formattedData);
         setLoading(false);
