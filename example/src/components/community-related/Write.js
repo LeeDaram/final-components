@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { FileInput, Label } from "flowbite-react";
 import { CommuModal } from "./CommuModal";
 import axios from "axios";
-
+import { useAuth } from "../../pages/login-related/AuthContext";
 const Write = () => {
+  const { user, token } = useAuth();
+
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    setUserInfo(user || {});
+  }, [userInfo]);
+
   const [title, setTitle] = useState(""); //제목
   const [content, setContent] = useState(""); //내용
 
@@ -60,7 +67,7 @@ const Write = () => {
         await axios.post(`http://localhost:8080/qna/create`, {
           title: title,
           content: content,
-          userId: "user124",
+          userId: userInfo.id,
           // 위에 변수선언해둠
         });
       } catch (error) {

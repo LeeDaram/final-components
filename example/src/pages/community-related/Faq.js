@@ -1,6 +1,7 @@
 import { Accordion } from "flowbite-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import faqimg from "../../assets/images/Faq/faqimg.png";
 
 function Faq() {
   const [faqData, setFaqData] = useState([]); // faq 데이터
@@ -23,7 +24,7 @@ function Faq() {
         {/* 이미지 */}
         <div className="w-1/2 flex justify-center items-start flex-shrink-0 pt-[60px]">
           <div className="w-10/12 h-[550px] bg-gray-200 flex justify-center items-center text-gray-500 text-lg">
-            이미지
+            <img src={faqimg} alt="FAQ이미지" />
           </div>
         </div>
 

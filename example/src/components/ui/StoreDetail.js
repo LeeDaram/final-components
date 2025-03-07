@@ -94,7 +94,7 @@ const StoreDetail = () => {
   // 데이터 없을경우 화면 처리
   if (!store) return <span class="loading loading-spinner loading-lg"></span>;
 
-  console.log(store);
+  console.log(store, "@@@@@@@@@@");
 
   const handleReviewSubmit = () => {
     if (!user) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import StoreComponent from "../../components/Store";
+import { useSearchParams } from "react-router-dom";
 import {
   FiChevronsLeft,
   FiChevronsRight,
@@ -24,6 +25,9 @@ const SIZE = 8;
 const MAX_PAGES_TO_SHOW = 10; // 10개씩 그룹화
 
 function Store() {
+  const [searchParams] = useSearchParams(); //쿼리스트링 접근
+  const query = searchParams.get("query") || ""; //query뒤에 담긴 값 저장
+
   // 상태 관리
   const [stores, setStores] = useState([]); // 업소 정보들
 
@@ -158,13 +162,17 @@ function Store() {
         setSido(sidoData.data);
         setSigungu(sigunguData.data);
         setIndustry(industryData.data);
+        if (query.trim() !== "") {
+          setSearchKeyword(query);
+          handleSearchClick(query);
+          console.log("검색어");
+        }
       } catch (error) {
         console.error("데이터 로드 실패:", error);
       }
     }
-
     fetch();
-  }, []);
+  }, [query]);
 
   // 추천,평점 클릭 함수
   const handleSortClick = (value) => {
@@ -198,6 +206,7 @@ function Store() {
       pet: "",
       kid: "",
     });
+    handleSearchClick();
   };
 
   useEffect(() => {

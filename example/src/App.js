@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -42,8 +42,21 @@ import FileUpload from "./pages/community-related/Mfiletest";
 import Ocrtest from "./pages/community-related/Ocrtest";
 import SimpleSlider from "./components/ui/homeCarousel/HomeCarousel";
 
+// import axios from 'axios';
 
+// import {springAxios} from '../../axiosConfig'
+// springAxios.get
+// A-Component
+// import axios from 'axios';
+// axios.get(...)
 function App() {
+  useEffect(() => {
+    // axios.defaults.baseURL = "http://localhost:8080";
+    // ex)
+    // instance.get('')
+    // axios.get('/api/v1/users')
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
@@ -105,16 +118,19 @@ function App() {
               />
               <Route path="/find/map" element={<Store />} />
               <Route path="/find/map/:storeName" element={<StoreDetail />} />
-              <Route path="/community-related/notice" element={<NoticePage />} />
-            <Route
-              path="/components/community-related/write"
-              element={<Write />}
-            />
-            <Route path="/community-related/qna" element={<QnaPage />} />
-            <Route path="/community-related/faq" element={<Faq />} />
-            <Route path="/answer" element={<Answer />} />
-            <Route path="/file" element={<FileUpload />} />
-            <Route path="/ocr" element={<Ocrtest />} />
+              <Route
+                path="/community-related/notice"
+                element={<NoticePage />}
+              />
+              <Route
+                path="/components/community-related/write"
+                element={<Write />}
+              />
+              <Route path="/community-related/qna" element={<QnaPage />} />
+              <Route path="/community-related/faq" element={<Faq />} />
+              <Route path="/answer" element={<Answer />} />
+              <Route path="/file" element={<FileUpload />} />
+              <Route path="/ocr" element={<Ocrtest />} />
             </Routes>
           </main>
         </div>
