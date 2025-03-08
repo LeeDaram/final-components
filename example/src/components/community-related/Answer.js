@@ -305,18 +305,22 @@ const Answer = () => {
                   </>
                 ) : (
                   <>
-                    <button
-                      onClick={handleEditMain}
-                      className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={handleDeleteMain}
-                      className="bg-white text-black px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
-                    >
-                      삭제
-                    </button>
+                    {userInfo.role === "ROLE_ADMIN" || (
+                      <button
+                        onClick={handleEditMain}
+                        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+                      >
+                        수정
+                      </button>
+                    )}
+                    {userInfo.role === "ROLE_ADMIN" || (
+                      <button
+                        onClick={handleDeleteMain}
+                        className="bg-white text-black px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
+                      >
+                        삭제
+                      </button>
+                    )}
                   </>
                 )}
               </div>
@@ -357,7 +361,9 @@ const Answer = () => {
           )}
 
           {/* 답변 목록 */}
-          {data?.qna && <h2 className="text-xl font-semibold mb-4">답변</h2>}
+          {data?.qna && comments.length > 0 && comments[0].content && (
+            <h2 className="text-xl font-semibold mb-4">답변</h2>
+          )}
           {data?.qna &&
             comments.length > 0 &&
             comments[0].content &&
