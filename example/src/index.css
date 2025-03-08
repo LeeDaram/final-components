@@ -45,3 +45,9 @@ input:focus,
     background-color: #f3f4f6 !important;
     color: #374151 !important;
 }
+
+.menu a:focus,
+.menu a:hover {
+    background-color: rgba(180, 209, 255, 0.5) !important;
+    color: #3b82f6 !important;
+}

@@ -1,10 +1,24 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../../pages/login-related/AuthContext';
 import Sidebar from '../sidebar.js';
 
 function UserAccount() {
+    // 유저 정보
+    const { user, token } = useAuth();
+
+    // 유저 정보 불러오기
+    useEffect(() => {
+        if (user && token) {
+            fetchUserInfo();
+            fetchUserTermsInfo();
+        }
+    }, [user, token]);
+
+    // 정규식
     const phoneRegex = /^\d{11}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    // 입력값 관리
     const [formData, setFormData] = useState({
         userId: '',
         name: '',
@@ -14,21 +28,21 @@ function UserAccount() {
     });
     const [termsData, setTermsData] = useState('');
     const [formErrors, setFormErrors] = useState({});
-    const [userLoginType, setUserLoginType] = useState('');
-    const [userRole, setUserRole] = useState('');
 
+    // 입력값 관리
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData({ ...formData, [id]: value });
         setFormErrors((prev) => ({ ...prev, [id]: '' }));
     };
 
+    // 사용자 기본 정보 조회
     const fetchUserInfo = async () => {
         try {
             const response = await fetch('http://localhost:8080/api/users/me', {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -46,21 +60,19 @@ function UserAccount() {
                 userEmail: userData.email,
                 isAgree: userData.isAgree,
             });
-
-            setUserLoginType(userData.loginType || '');
-            setUserRole(userData.role || '');
         } catch (err) {
             console.error(err);
         }
     };
 
+    // 사용자 약관 정보 가져오기
     const fetchUserTermsInfo = async () => {
         try {
-            const user = JSON.parse(localStorage.getItem('user'));
-            const userId = user?.id;
-
-            const response = await fetch(`http://localhost:8080/api/users/terms/${userId}`, {
+            const response = await fetch(`http://localhost:8080/api/users/terms/${user.id}`, {
                 method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             if (!response.ok) {
@@ -74,16 +86,9 @@ function UserAccount() {
         }
     };
 
-    useEffect(() => {
-        fetchUserInfo();
-        fetchUserTermsInfo();
-    }, []);
-
+    // 사용자 정보 저장
     const saveUserInfo = async () => {
         try {
-            const user = JSON.parse(localStorage.getItem('user'));
-            const userId = user?.id;
-
             const bodyData = {
                 userDto: {},
                 termsAgreementDto: {},
@@ -99,7 +104,9 @@ function UserAccount() {
                 bodyData.termsAgreementDto.isAgree = termsData;
             }
 
-            const response = await fetch(`http://localhost:8080/api/users/update/personal/${userId}`, {
+            console.log(bodyData);
+
+            const response = await fetch(`http://localhost:8080/api/users/update/personal/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,6 +124,7 @@ function UserAccount() {
         }
     };
 
+    // 유효성 검사
     const validateForm = () => {
         let errors = {};
 
@@ -134,6 +142,7 @@ function UserAccount() {
         return Object.keys(errors).length === 0;
     };
 
+    // 사용자 정보 수정
     const handleUpdateClick = async () => {
         if (validateForm()) {
             await saveUserInfo();
@@ -159,13 +168,11 @@ function UserAccount() {
                                 <label className="text-gray-500">아이디</label>
                                 <p className="block text-lg font-semibold mb-1">{formData?.userId || ''}</p>
                             </div>
-
                             <div className="mb-6">
                                 <label className="text-gray-500">이름</label>
                                 <p className="block text-lg font-semibold mb-1">{formData?.name || ''}</p>
                             </div>
-
-                            {!(userLoginType === 'SOCIAL') && (
+                            {!(user?.loginType === 'SOCIAL') && (
                                 <>
                                     <div className="mb-6">
                                         <label className="text-gray-500">생년월일</label>
@@ -212,7 +219,7 @@ function UserAccount() {
                                 </>
                             )}
 
-                            {!(userRole === 'ROLE_ADMIN') && (
+                            {!(user?.role === 'ROLE_ADMIN') && (
                                 <div className="mb-6 flex items-center justify-between">
                                     <div>
                                         <label className="text-sm text-gray-500">마케팅 정보 수신 동의</label>
@@ -235,7 +242,6 @@ function UserAccount() {
                                     </div>
                                 </div>
                             )}
-
                             <button
                                 className="w-full h-14 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition"
                                 onClick={handleUpdateClick}

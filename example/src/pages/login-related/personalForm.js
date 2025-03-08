@@ -341,6 +341,7 @@ function PersonalForm() {
             navigate('/login');
         } catch (error) {
             console.error('회원가입 실패', error);
+            alert('회원가입 오류 : 정확한 정보를 입력해주세요');
         }
     };
 
