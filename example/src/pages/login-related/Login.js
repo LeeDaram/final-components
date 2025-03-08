@@ -1,60 +1,68 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { jwtDecode } from 'jwt-decode';
 
 function Login() {
-    const [activeTab, setActiveTab] = useState('user');
-    const [form, setForm] = useState({ id: '', password: '' });
-    const [errors, setErrors] = useState({ id: '', password: '' });
-
-    const navigate = useNavigate();
+    // 로그인 함수
     const { login } = useAuth();
 
+    // 탭 상태값
+    const [activeTab, setActiveTab] = useState('user');
+
+    // 입력값 관리
+    const [formData, setFormData] = useState({ userId: '', userPassword: '' });
+    const [formErrors, setFormErrors] = useState({});
+
+    // 정규식
+    const idRegex = /^[a-zA-Z0-9]{5,20}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;
+
+    // 화면이동
+    const navigate = useNavigate();
+
+    // 값 입력 업데이트
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+
+        // 오류 메시지 제거
+        setFormErrors((prev) => ({ ...prev, [id]: '' }));
+    };
+
+    // 유효성 검사
+    const validateForm = () => {
+        let errors = {};
+
+        // 아이디
+        if (!formData.userId) {
+            errors.userId = '아이디를 입력해주세요';
+        } else if (!idRegex.test(formData.userId)) {
+            errors.userId = '아이디는 5~20자리 영문, 숫자를 포함해야 합니다';
+        }
+
+        // 비밀번호
+        if (!formData.userPassword) {
+            errors.userPassword = '비밀번호를 입력해주세요';
+        } else if (!passwordRegex.test(formData.userPassword)) {
+            errors.userPassword = '비밀번호는 8~16자리, 영문/숫자/특수기호를 포함해야 합니다';
+        }
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // 일반 로그인
+    const handleLogin = () => {
+        if (validateForm()) {
+            login(formData.userId, formData.userPassword);
+        } else {
+            alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인하고 다시 시도해 주세요.');
+        }
+    };
+
+    // 소셜로그인
     const handleGoogleLogin = () => {
         window.location.href = 'http://localhost:8080/oauth2/authorization/google';
-    };
-
-    // 입력 값 업데이트
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: '' });
-    };
-
-    // 로그인 요청
-    const handleLogin = async () => {
-        const { id, password } = form;
-        const newErrors = {
-            id: id ? '' : '아이디를 입력해주세요',
-            password: password ? '' : '비밀번호를 입력해주세요',
-        };
-
-        setErrors(newErrors);
-        if (!id || !password) return;
-
-        try {
-            const response = await fetch('http://localhost:8080/api/users/sign-in', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: id, password }),
-                credentials: 'include',
-            });
-
-            if (!response.ok) throw new Error('로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.');
-
-            const data = await response.json();
-            const decoded = jwtDecode(data.token);
-            login(data.token, {
-                id: decoded.sub,
-                name: decoded.name,
-                role: decoded.authorities,
-                loginType: decoded.loginType,
-            });
-
-            navigate('/');
-        } catch (error) {
-            alert(error.message);
-        }
     };
 
     return (
@@ -103,8 +111,8 @@ function Login() {
                                 }`}
                                 onClick={() => {
                                     setActiveTab(type);
-                                    setForm({ id: '', password: '' });
-                                    setErrors({ id: '', password: '' });
+                                    setFormData({ userId: '', userPassword: '' });
+                                    setFormErrors({});
                                 }}
                             >
                                 {type === 'user' ? '개인회원' : '사업자회원'}
@@ -113,20 +121,37 @@ function Login() {
                     </nav>
 
                     <div className="mt-3">
-                        {/* 입력 필드 */}
-                        {['id', 'password'].map((field) => (
-                            <div key={field} className="w-full mb-3">
-                                <input
-                                    type={field === 'password' ? 'password' : 'text'}
-                                    name={field}
-                                    placeholder={field === 'id' ? '아이디' : '비밀번호'}
-                                    className="input h-14"
-                                    value={form[field]}
-                                    onChange={handleChange}
-                                />
-                                {errors[field] && <span className="label-text-alt text-red-500">{errors[field]}</span>}
-                            </div>
-                        ))}
+                        {/* 아이디 */}
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="아이디"
+                                className="input h-12 border-gray-300 "
+                                id="userId"
+                                value={formData.userId}
+                                onChange={handleChange}
+                            />
+                            <span className="label">
+                                {formErrors.userId && <span className="text-red-500">{formErrors.userId}</span>}
+                            </span>
+                        </div>
+
+                        {/* 비밀번호 */}
+                        <div className="relative">
+                            <input
+                                type="password"
+                                placeholder="비밀번호"
+                                className="input h-12 border-gray-300 "
+                                id="userPassword"
+                                value={formData.userPassword}
+                                onChange={handleChange}
+                            />
+                            <span className="label">
+                                {formErrors.userPassword && (
+                                    <span className="text-red-500">{formErrors.userPassword}</span>
+                                )}
+                            </span>
+                        </div>
 
                         <button
                             className="btn btn-primary btn-block h-14 bg-blue-500 text-white border-2 border-blue-500 hover:bg-blue-700 hover:border-blue-700"

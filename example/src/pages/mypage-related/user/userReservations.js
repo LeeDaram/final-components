@@ -5,58 +5,58 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../../pages/login-related/AuthContext';
 
 function Useritems() {
-    const { user } = useAuth();
-    const [userId, setUserId] = useState('');
+    // 유저 정보 불러오기
+    const { user, token } = useAuth();
+
+    // 예약 데이터
     const [activate, setActivate] = useState([]);
+
+    // 필터 토글 상태값
     const [activeTab, setActiveTab] = useState('future');
 
+    // 예약 데이터 가져오기
     useEffect(() => {
-        if (user?.id) {
-            setUserId(user.id);
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (userId) {
+        if (user) {
             fetchUserActivatePeriod(activeTab);
         }
-    }, [userId, activeTab]);
+    }, [user, token, activeTab]);
 
+    // 필터 클릭
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
 
+    // 예약 정보 불러오기
     const fetchUserActivatePeriod = async (period) => {
-        const token = localStorage.getItem('token');
-        const headers = {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` }),
-        };
-
         try {
             const response = await fetch(
-                `http://localhost:8080/api/mypage/activate/${userId}/filter?period=${period}`,
-                { headers }
+                `http://localhost:8080/api/mypage/activate/${user.id}/filter?period=${period}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
+
             if (!response.ok) throw new Error('예약 조회 실패');
             const activateData = await response.json();
+
             setActivate(activateData);
         } catch (error) {
             console.error(error.message);
         }
     };
 
+    // 예약 삭제
     const handleDeleteActivate = async (activateId) => {
-        const token = localStorage.getItem('token');
-        const headers = {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` }),
-        };
-
         try {
             const response = await fetch(`http://localhost:8080/api/mypage/activate/delete/${activateId}`, {
                 method: 'DELETE',
-                headers,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
             });
             if (!response.ok) throw new Error('예약 삭제 실패');
             setActivate((prev) => prev.filter((item) => item.activateId !== activateId));

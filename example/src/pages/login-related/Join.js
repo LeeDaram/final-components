@@ -62,7 +62,9 @@ function Join() {
                         <div className="mt-3">
                             {activeTab === 'user' && (
                                 <div role="tabpanel">
-                                    <div class="divider border-gray-300 text-gray-500">소셜 계정으로 간편 회원가입</div>
+                                    <div className="divider border-gray-300 text-gray-500">
+                                        소셜 계정으로 간편 회원가입
+                                    </div>
                                     <button
                                         className="btn btn-primary btn-block h-14 bg-transparent text-gray-700 border-gray-500 hover:bg-transparent hover:text-gray-700 hover:border-gray-500 mb-5"
                                         onClick={handleGoogleLogin}

@@ -8,6 +8,7 @@ function BusinessForm() {
     const scriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
     const open = useDaumPostcodePopup(scriptUrl);
     const [addressData, setAddressData] = useState({ sido: '', sigungu: '' });
+    const [coordinate, setCoordinate] = useState({ lat: '', lng: '' });
 
     // 파입업로드 툴팁 상태
     const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -90,6 +91,31 @@ function BusinessForm() {
 
         setFormData({ ...formData, businessAddress: fullAddress });
         setAddressData({ sido: data.sido, sigungu: data.sigungu });
+        findCoordinate(fullAddress);
+    };
+
+    // 위도 경도 값 추출
+    const findCoordinate = async (address) => {
+        try {
+            const response = await fetch(
+                `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=similar&page=1&size=10&query=${address}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_API_KEY}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('위도 경도 반환에 실패했습니다.');
+            }
+
+            const data = await response.json();
+            setCoordinate({ lat: data.documents[0].x, lng: data.documents[0].y });
+        } catch (err) {
+            console.error(err.message);
+        }
     };
 
     const handleClick = () => {
@@ -133,7 +159,6 @@ function BusinessForm() {
 
     // 자동 업로드
     const handleUpload = (selectedFile) => {
-        console.log('자동 업로드 중...', selectedFile);
         // 실제 업로드 API 호출
         // 업로드 완료 후 상태 변경
         setIsUploaded(true);
@@ -243,7 +268,8 @@ function BusinessForm() {
             return;
         }
 
-        setIsLoading(true); // 로딩 시작
+        // 로딩 시작
+        setIsLoading(true);
 
         try {
             const response = await fetch('http://localhost:8080/api/email/send', {
@@ -435,8 +461,9 @@ function BusinessForm() {
                 email: formData.userEmail,
                 isAgree: optionalTerms,
                 sidoName: addressData.sido,
-
                 sigunguName: addressData.sigungu,
+                lat: coordinate.lat,
+                lng: coordinate.lng,
             };
 
             if (formData.userPhone) {
