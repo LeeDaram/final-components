@@ -302,30 +302,6 @@ function AdminDashboard() {
         }
     };
 
-    // 물가소비자동향지수 API 호출
-    const csiLineOptions = {
-        chart: {
-            type: 'line',
-        },
-        xaxis: {
-            categories: ['2009', '2010', '2011', '2012', '2013', '2014'],
-        },
-        stroke: {
-            curve: 'smooth',
-        },
-        colors: ['#FF6384'],
-        dataLabels: {
-            enabled: false, // 글자 없애기
-        },
-    };
-
-    const csiLineSeries = [
-        {
-            name: '물가 소비자동향지수',
-            data: [120, 130, 140, 145, 150, 160],
-        },
-    ];
-
     return (
         <div className="bg-white sm:p-6 dark:bg-gray-800">
             <div className="mx-auto max-w-screen-xl">
@@ -339,31 +315,12 @@ function AdminDashboard() {
                             {/* 업종별 착한 가격 업소 */}
                             <div className="border rounded-lg p-6 shadow-md">
                                 <p className="font-semibold mb-2">업종별 착한가격업소 현황</p>
-
                                 <Chart
                                     options={industryDoughnutOptions}
                                     series={IndustryStatus.series}
                                     type="donut"
                                     height={280}
                                 />
-                            </div>
-
-                            {/* 시도별 착한 가격 업소 */}
-                            <div className="border rounded-lg p-6 shadow-md">
-                                <p className="font-semibold mb-2">시도별 착한가격업소 현황</p>
-                                <Chart options={sidoBarOptions} series={sidoBarSeries} type="bar" height={280} />
-                            </div>
-
-                            {/* 년도별 착한 가격 업소 */}
-                            <div className="border rounded-lg p-6 shadow-md">
-                                <p className="font-semibold mb-2">착한가격업소 현황</p>
-                                <Chart options={yearBarOptions} series={yearBarSeries} type="bar" height={280} />
-                            </div>
-
-                            {/* 월별 착한 가격 업소 */}
-                            <div className="border rounded-lg p-6 shadow-md">
-                                <p className="font-semibold mb-2">착한가격업소 등록량</p>
-                                <Chart options={monthBarOptions} series={monthBarSeries} type="bar" height={280} />
                             </div>
 
                             {/* 이용자수 */}
@@ -381,10 +338,22 @@ function AdminDashboard() {
                                 </div>
                             </div>
 
-                            {/* 물가 소비자 동향지수 */}
+                            {/* 년도별 착한 가격 업소 */}
                             <div className="border rounded-lg p-6 shadow-md">
-                                <p className="font-semibold mb-2">물가 소비자동향지수(CSI)</p>
-                                <Chart options={csiLineOptions} series={csiLineSeries} type="line" height={280} />
+                                <p className="font-semibold mb-2">착한가격업소 현황</p>
+                                <Chart options={yearBarOptions} series={yearBarSeries} type="bar" height={280} />
+                            </div>
+
+                            {/* 월별 착한 가격 업소 */}
+                            <div className="border rounded-lg p-6 shadow-md">
+                                <p className="font-semibold mb-2">착한가격업소 등록량</p>
+                                <Chart options={monthBarOptions} series={monthBarSeries} type="bar" height={280} />
+                            </div>
+
+                            {/* 시도별 착한 가격 업소 */}
+                            <div className="border rounded-lg p-6 shadow-md col-span-2">
+                                <p className="font-semibold mb-2">시도별 착한가격업소 현황</p>
+                                <Chart options={sidoBarOptions} series={sidoBarSeries} type="bar" height={280} />
                             </div>
                         </div>
                     </div>

@@ -41,7 +41,7 @@ function Sidebar() {
                   },
                   {
                       name: '업소정보관리',
-                      link: '/business/apply',
+                      link: '/mypage/business/apply',
                       subMenu: [
                           { name: '착한가격업소 등록 신청', route: '/mypage/business/apply' },
                           { name: '착한가격업소 재신청', route: '/mypage/business/register' },

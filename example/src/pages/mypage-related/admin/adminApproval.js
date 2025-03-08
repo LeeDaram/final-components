@@ -12,8 +12,6 @@ import { useCallback } from 'react';
 function AdminApproval() {
     // 유저 정보
     const { user, token } = useAuth();
-    const [userId, setUserId] = useState('');
-    const [userToken, setUserToken] = useState('');
 
     // 토글 정보
     const [activeTab, setActiveTab] = useState('ALL');
@@ -58,22 +56,12 @@ function AdminApproval() {
         setActiveTab(tab);
     };
 
-    // 유저 정보 불러오기
-    useEffect(() => {
-        if (user?.id) {
-            setUserId(user?.id || '');
-        }
-        if (token) {
-            setUserToken(token || '');
-        }
-    }, [user, token]);
-
     // 리스트 불러오기
     useEffect(() => {
-        if (userId && token) {
+        if (user && token) {
             fetchApprovalList(activeTab);
         }
-    }, [userId, token, activeTab]);
+    }, [user, token, activeTab]);
 
     // 승인 상태값
     const getStatusBadge = useCallback((status) => {
@@ -106,7 +94,7 @@ function AdminApproval() {
             const response = await fetch(`http://localhost:8080/api/mypage/approva/management/list?status=${status}`, {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${userToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -127,7 +115,7 @@ function AdminApproval() {
             const response = await fetch(`http://localhost:8080/api/mypage/approvaList/modal/${storeId}`, {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${userToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -149,7 +137,7 @@ function AdminApproval() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${userToken}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ storeId: storeId, finalApprovalStatus: finalApprovalStatus }),
             });
@@ -194,7 +182,6 @@ function AdminApproval() {
 
                         {/* 모달 */}
                         <Modal show={openModal} onClose={() => setOpenModal(false)}>
-                            {console.log(modalData)}
                             <Modal.Header>상세정보</Modal.Header>
                             <Modal.Body>
                                 <div className="space-y-6">
@@ -273,22 +260,28 @@ function AdminApproval() {
                                 </div>
                             </Modal.Body>
                             <Modal.Footer className="flex justify-end space-x-2">
-                                <Button
-                                    className="bg-red-600 text-white"
-                                    onClick={() => {
-                                        updateApprovalStatus(modalData.storeId, 'REJECTED');
-                                    }}
-                                >
-                                    반려
-                                </Button>
-                                <Button
-                                    className="bg-blue-600 text-white"
-                                    onClick={() => {
-                                        updateApprovalStatus(modalData.storeId, 'APPROVED');
-                                    }}
-                                >
-                                    승인
-                                </Button>
+                                {modalData.finalApprovalStatus !== 'APPROVED' &&
+                                modalData.finalApprovalStatus !== 'REJECTED' &&
+                                modalData.finalApprovalStatus !== 'AI_REJECTED' ? (
+                                    <>
+                                        <Button
+                                            className="bg-red-600 text-white"
+                                            onClick={() => {
+                                                updateApprovalStatus(modalData.storeId, 'REJECTED');
+                                            }}
+                                        >
+                                            반려
+                                        </Button>
+                                        <Button
+                                            className="bg-blue-600 text-white"
+                                            onClick={() => {
+                                                updateApprovalStatus(modalData.storeId, 'APPROVED');
+                                            }}
+                                        >
+                                            승인
+                                        </Button>
+                                    </>
+                                ) : null}
                             </Modal.Footer>
                         </Modal>
 
