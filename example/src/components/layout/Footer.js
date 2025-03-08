@@ -1,3 +1,5 @@
+import mainLogo from '../../assets/images/mainLogo.png';
+
 function Footer() {
     return (
         <div>
@@ -6,14 +8,7 @@ function Footer() {
                     <div className="md:flex md:justify-between">
                         <div className="mb-6 md:mb-0">
                             <a href="" className="flex items-center">
-                                <img
-                                    src="https://cdn-icons-png.flaticon.com/512/4766/4766832.png"
-                                    className="mr-3 h-8"
-                                    alt="FlowBite Logo"
-                                />
-                                <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                                    착한업소 솔루션
-                                </span>
+                                <img src={mainLogo} className="mr-3 h-8" alt="FlowBite Logo" />
                             </a>
                         </div>
                         <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">

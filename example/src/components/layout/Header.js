@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../pages/login-related/AuthContext';
+import mainLogo from '../../assets/images/mainLogo.png';
 
 function Header() {
     // 로그인, 로그아웃
@@ -10,7 +11,7 @@ function Header() {
     const [activeMenu, setActiveMenu] = useState(null);
 
     // 권한 상태값
-    const [userRole, setUserRole] = useState('');
+    const [userRole, setUserRole] = useState(null);
 
     const roleMap = {
         ROLE_USER: 'user',
@@ -36,82 +37,87 @@ function Header() {
     const menuStructure = [
         {
             title: '착한가격업소 안내',
-            link: '/company',
+            link: '/guide-related/intro/site',
             subMenu: [
                 {
                     title: '소개',
-                    link: '/guide/intro',
+                    link: '/guide-related/intro/site',
                     subMenu: [
-                        { title: '사이트소개', link: '/guide/intro/site' },
-                        { title: '서비스 소개', link: '/guide/intro/service' },
-                        { title: '이용가이드', link: '/guide/intro/guide' },
-                        { title: '브랜드 가이드', link: '/guide/intro/brand' },
+                        { title: '사이트소개', link: '/guide-related/intro/site' },
+                        { title: '서비스 소개', link: '/guide-related/intro/service' },
+                        { title: '이용가이드', link: '/guide-related/intro/guide' },
+                        { title: '브랜드 가이드', link: '/guide-related/intro/brand' },
                         { title: '연혁 페이지', link: '/guide/intro/history' },
                     ],
                 },
                 {
                     title: '소비자편',
-                    link: '/guide/consumer',
+                    link: '/guide-related/intro/herosection',
                     subMenu: [
                         {
                             title: '소비자 혜택',
-                            link: '/guide/consumer/benefit',
+                            link: '/guide-related/intro/herosection',
                         },
                     ],
                 },
                 {
                     title: '업소편',
                     link: '/guide/shop',
-                    subMenu: [{ title: '점주 혜택', link: '/guide/shop/benefit' }],
+                    subMenu: [{ title: '점주 혜택', link: '/guide/shop' }],
                 },
             ],
         },
         {
             title: '착한업소찾기',
-            link: '/contact',
+            link: '/find/map',
             subMenu: [{ title: '착한업소 지도', link: '/find/map' }],
         },
         {
             title: '커뮤니티',
-            link: '/marketplace',
+            link: '/community-related/notice',
             subMenu: [
                 { title: '공지사항', link: '/community-related/notice' },
                 { title: 'Q&A', link: '/community-related/qna' },
                 { title: 'FAQ', link: '/community-related/faq' },
             ],
         },
-        {
-            title: '채팅',
-            link: '/features',
-            subMenu: [{ title: '내 채팅방', link: '/chat/room' }],
-        },
-        {
-            title: '마이페이지',
-            link: '/mypage/update/info',
-            subMenu: [
-                { title: '내 정보', link: '/mypage/update/info' },
-                ...(userRole === 'user'
-                    ? [
-                          { title: '내가 쓴 후기', link: '/mypage/user/review' },
-                          { title: '내 예약 정보', link: '/mypage/user/reservation' },
-                      ]
-                    : userRole === 'business'
-                    ? [
-                          { title: '착한업소 등록', link: '/mypage/business/register' },
-                          { title: '내 업소 정보 변경', link: '/mypage/business/info' },
-                          {
-                              title: '내 가계 예약 정보',
-                              link: '/mypage/business/reservation',
-                          },
-                      ]
-                    : userRole === 'admin'
-                    ? [
-                          { title: '사업자 승인 페이지', link: '/mypage/admin/approval' },
-                          { title: '통계 및 업소 대시보드', link: '/mypage/admin/stats' },
-                      ]
-                    : []),
-            ],
-        },
+
+        // {
+        //     title: '채팅',
+        //     link: '/features',
+        //     subMenu: [{ title: '내 채팅방', link: '/chat/room' }],
+        // },
+        ...(userRole
+            ? [
+                  {
+                      title: '마이페이지',
+                      link: '/mypage/update/info',
+                      subMenu: [
+                          { title: '내 정보', link: '/mypage/update/info' },
+                          ...(userRole === 'user'
+                              ? [
+                                    { title: '내가 쓴 후기', link: '/mypage/reviews' },
+                                    { title: '내 예약 정보', link: '/mypage/reservations' },
+                                ]
+                              : userRole === 'business'
+                              ? [
+                                    { title: '착한업소 등록', link: '/mypage/business/apply' },
+                                    { title: '내 업소 정보 변경', link: '/mypage/business/update-info' },
+                                    {
+                                        title: '내 가계 예약 정보',
+                                        link: '/mypage/business/reservations',
+                                    },
+                                ]
+                              : userRole === 'admin'
+                              ? [
+                                    { title: '사업자 승인 페이지', link: '/mypage/admin/approval' },
+                                    { title: '통계 및 업소 대시보드', link: '/mypage/admin/dashboard' },
+                                ]
+                              : []),
+                      ],
+                  },
+              ]
+            : []),
     ];
 
     const handleMouseEnter = (index) => {
@@ -132,14 +138,7 @@ function Header() {
             <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                     <Link to="/" className="flex items-center">
-                        <img
-                            src="https://cdn-icons-png.flaticon.com/512/4766/4766832.png"
-                            className="mr-3 h-6 sm:h-9"
-                            alt="로고"
-                        />
-                        <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                            착한업소 솔루션
-                        </span>
+                        <img src={mainLogo} className="mr-3 h-6 sm:h-9" alt="로고" />
                     </Link>
                     <div className="hidden lg:flex lg:space-x-6">
                         {menuStructure.map((menu, index) => (
@@ -184,7 +183,7 @@ function Header() {
                             {userRole ? (
                                 <>
                                     {/* 채팅방 알림 */}
-                                    <div className="dropdown relative inline-flex ml-4 mr-4">
+                                    {/* <div className="dropdown relative inline-flex ml-4 mr-4">
                                         <button
                                             type="button"
                                             className="dropdown-toggle btn btn-text btn-circle size-10"
@@ -222,7 +221,7 @@ function Header() {
                                                 더보기
                                             </a>
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     {/* 마이페이지 */}
                                     <div className="dropdown relative inline-flex ml-4 mr-4">
