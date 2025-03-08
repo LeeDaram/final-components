@@ -102,7 +102,7 @@ function BusinessForm() {
                 {
                     method: 'GET',
                     headers: {
-                        Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_KEY}`,
+                        Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_API_KEY}`,
                     },
                 }
             );
