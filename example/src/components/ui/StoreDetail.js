@@ -9,6 +9,10 @@ import {
 } from "react-icons/md"; // 포장 아이콘, 배달 아이콘
 import { FaDog, FaBaby } from "react-icons/fa6"; // 반려동물 아이콘, 유아시설 아이콘
 import { CiImageOn } from "react-icons/ci";
+import { useAuth } from "../../pages/login-related/AuthContext";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
 
 // 카카오맵 SDK
 import {
@@ -21,22 +25,30 @@ import {
 // material ui
 import Rating from "@mui/material/Rating";
 import Stack from "@mui/material/Stack";
-
-// 임시 유저
-const user = "user128";
+import { User } from "lucide-react";
+import { format } from "date-fns";
+import Storereview from "./StoreReview";
 
 const StoreDetail = () => {
   const { storeName } = useParams(); // url에서 storeName 가져오기
   const { state } = useLocation(); // 전달된 state 데이터 가져오기
   const store = state?.storeData; // 데이터 없을 경우 예외처리
-  const [modalOn, setModalOn] = useState(false); // 모달창 표시
+  const [modalOn, setModalOn] = useState(false); // 이용후기 모달
+  const [ismodal, setIsmodal] = useState(false); // 예약하기 모달
+  const [selectedDate, setSelectedDate] = useState(null); // 날짜 선택
   const modalBackground = useRef(); // 콘텐츠 바깥 클릭 시 닫히게
-  const [images, setImages] = useState([]); // 업로드된 이미지 상태
+
+  const [images, setImages] = useState(); // 업로드된 이미지 상태
+  const [previews, setPreviews] = useState([]);
   const fileInputRef = useRef(null); // 파일 업로드 input 참조
+
   const [rating, setRating] = useState(1); // 별점
-  const menu = useRef(null); // 이용메뉴
-  const cost = useRef(null); // 가격
-  const review = useRef(null); // 리뷰
+  const [menu, setMenu] = useState("");
+  const [cost, setCost] = useState();
+  const [review, setReview] = useState("");
+
+  const { user, login, logout } = useAuth();
+  console.log("현재 로그인 유저", user);
 
   const [isSdkLoaded, setIsSdkLoaded] = useState(false); // SDK 로드 상태
   const storeCoord = {
@@ -58,13 +70,31 @@ const StoreDetail = () => {
     { icon: <FaBaby />, name: "유아시설", checking: store.kid },
   ];
 
+  // 0으로 나눔 방지
+  const totalReviews = store.reviewCount || 1;
+
   // 평점 그래프
   const ratingData = [
-    { rt: 5, value: 20, width: "w-1/4" },
-    { rt: 4, value: 50, width: "w-1/2" },
-    { rt: 3, value: 70, width: "w-3/4" },
-    { rt: 2, value: 100, width: "w-full" },
-    { rt: 1, value: 100, width: "w-full" },
+    {
+      rt: 5,
+      value: Math.round((store.rating5Count / totalReviews) * 100),
+    },
+    {
+      rt: 4,
+      value: Math.round((store.rating4Count / totalReviews) * 100),
+    },
+    {
+      rt: 3,
+      value: Math.round((store.rating3Count / totalReviews) * 100),
+    },
+    {
+      rt: 2,
+      value: Math.round((store.rating2Count / totalReviews) * 100),
+    },
+    {
+      rt: 1,
+      value: Math.round((store.rating1Count / totalReviews) * 100),
+    },
   ];
 
   const allFalse = filterCheckboxes.every((item) => item.checking === "F");
@@ -91,10 +121,63 @@ const StoreDetail = () => {
     return <span class="loading loading-spinner loading-lg" />;
   }
 
+  // 날짜 핸들러
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  //예약 저장 핸들러
+  const handleReservation = async () => {
+    if (!selectedDate) {
+      alert("날짜를 선택해주세요.");
+      return;
+    }
+    const formattedDate = format(selectedDate, "yyyy-MM-dd");
+    console.log("sysdate", formattedDate);
+
+    const requestData = {
+      reservationDate: formattedDate,
+      userId: user.id,
+      storeId: store.storeId,
+    };
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/reservation",
+        requestData
+      );
+      console.log("예약 성공:", response.data);
+      alert("예약이 완료되었습니다!");
+    } catch (error) {
+      console.error("예약 실패:", error);
+
+      // 예약 중복 시 서버에서 메시지 날림
+      if (error.response && error.response.data) {
+        alert(error.response.data.message);
+        // console.log("예약중복 메시지", error.response.data.message);
+      } else {
+        // 서버 및 통신 문제 오류
+        alert("예약 중 오류가 발생했습니다.");
+      }
+    }
+
+    // 예약 완료 후 모달 닫기
+    setIsmodal(false);
+  };
+
+  // 예약버튼
+  const handleReservationClick = () => {
+    if (!user) {
+      alert("로그인 후 이용하실 수 있습니다.");
+      setIsmodal(false);
+      return;
+    }
+    setIsmodal(true);
+  };
+
   // 데이터 없을경우 화면 처리
   if (!store) return <span class="loading loading-spinner loading-lg"></span>;
 
-  console.log(store);
+  console.log("가져오는 데이터", store);
 
   const handleReviewSubmit = () => {
     if (!user) {
@@ -104,36 +187,73 @@ const StoreDetail = () => {
     }
   };
 
-  // 파일 업로드 핸들러
-  const handlePhoto = (event) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const newImages = [
-      ...images,
-      ...Array.from(files).map((file) => URL.createObjectURL(file)),
-    ];
-
-    setImages(newImages);
-  };
-
   // 사진 업로드 버튼 클릭
   const triggerFileUpload = () => {
     fileInputRef.current.click();
   };
 
   // 저장 버튼
-  const handleSubmit = () => {
-    console.log("메뉴확인", menu.current.value);
-    console.log("가격확인", cost.current.value);
-    console.log("후기확인", review.current.value);
-    console.log("이미지 확인", images);
-    console.log("리뷰확인", rating);
-    setModalOn(false);
+  const handleSubmit = async () => {
+    // console.log(rating, menu, cost, review);
+    // console.log(images.length);
+
+    const formData = new FormData();
+    formData.append("storeId", store.storeId);
+    formData.append("userId", store.userId);
+    formData.append("rating", rating);
+    formData.append("cost", cost);
+    formData.append("menu", menu);
+    formData.append("review", review);
+
+    for (let i = 0; i < images.length; i++) {
+      formData.append(`files`, images[i]);
+    }
+
+    const response = await axios.post(
+      "http://localhost:8080/api/review",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // 데이터 객체 담기
+    // const resData = {
+    //   storeId: store.storeId,
+    //   userId: user.id,
+    //   reviewMenu: menu.current.value,
+    //   reviewPrice: cost.current.value,
+    //   content: review.current.value,
+    //   files: fileInputRef.current.files,
+    //   rating: rating,
+    // };
+
+    // if (resData) {
+    //   try {
+    //     const response = await axios.post(
+    //       "http://localhost:8080/api/reviews",
+    //       resData
+    //     );
+    //     console.log("예약성공", response.data); // reviewId
+    //     alert("이용후기 작성이 완료되었습니다!");
+    //   } catch (error) {
+    //     console.log("예약실패", error);
+    //     alert("이용후기 작성 중 오류가 발생했습니다.");
+    //   }
+    // }
+
+    // if(resData && images.length > 0 && reviewId){
+    //   const formData = new FormData();
+
+    // }
+
+    // setModalOn(false);
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <div className="w-9/12 mx-auto bg-white p-6 rounded-lg shadow-md">
       {/* 아이콘 및 업소이름 */}
       <p className="text-2xl font-semibold"> {storeName} </p>
       {/* 업소 정보 섹션 */}
@@ -170,11 +290,55 @@ const StoreDetail = () => {
               <span className="text-black font-bold">업종</span>:{" "}
               {store.industryName}
             </p>
-            {/* 예약 & 문의 */}
+            {/* 예약버튼*/}
             <div className="flex">
-              <button className="mt-2 px-3 py-1 text-sm border border-blue-500 bg-white text-blue-500 rounded mx-3">
+              <button
+                className="mt-2 px-3 py-1 text-sm border border-blue-500 bg-white text-blue-500 rounded mx-3"
+                onClick={() => handleReservationClick()}
+              >
                 예약하기
               </button>
+              {/* 모달창 (ismodal이 true일 때만 표시) */}
+              {ismodal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+                    <h2 className="text-lg font-bold mb-4">예약하기</h2>
+
+                    {/* 날짜 선택 */}
+                    <div className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        날짜 선택
+                      </label>
+                      <DatePicker
+                        selected={selectedDate}
+                        onChange={handleDateChange}
+                        minDate={new Date()} // 오늘 이전 날짜 선택 불가
+                        dateFormat="yyyy-MM-dd"
+                        className="border p-2 w-full rounded"
+                        inline // 인라인으로 캘린더 표시
+                      />
+                    </div>
+
+                    {/* 버튼 */}
+                    <div className="flex justify-between">
+                      <button
+                        onClick={() => setIsmodal(false)}
+                        className="px-4 py-2 bg-gray-400 text-white rounded"
+                      >
+                        닫기
+                      </button>
+                      <button
+                        onClick={handleReservation}
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                      >
+                        예약
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 문의버튼 */}
               <button className="mt-2 px-3 py-1 text-sm bg-blue-500 text-white rounded">
                 문의하기
               </button>
@@ -288,25 +452,51 @@ const StoreDetail = () => {
                   multiple
                   accept="image/*"
                   ref={fileInputRef}
-                  onChange={handlePhoto}
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    setImages(files);
+
+                    let newPreviews = [];
+                    if (files.length > 0) {
+                      for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        newPreviews.push(URL.createObjectURL(file));
+                      }
+                    }
+                    setPreviews(newPreviews);
+                  }}
                   className="hidden"
                 />
 
                 {/* 업로드된 이미지 미리보기 */}
+
                 <div className="flex items-center gap-2">
-                  {images.slice(0, 2).map((src, index) => (
+                  {previews.slice(0, 2).map((preview, index) => (
+                    <img
+                      key={index}
+                      src={preview}
+                      alt={`업로드된 이미지 ${index + 1}`}
+                      className="w-10 h-10 object-cover border rounded"
+                    />
+                  ))}
+
+                  {previews.length > 2 && (
+                    <p className="text-base font-bold">+{images.length - 2}</p>
+                  )}
+
+                  {/* {images.slice(0, 2).map((src, index) => (
                     <img
                       key={index}
                       src={src}
                       alt={`업로드된 이미지 ${index + 1}`}
                       className="w-10 h-10 object-cover border rounded"
                     />
-                  ))}
+                  ))} */}
 
                   {/* 추가된 이미지 개수 표시 */}
-                  {images.length > 2 && (
+                  {/* {images.length > 2 && (
                     <p className="text-base font-bold">+{images.length - 2}</p>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -317,7 +507,8 @@ const StoreDetail = () => {
                   <input
                     type="text"
                     className="w-full border border-blue-500 rounded"
-                    ref={menu}
+                    defaultValue={menu}
+                    onBlur={(e) => setMenu(e.target.value)}
                   />
                 </div>
                 {/* 가격 */}
@@ -327,7 +518,8 @@ const StoreDetail = () => {
                     <input
                       type="number"
                       className="w-full border-none outline-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
-                      ref={cost}
+                      defaultValue={cost}
+                      onBlur={(e) => setCost(e.target.value)}
                     />
                     <span className="ml-2 text-black">원</span>
                   </div>
@@ -338,7 +530,8 @@ const StoreDetail = () => {
               <input
                 type="text"
                 className="w-full border border-blue-500 rounded"
-                ref={review}
+                defaultValue={review}
+                onBlur={(e) => setReview(e.target.value)}
               />
 
               <div className="w-full flex justify-between mt-3">
@@ -381,14 +574,14 @@ const StoreDetail = () => {
         <div className="w-1/2 flex items-center">
           <div className="flex flex-col items-center w-1/2">
             <p className="text-sm font-bold text-gray-800 flex items-center">
-              총 리뷰수
+              총 {store.reviewCount}건
             </p>
             <p className="text-xl font-bold text-gray-800 flex items-center">
-              총 평점
+              {store.reviewAvg}점
             </p>
             <Rating
               name="half-rating-read"
-              defaultValue={5}
+              defaultValue={store.reviewAvg}
               precision={0.5}
               readOnly
             />
@@ -396,7 +589,10 @@ const StoreDetail = () => {
           {/* 평점 비율2 */}
           <div className="flex flex-col w-1/2 gap-2">
             {ratingData.map((item) => (
-              <div className="flex items-center gap-2" key={`i-${item.value}`}>
+              <div
+                className="flex items-center gap-2"
+                key={`rating-${item.rt}-${item.value}`}
+              >
                 <div
                   className="progress h-4 flex-1 bg-gray-200 rounded-full"
                   role="progressbar"
@@ -405,7 +601,8 @@ const StoreDetail = () => {
                   aria-valuemax="100"
                 >
                   <div
-                    className={`progress-bar ${item.width} bg-gray-800 text-white text-sm rounded-full px-2`}
+                    className="progress-bar bg-gray-800 text-white text-xs rounded-full px-2"
+                    style={{ width: `${item.value}%` }} // ⭐ 비율에 맞게 width 동적 적용
                   >
                     {item.value}%
                   </div>
@@ -421,32 +618,7 @@ const StoreDetail = () => {
 
       {/* 리뷰 섹션 */}
       <div className="mt-6 space-y-6">
-        {[1, 2].map((review) => (
-          <div key={`review-${review}`} className="border-t pt-4">
-            {/* 사용자 정보 */}
-            <div className="flex items-center space-x-2">
-              <p className="font-semibold text-gray-700">사용자 아이디</p>
-              <span className="text-yellow-500">⭐⭐⭐⭐⭐</span>
-            </div>
-            {/* 리뷰 내용 */}
-            <p className="text-sm text-gray-600 mt-2">
-              처음 이용해봤는데 기대 이상으로 만족스러웠습니다. 직원분들도
-              친절하고 서비스도 훌륭하게 제공되었습니다. 시설이 깔끔하고
-              분위기가 좋아서 편안하게 이용할 수 있었습니다.
-            </p>
-            {/* 이미지 */}
-            <div className="flex gap-2 mt-3">
-              <div className="bg-gray-300 w-24 h-24 rounded-md"></div>
-              <div className="bg-gray-300 w-24 h-24 rounded-md"></div>
-              <div className="bg-gray-300 w-24 h-24 rounded-md"></div>
-            </div>
-            {/* 도움이 되었나요? */}
-            <div className="flex justify-between mt-4 text-sm">
-              <p className="text-gray-500">이 리뷰가 도움이 되셨나요?</p>
-              <button className="text-blue-500">👍 2</button>
-            </div>
-          </div>
-        ))}
+        <Storereview data={store} />
       </div>
 
       {/* 페이지네이션 */}

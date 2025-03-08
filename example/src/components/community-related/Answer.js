@@ -75,7 +75,7 @@ const Answer = () => {
   // 메인글 저장
   const handleSaveMain = async () => {
     try {
-      //notice qna로직 구분분
+      //notice qna로직 구분
       const res = await axios.patch(
         `http://localhost:8080/notice/update/${data.id}`,
         { title: editingMain.title, content: editingMain.content }
@@ -99,7 +99,7 @@ const Answer = () => {
     setIsModalOpen(true);
   };
 
-  // 답글 삭제 모달로 처리함함
+  // 답글 삭제 모달로 처리함
   // const handleDelete = async () => {
   //   try {
   //     //Q&A 답글 삭제 (DELETE)

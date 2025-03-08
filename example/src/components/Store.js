@@ -8,6 +8,8 @@ function StoreComponent({ data }) {
   const [isAdding, setIsAdding] = useState(false); // 새페이지
   const navigate = useNavigate();
 
+  // console.log("전달되는 데이터", data);
+
   // 팝업창 클릭
   const handleStoreDetail = () => {
     navigate(`/find/map/${encodeURIComponent(data.storeName)}`, {
@@ -17,7 +19,7 @@ function StoreComponent({ data }) {
 
   return (
     <div
-      className="w-80 min-h-72 border rounded-lg shadow-lg overflow-hidden p-4 bg-white flex flex-col cursor-pointer"
+      className="w-80 min-h-72 border rounded-lg shadow-lg overflow-hidden p-4 bg-white flex flex-col cursor-pointer  transition hover:scale-105"
       onClick={() => handleStoreDetail()}
     >
       <div className="w-full h-48 bg-gray-300 flex items-center justify-center text-lg font-bold text-gray-700">
@@ -33,7 +35,7 @@ function StoreComponent({ data }) {
           <div className="mt-0.5 pr-0.5">
             <FaStar />
           </div>
-          {data.averageRating}
+          {data.reviewAvg}
         </span>
         <div className="mt-2 text-lg font-semibold">{data.storeName}</div>
 
