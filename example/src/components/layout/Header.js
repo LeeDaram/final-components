@@ -51,7 +51,7 @@ function Header() {
         },
         {
           title: "소비자편",
-          link: "/guide/consumer",
+          link: "/guide-related/intro/herosection",
           subMenu: [
             {
               title: "소비자 혜택",

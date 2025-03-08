@@ -44,7 +44,9 @@ import SimpleSlider from "./components/ui/homeCarousel/HomeCarousel";
 import Brand from "./pages/guide-related/intro/Brand";
 import Guide from "./pages/guide-related/intro/Guide";
 import Imchat from "./pages/guide-related/intro/imchat.js/Imchatbot";
-
+import Service from "./pages/guide-related/intro/g-service";
+import Site from "./pages/guide-related/intro/site";
+import HeroSection from "./pages/guide-related/intro/herosection";
 
 function App() {
   return (
@@ -108,19 +110,27 @@ function App() {
               />
               <Route path="/find/map" element={<Store />} />
               <Route path="/find/map/:storeName" element={<StoreDetail />} />
-              <Route path="/community-related/notice" element={<NoticePage />} />
-            <Route
-              path="/components/community-related/write"
-              element={<Write />}
-            />
-            <Route path="/community-related/qna" element={<QnaPage />} />
-            <Route path="/community-related/faq" element={<Faq />} />
-            <Route path="/answer" element={<Answer />} />
-            <Route path="/file" element={<FileUpload />} />
-            <Route path="/ocr" element={<Ocrtest />} />
-            <Route path="/guide-related/intro/brand" element={<Brand />} />
-            <Route path="/guide-related/intro/guide" element={<Guide />} />
-            <Route path="/chatbot" element={<Imchat />} />
+              <Route
+                path="/community-related/notice"
+                element={<NoticePage />}
+              />
+              <Route
+                path="/components/community-related/write"
+                element={<Write />}
+              />
+              <Route path="/community-related/qna" element={<QnaPage />} />
+              <Route path="/community-related/faq" element={<Faq />} />
+              <Route path="/answer" element={<Answer />} />
+              <Route path="/file" element={<FileUpload />} />
+              <Route path="/ocr" element={<Ocrtest />} />
+              <Route path="/guide-related/intro/brand" element={<Brand />} />
+              <Route path="/guide-related/intro/guide" element={<Guide />} />
+              <Route path="/chatbot" element={<Imchat />} />
+              <Route path="/guide-related/intro/site" element={<Site />} />
+              <Route
+                path="/guide-related/intro/herosection"
+                element={<HeroSection />}
+              />
             </Routes>
           </main>
         </div>
