@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import { FileInput, Label } from "flowbite-react";
 import { CommuModal } from "./CommuModal";
 import axios from "axios";
-
+import { useAuth } from "../../pages/login-related/AuthContext";
 const Write = () => {
+  const { user, token } = useAuth();
+
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    setUserInfo(user || {});
+  }, [userInfo]);
+
   const [title, setTitle] = useState(""); //제목
   const [content, setContent] = useState(""); //내용
 
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isHeader, setIsHeader] = useState(false);
-
+  // 업로드 선택된 파일들
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [files, setFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); //모달상태
   const navigate = useNavigate();
@@ -34,14 +42,21 @@ const Write = () => {
       alert("내용을 입력해주세요.");
       return;
     }
-    //공지사항인지 qna인지 조건걸기기
+
+    let noticeId;
+    //공지사항인지 qna인지 조건걸기
     if (data?.notice) {
       try {
-        await axios.post(`http://localhost:8080/notice/create`, {
-          title: title,
-          content: content,
-          isMainNotice: isNotice,
-        });
+        const noticeResponse = await axios.post(
+          `http://localhost:8080/notice/create`,
+          {
+            title: title,
+            content: content,
+            isMainNotice: isNotice,
+          }
+        );
+        noticeId = noticeResponse.data.id; // 서버에서 반환한 자동증가 PK
+        console.log(noticeResponse.data, "ㅁㄴㅇㄻㄴㄹㅇ");
       } catch (error) {
         console.log("ERROR");
       }
@@ -52,11 +67,29 @@ const Write = () => {
         await axios.post(`http://localhost:8080/qna/create`, {
           title: title,
           content: content,
-          userId: "user124",
+          userId: userInfo.id,
           // 위에 변수선언해둠
         });
       } catch (error) {
         console.log("ERROR");
+      }
+    }
+    // 파일 업로드 (공지사항인 경우)
+    if (data?.notice && selectedFiles.length > 0 && noticeId) {
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+      formData.append("noticeId", noticeId);
+
+      try {
+        const uploadResponse = await axios.post(
+          "http://localhost:8080/notice/attachments",
+          formData
+        );
+        console.log(uploadResponse);
+      } catch (error) {
+        console.error("파일 업로드 ERROR", error);
       }
     }
 
@@ -87,9 +120,36 @@ const Write = () => {
   };
 
   //업로드 파일 이름 표기
-  const handleFileChange = (event) => {
-    setFiles(Array.from(event.target.files));
+  const handleFileChange = (e) => {
+    setFiles(Array.from(e.target.files));
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
   };
+  // 업로드 통신
+  // const handleSubmitNotice = async () => {
+  //   if (selectedFiles.length === 0) {
+  //     alert("No files");
+  //     return;
+  //   }
+  //   const formData = new FormData();
+  //   selectedFiles.forEach((file) => {
+  //     formData.append("files", file);
+  //   });
+
+  //   formData.append("noticeId", "20");
+
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8080/notice/attachments",
+  //       formData
+  //       // { headers: { "Content-Type": "multipart/form-data" } } 직접 설정안해줘도 알아서바인딩 된다고함.
+  //     );
+  //     console.log(response);
+  //     alert("완료되었습니다~");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   //중요공지 체크박스 T, F 판단
   const [isNotice, setIsNotice] = useState("F");
   const handleCheckboxChange = (e) => {
@@ -194,23 +254,28 @@ const Write = () => {
               ></textarea>
             </div>
 
-            <div className="mb-4">
-              <Label htmlFor="file-upload" className="block text-gray-700 mb-2">
-                파일 업로드
-              </Label>
-              <FileInput
-                id="file-upload"
-                multiple
-                onChange={handleFileChange}
-              />
-              {files.length > 0 && (
-                <ul className="mt-2 text-gray-700">
-                  {files.map((file, index) => (
-                    <li key={index}>{file.name}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            {data?.notice && (
+              <div className="mb-4">
+                <Label
+                  htmlFor="file-upload"
+                  className="block text-gray-700 mb-2"
+                >
+                  파일 업로드
+                </Label>
+                <FileInput
+                  id="file-upload"
+                  multiple
+                  onChange={handleFileChange}
+                />
+                {files.length > 0 && (
+                  <ul className="mt-2 text-gray-700">
+                    {files.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
 
             <div className="flex justify-center space-x-4 mt-6">
               <button

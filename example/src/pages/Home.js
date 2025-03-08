@@ -1,40 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import SimpleSlider from "../components/ui/homeCarousel/HomeCarousel";
-function Home() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
+import { handleEnterKey } from "../utils/Keydown";
 
+function Home() {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState(null); //검색어
+  const [stores, setStores] = useState([]); // 오늘의 착한가격업소
+  const [homeCount, setHomeCount] = useState([]); // 홈페이지 카운트 화면
+  const [homeNotice, setHomeNotice] = useState([]); // 홈페이지 최신 공지사항순
+
+  // 가게, 품목검색
   const handleSearch = () => {
-    navigate(`/find/map?query=${searchTerm}`);
+    if (!searchTerm || searchTerm.trim() === "") {
+      alert("검색어를 입력해주세요");
+      return;
+    }
+    navigate(`/find/map?query=${encodeURIComponent(searchTerm)}`);
   };
 
-  const stores = [
-    {
-      id: 1,
-      name: "가게이름1",
-      description: "신규 가게로 선정되었습니다",
-      src: "https://www.goodprice.go.kr/comm/showImageFile.do?fileCours=/bssh/20240913/thumb/&fileId=8F3F0544772546B495E739C636D3016D.png",
-    },
-    {
-      id: 2,
-      name: "가게이름2",
-      description: "신규 가게로 선정되었습니다",
-      src: "https://www.goodprice.go.kr/comm/showImageFile.do?fileCours=/bssh/20250103/thumb/&fileId=242347F596B148BCBF01200AEA69E451.jpeg",
-    },
-    {
-      id: 3,
-      name: "가게이름3",
-      description: "신규 가게로 선정되었습니다",
-      src: "https://www.goodprice.go.kr/comm/showImageFile.do?fileCours=/bssh/20250103/thumb/&fileId=A90AB53F5ADF433DBDCE33F5428D588E.jpeg",
-    },
-    {
-      id: 4,
-      name: "가게이름4",
-      description: "신규 가게로 선정되었습니다",
-      src: "https://www.goodprice.go.kr/comm/showImageFile.do?fileCours=/bssh/20241011/thumb/&fileId=1CAA071456D74DCA808DAF8A48DBC491.jpeg",
-    },
-  ];
+  // 공지사항 클릭
+  const handleNotice = (notice) => {
+    navigate("/answer", {
+      state: { mainPageNotice: notice },
+    });
+  };
+
+  useEffect(() => {
+    const getTodayData = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/home/likecount");
+        setStores(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getTodayData();
+
+    const getHomeCountData = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/home/homecount");
+        setHomeCount(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getHomeCountData();
+
+    const getHomeNoticeData = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/home/newnotice");
+        setHomeNotice(res.data);
+      } catch (error) {
+        console.log("ERROR");
+      }
+    };
+    getHomeNoticeData();
+  }, []);
+  console.log(homeCount, "@@@@@@@#!@$!@#%!#$%@$#^@#");
+  const totalUser =
+    homeCount[0]?.totalStoreCount + homeCount[0]?.totalUserCount; // 홈페이지 카운트계산
+  console.log(totalUser);
 
   const reviews = [
     { id: 1, storeName: "가게이름1", reviewer: "회원아이디", rating: 4.5 },
@@ -43,24 +70,12 @@ function Home() {
     { id: 4, storeName: "가게이름4", reviewer: "회원아이디", rating: 4.5 },
   ];
 
-  const notices = [
-    { id: 1, title: "공지사항 제목", content: "가나다라마바" },
-    { id: 2, title: "공지사항 제목", content: "가나다라마바" },
-    { id: 3, title: "공지사항 제목", content: "가나다라마바" },
-  ];
   return (
     <>
       <div className="bg-blue-100 dark:bg-gray-700 text-center">
         <div className="bg-blue-100 dark:bg-gray-700 py-20 text-left">
           {/* 검색 및 이동 */}
           <div className="flex items-center justify-end space-x-2 mb-6 mr-[20%]">
-            {/* <input
-            type="text"
-            placeholder="가게명 검색"
-            className="p-2 border border-gray-300 rounded"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          /> */}
             <div class="relative w-96">
               <input
                 type="text"
@@ -69,6 +84,7 @@ function Home() {
                 id="floatingInput"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => handleEnterKey(e, handleSearch)}
               />
               <label class="input-floating-label" for="floatingInput">
                 가게명 검색
@@ -78,8 +94,7 @@ function Home() {
               className="p-2 bg-blue-500 text-white rounded-full"
               onClick={handleSearch}
             >
-              {/* 엔터키 함수로 따로 빼서 검색버튼 없애면 이쁠듯 */}
-              <Link to="/find/map">검색</Link>
+              검색
             </button>
           </div>
           <div className="flex flex-wrap justify-start items-center mx-auto max-w-screen-xl">
@@ -101,16 +116,20 @@ function Home() {
                 </button>
                 <div className="grid grid-cols-3 gap-4 text-center pt-4">
                   <div>
-                    <h1 className="text-4xl font-bold text-gray-800">9,700+</h1>
+                    <h1 className="text-4xl font-bold text-gray-800">
+                      {homeCount[0]?.totalStoreCount.toLocaleString("en-US")}+
+                    </h1>
                     <p className="text-sm text-gray-500">착한가격업소</p>
                   </div>
                   <div className="border-l border-r border-gray-300">
-                    <h1 className="text-4xl font-bold text-gray-800">2,000+</h1>
+                    <h1 className="text-4xl font-bold text-gray-800">
+                      {homeCount[0]?.totalReviewCount.toLocaleString("en-US")}+
+                    </h1>
                     <p className="text-sm text-gray-500">리뷰수</p>
                   </div>
                   <div>
                     <h1 className="text-4xl font-bold text-gray-800">
-                      30,800+
+                      {totalUser.toLocaleString("en-US")}+
                     </h1>
                     <p className="text-sm text-gray-500">이용자수</p>
                   </div>
@@ -161,17 +180,22 @@ function Home() {
             <h2 className="text-xl font-bold mb-4 mt-20">공지사항</h2>
             <div className="border p-5 rounded-lg">
               <div className="grid grid-cols-3 gap-4 justify-center">
-                {notices.map((notice) => (
-                  <Link
-                    key={notice.id}
+                {homeNotice.map((notice) => (
+                  <button
+                    key={notice.noticeId}
                     to={`/notice/${notice.id}`}
                     className="border p-4 rounded shadow hover:bg-gray-100"
+                    onClick={() => handleNotice(notice)}
+                    //버튼으로 바꾸고 온클릭 맥여서 navigate에 id값 태워서 보낸다음에 answer페이지 조회
                   >
-                    <div className="text-lg font-semibold">{notice.title}</div>
-                    <div className="text-sm text-gray-500">
-                      {notice.content}
+                    <div className="text-lg font-semibold text-left">
+                      <span>{notice.noticeId}번공지 : </span>{" "}
+                      {notice.noticeTitle}
                     </div>
-                  </Link>
+                    <div className="text-sm text-gray-500 text-left">
+                      {notice.noticeContent}
+                    </div>
+                  </button>
                 ))}
               </div>
             </div>

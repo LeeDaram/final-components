@@ -177,8 +177,6 @@ const StoreDetail = () => {
   // 데이터 없을경우 화면 처리
   if (!store) return <span class="loading loading-spinner loading-lg"></span>;
 
-  console.log("가져오는 데이터", store);
-
   const handleReviewSubmit = () => {
     if (!user) {
       alert("로그인 후 이용하실 수 있습니다.");

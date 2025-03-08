@@ -3,23 +3,94 @@ import { ImgCarousel } from "../../components/ui/Carousel";
 import { Link } from "react-router-dom";
 import { handleEnterKey, handleEscKey } from "../../utils/Keydown";
 import axios from "axios";
+import { useAuth } from "../login-related/AuthContext";
+import { FaFileAlt } from "react-icons/fa";
+import {
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 const NoticePage = () => {
+  const { user, token } = useAuth();
+
+  // 로그인정보저장
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    setUserInfo(user || {});
+  }, [userInfo]);
+  console.log(userInfo, "로그인 정보확인");
+
+  // 페이지네이션
+  const SIZE = 8;
+  const MAX_PAGES_TO_SHOW = 10; // 10개씩
+  const [page, setPage] = useState(null);
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지의 개수
+  const makePageNumbers = (currentPage, totalPages) => {
+    let pages = [];
+
+    // 현재 그룹의 시작/끝 페이지 계산
+    let start = Math.floor(currentPage / MAX_PAGES_TO_SHOW) * MAX_PAGES_TO_SHOW;
+    let end = Math.min(start + MAX_PAGES_TO_SHOW - 1, totalPages - 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
+  // const [userId, setUserId] = useState('');
+  // const [userToken, setUserToken] = useState('');
+  // useEffect(() => {
+  //     if (user?.id) {
+  //         setUserId(user?.id || '');
+  //     }
+  //     if (token) {
+  //         setUserToken(token || '');
+  //     }
+  // }, [user, token]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchNotice, setSearchNotice] = useState("");
-  const totalPages = 13;
 
   const [notices, setNotice] = useState([]);
+
+  const getNoticeData = async (page = 0) => {
+    const params = {
+      page,
+      size: SIZE,
+    };
+    try {
+      const res = await axios.get(
+        "http://localhost:8080/notice/main/pagination",
+        {
+          params,
+        }
+      );
+
+      console.log(res);
+
+      setTotalPages(res.data.page.totalPages);
+      if (res.data && res.data.content.length > 0) {
+        setPage(res.data.page);
+        setNotice(res.data.content);
+      }
+    } catch (error) {
+      console.log("ERROR");
+    }
+  };
+  console.log(totalPages, "@@@@@");
   // 첫 로드때 데이터 가져오기기
   useEffect(() => {
-    const getNoticeData = async () => {
+    async function getData() {
       try {
-        const res = await axios.get("http://localhost:8080/notice/main");
-        setNotice(res.data);
-      } catch (error) {
-        console.log("ERROR");
+        await getNoticeData();
+      } catch (e) {
+        console.log(e);
       }
-    };
-    getNoticeData();
+    }
+    getData();
   }, []);
   console.log(notices, "@@");
 
@@ -39,6 +110,7 @@ const NoticePage = () => {
   };
   const handlePageClick = (page) => {
     setCurrentPage(page);
+    getNoticeData(page - 1);
   };
 
   return (
@@ -109,7 +181,7 @@ const NoticePage = () => {
                   <td className="p-3">관리자</td>
                   <td className="p-3 text-center">{notice.createdAt}</td>
                   <td className="p-3 pl-8">
-                    {notice.attachments[0].attachmentId == 0 ? null : "📂"}
+                    {notice.attachmentsCount > 0 && <FaFileAlt />}
                   </td>
                   <td className="p-3">{notice.views}</td>
                 </tr>
@@ -117,44 +189,116 @@ const NoticePage = () => {
             </tbody>
           </table>
 
-          {/* 임시 페이징처리리 */}
-          <nav className="flex items-center justify-center gap-x-1 mt-20">
-            <button type="button" className="btn btn-soft btn-square">
-              <span className="icon-[tabler--chevron-left] size-5 rtl:rotate-180"></span>
-            </button>
-            <div className="flex items-center gap-x-1">
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={`btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary ${
-                    currentPage === index + 1
-                      ? "bg-black text-white"
-                      : "bg-white text-black"
-                  }`}
-                  onClick={() => handlePageClick(index + 1)}
+          {/* 페이지네이션 필요함 */}
+          {/* 페이지 관련 */}
+          {page && (
+            <>
+              <div className="flex justify-center items-center mt-6">
+                <nav
+                  aria-label="Pagination"
+                  className="isolate inline-flex -space-x-px rounded-md shadow-sm"
                 >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-            {/* 아래 버튼에 페이지 넘기는 로직 픽요함함 */}
-            <button type="button" className={`btn btn-soft btn-square`}>
-              <span className="icon-[tabler--chevron-right] size-5 rtl:rotate-180"></span>
-            </button>
-          </nav>
+                  <button
+                    className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                      page.number === 0
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-white text-gray-900 hover:bg-gray-100"
+                    }`}
+                    disabled={page.number === 0}
+                    onClick={() => getNoticeData(0)}
+                  >
+                    <FiChevronsLeft />
+                  </button>
+
+                  {/* 전 페이지로 이동 */}
+                  <button
+                    className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-medium ${
+                      page.number === 0
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-white text-gray-900 hover:bg-gray-100"
+                    }`}
+                    disabled={page.number === 0}
+                    onClick={() =>
+                      getNoticeData(
+                        makePageNumbers(page.number, page.totalPages)[
+                          MAX_PAGES_TO_SHOW - 10
+                        ] - 1
+                      )
+                    }
+                  >
+                    <FiChevronLeft />
+                  </button>
+
+                  {/* 페이지 넘버 */}
+                  {makePageNumbers(page.number, page.totalPages).map(
+                    (navNum) => (
+                      <button
+                        key={navNum}
+                        onClick={() => handlePageClick(navNum + 1)}
+                        className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                          page.number === navNum
+                            ? "bg-indigo-600 text-white"
+                            : "bg-white text-gray-900 hover:bg-gray-100"
+                        }`}
+                      >
+                        {navNum + 1}
+                      </button>
+                    )
+                  )}
+
+                  {/* 다음 페이지로 이동 */}
+                  <button
+                    className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                      page.number === page.totalPages
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-white text-gray-900 hover:bg-gray-100"
+                    }`}
+                    disabled={page.number === page.totalPages}
+                    onClick={() =>
+                      getNoticeData(
+                        makePageNumbers(page.number, page.totalPages)[
+                          MAX_PAGES_TO_SHOW - 1
+                        ] + 1
+                      )
+                    }
+                  >
+                    <FiChevronRight />
+                  </button>
+
+                  {/* 끝 페이지로 이동 */}
+                  <button
+                    className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                      page.number === page.totalPages - 1
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-white text-gray-900 hover:bg-gray-100"
+                    }`}
+                    disabled={page.number === page.totalPages - 1}
+                    onClick={() => getNoticeData(page.totalPages - 1)}
+                  >
+                    <FiChevronsRight />
+                  </button>
+                </nav>
+              </div>
+
+              <div className="text-center mt-4 text-sm text-gray-600">
+                페이지 {page.number + 1} / {page.totalPages}
+              </div>
+            </>
+          )}
 
           {/* admin 일때만만 글쓰기 버튼 */}
-          <div className="flex justify-end mt-6">
-            <Link
-              to="/components/community-related/write"
-              state={{ notice: "공지사항" }}
-            >
-              <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-700">
-                글쓰기 USER_ROLE에 따라서 컨트롤
-              </button>
-            </Link>
-          </div>
+          {userInfo.role == "ROLE_ADMIN" && (
+            <div className="flex justify-end mt-6">
+              <Link
+                to="/components/community-related/write"
+                state={{ notice: "공지사항" }}
+              >
+                <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-700">
+                  글쓰기 USER_ROLE에 따라서 컨트롤
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>

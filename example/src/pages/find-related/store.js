@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import StoreComponent from "../../components/Store";
+import { useSearchParams } from "react-router-dom";
 import {
   FiChevronsLeft,
   FiChevronsRight,
@@ -24,6 +25,9 @@ const SIZE = 8;
 const MAX_PAGES_TO_SHOW = 10; // 10개씩 그룹화
 
 function Store() {
+  const [searchParams] = useSearchParams(); //쿼리스트링 접근
+  const query = searchParams.get("query") || ""; //query뒤에 담긴 값 저장
+
   // 상태 관리
   const [stores, setStores] = useState([]); // 업소 정보들
 
@@ -78,7 +82,11 @@ function Store() {
   }, [selectSido, sigungu]);
 
   // 검색 버튼
-  const handleSearchClick = async (page = 0, value = sort) => {
+  const handleSearchClick = async ({
+    keyword = searchKeyword,
+    page = 0,
+    sortValue = sort,
+  } = {}) => {
     const { parking, takeout, delivery, wifi, pet, kid } = filters; // TODO: 예약 관련 코드 추가해야 함
     console.log(filters);
     const params = {
@@ -88,15 +96,15 @@ function Store() {
       sidoId: selectSido || null,
       sigunguId: selectSigungu || null,
       industryId: selectIndustry || null,
-      storeName: searchType === "storeName" ? searchKeyword : "",
-      mainMenu: searchType === "mainMenu" ? searchKeyword : "",
+      storeName: searchType === "storeName" ? keyword : "",
+      mainMenu: searchType === "mainMenu" ? keyword : "",
       parking,
       takeout,
       delivery,
       wifi,
       pet,
       kid,
-      sort: value,
+      sort: sortValue,
     };
 
     console.log("검색 요청 파라미터:", params);
@@ -158,13 +166,17 @@ function Store() {
         setSido(sidoData.data);
         setSigungu(sigunguData.data);
         setIndustry(industryData.data);
+        if (query.trim() !== "") {
+          setSearchKeyword(query);
+          handleSearchClick({ keyword: query });
+          console.log("검색어");
+        }
       } catch (error) {
         console.error("데이터 로드 실패:", error);
       }
     }
-
     fetch();
-  }, []);
+  }, [query]);
 
   // 추천,평점 클릭 함수
   const handleSortClick = (value) => {
@@ -198,7 +210,13 @@ function Store() {
       pet: "",
       kid: "",
     });
+    handleSearchClick();
   };
+
+  //초기화
+  useEffect(() => {
+    handleSearchClick();
+  }, [selectSido, selectSigungu, selectIndustry, searchType, sort, filters]);
 
   useEffect(() => {
     console.log("선택된 시도", selectSido);
@@ -294,7 +312,7 @@ function Store() {
               type="text"
               placeholder="검색어를 입력해주세요."
               className="border border-gray-400 px-4 py-2 rounded-md text-center w-60 mr-40 sm:w-64 md:w-80 lg:w-96"
-              value={searchKeyword}
+              // value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               onKeyDown={handleKeyPress}
             />
@@ -386,6 +404,7 @@ function Store() {
                 aria-label="Pagination"
                 className="isolate inline-flex -space-x-px rounded-md shadow-sm"
               >
+                {/* 처음 페이지 버튼 */}
                 <button
                   className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
                     page.number === 0
@@ -393,12 +412,12 @@ function Store() {
                       : "bg-white text-gray-900 hover:bg-gray-100"
                   }`}
                   disabled={page.number === 0}
-                  onClick={() => handleSearchClick(0)}
+                  onClick={() => handleSearchClick({ page: 0 })}
                 >
                   <FiChevronsLeft />
                 </button>
 
-                {/* 전 페이지로 이동 */}
+                {/* 전 페이지 그룹 버튼 */}
                 <button
                   className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-medium ${
                     page.number === 0
@@ -407,21 +426,22 @@ function Store() {
                   }`}
                   disabled={page.number === 0}
                   onClick={() =>
-                    handleSearchClick(
-                      makePageNumbers(page.number, page.totalPages)[
-                        MAX_PAGES_TO_SHOW - 10
-                      ] - 1
-                    )
+                    handleSearchClick({
+                      page:
+                        makePageNumbers(page.number, page.totalPages)[
+                          MAX_PAGES_TO_SHOW - 10
+                        ] - 1,
+                    })
                   }
                 >
                   <FiChevronLeft />
                 </button>
 
-                {/* 페이지 넘버 */}
+                {/* 페이지 번호 버튼 */}
                 {makePageNumbers(page.number, page.totalPages).map((navNum) => (
                   <button
                     key={navNum}
-                    onClick={() => handleSearchClick(navNum)}
+                    onClick={() => handleSearchClick({ page: navNum })}
                     className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
                       page.number === navNum
                         ? "bg-indigo-600 text-white"
@@ -432,7 +452,7 @@ function Store() {
                   </button>
                 ))}
 
-                {/* 다음 페이지로 이동 */}
+                {/* 다음 페이지 그룹 버튼 */}
                 <button
                   className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
                     page.number === page.totalPages
@@ -441,17 +461,18 @@ function Store() {
                   }`}
                   disabled={page.number === page.totalPages}
                   onClick={() =>
-                    handleSearchClick(
-                      makePageNumbers(page.number, page.totalPages)[
-                        MAX_PAGES_TO_SHOW - 1
-                      ] + 1
-                    )
+                    handleSearchClick({
+                      page:
+                        makePageNumbers(page.number, page.totalPages)[
+                          MAX_PAGES_TO_SHOW - 1
+                        ] + 1,
+                    })
                   }
                 >
                   <FiChevronRight />
                 </button>
 
-                {/* 끝 페이지로 이동 */}
+                {/* 마지막 페이지 버튼 */}
                 <button
                   className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
                     page.number === page.totalPages - 1
@@ -459,7 +480,9 @@ function Store() {
                       : "bg-white text-gray-900 hover:bg-gray-100"
                   }`}
                   disabled={page.number === page.totalPages - 1}
-                  onClick={() => handleSearchClick(page.totalPages - 1)}
+                  onClick={() =>
+                    handleSearchClick({ page: page.totalPages - 1 })
+                  }
                 >
                   <FiChevronsRight />
                 </button>

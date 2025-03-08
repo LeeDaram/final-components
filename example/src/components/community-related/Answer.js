@@ -3,10 +3,22 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ImgCarousel } from "../../components/ui/Carousel";
 import DeletModal from "./CommuModal";
 import axios from "axios";
-
+import { useAuth } from "../../pages/login-related/AuthContext";
 const Answer = () => {
+  const { user, token } = useAuth();
+
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    setUserInfo(user || {});
+  }, [userInfo]);
+  console.log(userInfo, "로그인 정보확인");
+
   const location = useLocation();
   const data = location.state;
+  const { state } = useLocation();
+  const mainPageNotice = state?.mainPageNotice;
+
+  console.log(mainPageNotice, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
   const [comment, setComment] = useState("");
   const [isEditingMain, setIsEditingMain] = useState(false); // 메인글 수정 상태
@@ -14,10 +26,11 @@ const Answer = () => {
   const [comments, setComments] = useState([]); // 답글(댓글) 내용; 배열로 관리
   const [editingAnswerId, setEditingAnswerId] = useState(null); // 답글이 있으면 수정 아니면 냅두기
   const [editingContent, setEditingContent] = useState(""); // 수정 중인 답글 내용
-  const USER_ROLE = "user"; // 현재 관리자 역할 (테스트용)
+  const USER_ROLE = "admin"; // 현재 관리자 역할 (테스트용)
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [deleteAnswerId, setDeleteAnswerId] = useState(null); // 삭제할 답글 아이디
+  const [files, setFiles] = useState([]); //각 공지사항의 첨부파일
 
   // 페이지 첫 로드 시 공지사항 또는 Q&A 데이터 가져오기
   useEffect(() => {
@@ -28,6 +41,10 @@ const Answer = () => {
             `http://localhost:8080/notice/main/${data.id}`
           );
           setEditingMain(res.data);
+          const attachments = await axios.get(
+            `http://localhost:8080/notice/attachment/${data.id}/download`
+          );
+          setFiles(attachments.data);
         }
         if (data.qna === "Q&A") {
           const res = await axios.get(
@@ -38,6 +55,16 @@ const Answer = () => {
           // API가 answer 객체를 반환하면 배열에 담아 저장 (없으면 빈 배열)
           setComments(res.data.answers);
         }
+        if (mainPageNotice) {
+          const res = await axios.get(
+            `http://localhost:8080/notice/main/${mainPageNotice.noticeId}`
+          );
+          setEditingMain(res.data);
+          const attachments = await axios.get(
+            `http://localhost:8080/notice/attachment/${mainPageNotice.noticeId}/download`
+          );
+          setFiles(attachments.data);
+        }
       } catch (error) {
         console.log("ERROR", error);
       }
@@ -45,7 +72,8 @@ const Answer = () => {
     getData();
   }, [data, comment, editingContent, isModalOpen]);
 
-  console.log(comments, "@@@");
+  console.log(comments, "댓글댓글댓글댓글댓글댓글댓글댓글");
+  console.log(files, "파일파일파일파일파일파일파일파일");
 
   // Qna 답글 등록 (DB 통신)
   const handleCommentSubmit = async () => {
@@ -142,6 +170,8 @@ const Answer = () => {
     setIsModalOpen(true);
   };
 
+  console.log(files);
+
   return (
     <>
       <div className="flex justify-center items-center mt-10">
@@ -155,6 +185,7 @@ const Answer = () => {
           {/* 목록 버튼 */}
           <div className="flex justify-between mb-4 border-b border-black">
             <h1 className="text-2xl font-semibold mb-4">
+              {mainPageNotice ? "공지사항" : ""}
               {data?.notice}
               {data?.qna}
             </h1>
@@ -164,6 +195,8 @@ const Answer = () => {
                 if (data.qna === "Q&A") {
                   navigate("/community-related/qna");
                 } else if (data.notice === "공지사항") {
+                  navigate("/community-related/notice");
+                } else if (mainPageNotice) {
                   navigate("/community-related/notice");
                 }
               }}
@@ -188,11 +221,54 @@ const Answer = () => {
             <div className="border-b py-2">
               <span className="text-gray-600 mr-5">
                 {data?.notice ? "관리자" : editingMain.userId}
+                {mainPageNotice ? "관리자" : ""}
               </span>
               <span className="text-gray-600 mt-2">
                 {editingMain.createdAt}
               </span>
             </div>
+
+            <div>
+              {files.map((file) => (
+                <div key={file.attachmentId} style={{ marginBottom: "1rem" }}>
+                  <p>{file.originFilename}</p>
+                  {file.contentType.startsWith("image/") ? (
+                    <img
+                      src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                      alt={file.originFilename}
+                      style={{ maxWidth: "300px", display: "block" }}
+                    />
+                  ) : file.contentType === "application/pdf" ? (
+                    <iframe
+                      src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                      title={file.originFilename}
+                      width="600"
+                      height="400"
+                    />
+                  ) : file.contentType === "video/mp4" ? (
+                    <video controls width="600" height="400">
+                      <source
+                        src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                        type="video/mp4"
+                        style={{ maxWidth: "300px", display: "block" }}
+                      />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <p>미리보기를 지원하지 않는 파일입니다.</p>
+                  )}
+                  <a
+                    href={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                    download={file.storedFilename}
+                    style={{ display: "inline-block", marginTop: "0.5rem" }}
+                    // onClick={handleDownload} 다운로드
+                  >
+                    다운로드
+                  </a>
+                </div>
+              ))}
+            </div>
+
             {isEditingMain ? (
               <textarea
                 className="w-full p-3 border rounded h-24 resize-none"
@@ -209,56 +285,59 @@ const Answer = () => {
           </div>
 
           {/* 관리자가 쓴 공지사항: 수정 & 삭제 버튼 */}
-          {data?.notice && USER_ROLE === "admin" && (
-            <div className="flex justify-center space-x-4 mt-6 mb-6">
-              {isEditingMain ? (
-                <>
-                  <button
-                    onClick={handleSaveMain}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-                  >
-                    저장
-                  </button>
-                  <button
-                    onClick={handleCancelMain}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                  >
-                    취소
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={handleEditMain}
-                    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={handleDeleteMain}
-                    className="bg-white text-black px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
-                  >
-                    삭제
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          {(data?.notice && mainPageNotice) ||
+            (userInfo.role === "ROLE_ADMIN" && (
+              <div className="flex justify-center space-x-4 mt-6 mb-6">
+                {isEditingMain ? (
+                  <>
+                    <button
+                      onClick={handleSaveMain}
+                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+                    >
+                      저장
+                    </button>
+                    <button
+                      onClick={handleCancelMain}
+                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+                    >
+                      취소
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleEditMain}
+                      className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={handleDeleteMain}
+                      className="bg-white text-black px-4 py-2 border border-gray-400 rounded hover:bg-gray-100"
+                    >
+                      삭제
+                    </button>
+                  </>
+                )}
+              </div>
+            ))}
 
           {/* 버튼을 회원 본인이 쓴 글일때만 표시 id확인해서 일치할때만 띄우기 */}
-          {data?.qna && USER_ROLE === "user" && (
-            <div className="flex justify-end space-x-4 mt-6">
-              <button
-                onClick={handleDeletQna}
-                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 mb-4"
-              >
-                삭제
-              </button>
-            </div>
-          )}
+          {data?.qna &&
+            userInfo.role === "ROLE_USER" &&
+            userInfo.id == editingMain.userId && (
+              <div className="flex justify-end space-x-4 mt-6">
+                <button
+                  onClick={handleDeletQna}
+                  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 mb-4"
+                >
+                  삭제
+                </button>
+              </div>
+            )}
 
           {/* Q&A: 관리자만 답글 등록 */}
-          {data?.qna && USER_ROLE === "admin" && (
+          {data?.qna && userInfo.role === "ROLE_ADMIN" && (
             <div className="mb-6">
               <textarea
                 value={comment}
@@ -289,7 +368,7 @@ const Answer = () => {
               >
                 <div className="flex justify-between">
                   <span className="font-semibold">관리자</span>
-                  {USER_ROLE === "admin" && (
+                  {userInfo.role === "ROLE_ADMIN" && (
                     <div>
                       {editingAnswerId === c.answerId ? (
                         <>

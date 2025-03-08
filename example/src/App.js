@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -49,8 +49,24 @@ import Site from "./pages/guide-related/intro/site";
 import HeroSection from "./pages/guide-related/intro/herosection";
 import HistoryPage from "./pages/guide-related/intro/History";
 import GuidePage from "./pages/guide-related/shop/Guidemain";
+import { Kitchen } from "@mui/icons-material";
+import KitchenTest from "./pages/community-related/KitchenTest";
 
+// import axios from 'axios';
+
+// import {springAxios} from '../../axiosConfig'
+// springAxios.get
+// A-Component
+// import axios from 'axios';
+// axios.get(...)
 function App() {
+  useEffect(() => {
+    // axios.defaults.baseURL = "http://localhost:8080";
+    // ex)
+    // instance.get('')
+    // axios.get('/api/v1/users')
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
@@ -135,6 +151,7 @@ function App() {
               />
               <Route path="/guide/intro/history" element={<HistoryPage />} />
               <Route path="/guide/shop" element={<GuidePage />} />
+              <Route path="/kitchen" element={<KitchenTest />} />
             </Routes>
           </main>
         </div>

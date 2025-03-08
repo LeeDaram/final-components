@@ -46,7 +46,7 @@ export default function SimpleSlider({ data }) {
                   </div>
                 </div>
                 <div className="text-sm text-gray-500 text-left">
-                  <span>오늘의 착한 가격업소입니다!</span>
+                  <span>오늘의 착한 가격업소</span>
                 </div>
               </button>
             </div>

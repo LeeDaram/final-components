@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const FileUpload = () => {
+  // 업로드 선택된 파일들
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  // 파일 업로드 셋셋
+  // 파일 업로드 셋
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setSelectedFiles(files);
   };
 
-  // 업로드 통신신
+  // 업로드 통신
   const handleSubmit = async () => {
     if (selectedFiles.length === 0) {
       alert("No files");
