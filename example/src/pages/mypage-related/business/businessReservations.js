@@ -12,13 +12,13 @@ function Useractivates() {
 
     // 예약정보
     const [approvalResult, setApprovalResult] = useState({});
+
+    // 페이지네이션
+    const [currentPage, setCurrentPage] = useState(1);
     const [pageInfo, setPageInfo] = useState({
         totalPages: 0,
         currentPage: 0,
     });
-
-    // 페이지네이션
-    const [currentPage, setCurrentPage] = useState(1);
 
     // 토글 정보
     const [activate, setActivate] = useState([]);
