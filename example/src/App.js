@@ -41,6 +41,8 @@ import { CommuModal } from "./components/community-related/CommuModal";
 import FileUpload from "./pages/community-related/Mfiletest";
 import Ocrtest from "./pages/community-related/Ocrtest";
 import SimpleSlider from "./components/ui/homeCarousel/HomeCarousel";
+import { Kitchen } from "@mui/icons-material";
+import KitchenTest from "./pages/community-related/KitchenTest";
 
 // import axios from 'axios';
 
@@ -131,6 +133,7 @@ function App() {
               <Route path="/answer" element={<Answer />} />
               <Route path="/file" element={<FileUpload />} />
               <Route path="/ocr" element={<Ocrtest />} />
+              <Route path="/kitchen" element={<KitchenTest />} />
             </Routes>
           </main>
         </div>

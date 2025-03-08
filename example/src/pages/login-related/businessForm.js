@@ -114,7 +114,11 @@ function BusinessForm() {
     setFile(null); // 선택된 파일 초기화
     setPreview(null); // 미리보기 초기화
     setIsUploaded(false); // 업로드 상태 초기화
-    setFormData({ ...formData, businessRegistrationNumber: "" }); // 사업자등록번호 초기화
+    setFormData({
+      ...formData,
+      businessRegistrationNumber: "",
+      businessName: "",
+    }); // 사업자등록번호 업소명 초기화
     // 툴팁 닫기
     setTooltipVisible(false);
   };
