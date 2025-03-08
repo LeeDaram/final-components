@@ -1,13 +1,24 @@
 import Sidebar from '../sidebar.js';
-import Stack from '@mui/material/Stack';
-import Pagination from '@mui/material/Pagination';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../pages/login-related/AuthContext';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import LastPageIcon from '@mui/icons-material/LastPage';
 
 function Useractivates() {
     // 유저 정보
     const { user, token } = useAuth();
+
+    // 예약정보
     const [approvalResult, setApprovalResult] = useState({});
+    const [pageInfo, setPageInfo] = useState({
+        totalPages: 0,
+        currentPage: 0,
+    });
+
+    // 페이지네이션
+    const [currentPage, setCurrentPage] = useState(1);
 
     // 토글 정보
     const [activate, setActivate] = useState([]);
@@ -16,7 +27,7 @@ function Useractivates() {
     // 결과 상태값
     useEffect(() => {
         if (user && token) {
-            fetchStoreActivatePeriod(activeTab);
+            fetchStoreActivatePeriod(activeTab, 0);
             fetchUserInfo();
         }
     }, [user, token, activeTab]);
@@ -26,10 +37,10 @@ function Useractivates() {
     };
 
     // 예약정보 가져오기
-    const fetchStoreActivatePeriod = async (period) => {
+    const fetchStoreActivatePeriod = async (period, page) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/mypage/store/activate/${user.id}/filter?period=${period}`,
+                `http://localhost:8080/api/mypage/store/activate/${user.id}/filter?period=${period}&page=${page}&size=10`,
                 {
                     method: 'GET',
                     headers: {
@@ -39,10 +50,31 @@ function Useractivates() {
             );
             if (!response.ok) throw new Error('예약 조회 실패');
             const activateData = await response.json();
-            setActivate(activateData);
+
+            setActivate(activateData.content);
+            setPageInfo({
+                totalPages: activateData.page.totalPages,
+                currentPage: activateData.page.number,
+            });
         } catch (error) {
             console.error(error.message);
         }
+    };
+
+    // 페이지 이동 처리
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= pageInfo.totalPages) {
+            setCurrentPage(page);
+            fetchStoreActivatePeriod(activeTab, page - 1);
+        }
+    };
+
+    const getPageNumbers = () => {
+        const pageGroup = Math.floor((currentPage - 1) / 10);
+        const startPage = pageGroup * 10 + 1;
+        const endPage = Math.min(startPage + 9, pageInfo.totalPages);
+
+        return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
     };
 
     // 유저 정보 가져오기
@@ -172,10 +204,69 @@ function Useractivates() {
                                     </div>
                                 </div>
 
-                                {/* 페이징 처리 */}
-                                <Stack spacing={2} className="mt-8" alignItems="center">
-                                    <Pagination count={10} color="primary" />
-                                </Stack>
+                                {/* 페이지네이션 */}
+                                <div className="flex justify-center mt-10">
+                                    <nav className="flex items-center gap-x-1">
+                                        {/* First 버튼 */}
+                                        <button
+                                            type="button"
+                                            className="btn btn-soft"
+                                            onClick={() => handlePageChange(1)}
+                                            disabled={currentPage === 1}
+                                        >
+                                            <FirstPageIcon />
+                                        </button>
+
+                                        {/* Previous 버튼 */}
+                                        <button
+                                            type="button"
+                                            className="btn btn-soft"
+                                            onClick={() => handlePageChange(currentPage - 1)}
+                                            disabled={currentPage === 1}
+                                        >
+                                            <NavigateBeforeIcon />
+                                        </button>
+
+                                        {/* 페이지 번호들 */}
+                                        <div className="flex items-center gap-x-1">
+                                            {getPageNumbers().map((page) => (
+                                                <button
+                                                    key={page}
+                                                    type="button"
+                                                    className={`btn btn-soft btn-square px-3 py-1 rounded-md text-sm transition-all duration-300 ${
+                                                        currentPage === page
+                                                            ? 'bg-blue-100 text-blue-600'
+                                                            : 'hover:bg-blue-50 text-gray-700'
+                                                    }`}
+                                                    aria-current={currentPage === page ? 'page' : undefined}
+                                                    onClick={() => handlePageChange(page)}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Next 버튼 */}
+                                        <button
+                                            type="button"
+                                            className="btn btn-soft"
+                                            onClick={() => handlePageChange(currentPage + 1)}
+                                            disabled={currentPage === pageInfo.totalPages}
+                                        >
+                                            <NavigateNextIcon />
+                                        </button>
+
+                                        {/* Last 버튼 */}
+                                        <button
+                                            type="button"
+                                            className="btn btn-soft"
+                                            onClick={() => handlePageChange(pageInfo.totalPages)}
+                                            disabled={currentPage === pageInfo.totalPages}
+                                        >
+                                            <LastPageIcon />
+                                        </button>
+                                    </nav>
+                                </div>
                             </>
                         )}
                     </div>
