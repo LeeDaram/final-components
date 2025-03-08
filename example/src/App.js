@@ -47,6 +47,8 @@ import Imchat from "./pages/guide-related/intro/imchat.js/Imchatbot";
 import Service from "./pages/guide-related/intro/g-service";
 import Site from "./pages/guide-related/intro/site";
 import HeroSection from "./pages/guide-related/intro/herosection";
+import HistoryPage from "./pages/guide-related/intro/History";
+import GuidePage from "./pages/guide-related/shop/Guidemain";
 
 function App() {
   return (
@@ -131,6 +133,8 @@ function App() {
                 path="/guide-related/intro/herosection"
                 element={<HeroSection />}
               />
+              <Route path="/guide/intro/history" element={<HistoryPage />} />
+              <Route path="/guide/shop" element={<GuidePage />} />
             </Routes>
           </main>
         </div>
