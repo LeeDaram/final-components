@@ -1,9 +1,98 @@
 import Sidebar from "../sidebar.js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FiAlertCircle } from "react-icons/fi";
 import { useAuth } from "../../../pages/login-related/AuthContext";
+import * as tmImage from "@teachablemachine/image";
+import axios from "axios";
 
 function BusinessApply() {
+  // ###############################################
+  // 모델 URL (Teachable Machine에서 제공)
+  const URL = "https://teachablemachine.withgoogle.com/models/0mpeZYm5b/";
+  const [model, setModel] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null); // 이미지
+  const [predictions, setPredictions] = useState([]); // 분석결과
+  const [imgFile, setImgFile] = useState([]); //DB에 업로드할 사진 이미지
+
+  // 모델 초기화 (컴포넌트가 마운트될 때)
+  useEffect(() => {
+    async function init() {
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+      const loadedModel = await tmImage.load(modelURL, metadataURL);
+      setModel(loadedModel);
+    }
+    init();
+    //결과 값이 있을때 반려 대기 판단.
+    const vlaue = parseInt(
+      parseFloat(predictions[0]?.probability.toFixed(2)) * 100
+    );
+  }, [predictions]);
+  console.log(predictions, "결과물");
+  console.log(imgFile, "이미지file");
+
+  // predictions 결과에 따라 from data에 값 저장
+  useEffect(() => {
+    if (predictions.length > 0 && imgFile.length > 0) {
+      const vlaue = parseInt(
+        parseFloat(predictions[0]?.probability.toFixed(2)) * 100
+      );
+      if (vlaue > 60) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          isImgclean: "T",
+          files: imgFile[0], // 단일 파일 처리
+        }));
+        console.log("통과", vlaue);
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          isImgclean: "F",
+          files: imgFile[0],
+        }));
+        console.log("실패", vlaue);
+      }
+    }
+  }, [predictions, imgFile]);
+  // 파일 업로드 후 이미지 판단측 실행
+  const readURL = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageSrc(e.target.result);
+
+      // 약간의 딜레이주기
+      setTimeout(() => {
+        predict();
+      }, 100);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setImgFile(files);
+      readURL(files[0]);
+      setIsUploaded(true);
+    }
+  };
+
+  // 업로드된 이미지 제거 (초기화)
+  const removeUpload = () => {
+    setImageSrc(null);
+    setIsUploaded(false);
+    setTooltipVisible(false);
+    setPredictions([]);
+  };
+
+  // 예측 함수: 모델을 통해 이미지를 분석하고 결과를 상태에 저장
+  const predict = async () => {
+    if (!model) return;
+    const imageElement = document.getElementById("face-image");
+    const prediction = await model.predict(imageElement, false);
+    setPredictions(prediction);
+  };
+  // ####################################################
   // 정규식
   const numberRegex = /^[0-9]+$/;
   const textRegex = /^.{2,}$/;
@@ -18,21 +107,22 @@ function BusinessApply() {
 
   // 입력값 관리
   const [formData, setFormData] = useState({
-    storePicture: "",
     userSido: "",
     userSigungu: "",
-    userIndustry: 0,
-    userMenu: "",
-    userPrice: "",
-    userPhone: "",
-    userReservation: false,
-    facilityParking: false,
-    facilityTakeout: false,
-    facilityDelivery: false,
-    facilityWifi: false,
-    facilityPet: false,
-    facilityKids: false,
-    priceComparison: false,
+    userIndustry: 0, //gpb
+    userMenu: "", //Management
+    userPrice: "", //Management
+    userPhone: "", //gpb
+    userReservation: false, //Management
+    facilityParking: false, //gpb
+    facilityTakeout: false, //gpb
+    facilityDelivery: false, //gpb
+    facilityWifi: false, //gpb
+    facilityPet: false, //gpb
+    facilityKids: false, //gpb
+    priceComparison: false, //Management
+    isImgclean: "", //Management
+    files: "", //Management
   });
 
   // 입력값 오류
@@ -196,32 +286,6 @@ function BusinessApply() {
     setTooltipVisible(false);
   };
 
-  // 파일이 선택되었을 때
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      // 이미지 미리보기
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(selectedFile);
-
-      // 파일 자동 업로드
-      handleUpload(selectedFile);
-    }
-  };
-
-  // 자동 업로드
-  const handleUpload = (selectedFile) => {
-    console.log("자동 업로드 중...", selectedFile);
-    // 실제 업로드 API 호출
-    // 업로드 완료 후 상태 변경
-    setFormData({ ...formData, storePicture: selectedFile.name });
-    setIsUploaded(true);
-  };
-
   // 유효성 검사
   const validateForm = () => {
     let errors = {};
@@ -272,10 +336,45 @@ function BusinessApply() {
     return Object.keys(errors).length === 0; // 에러가 없으면 true 반환
   };
 
+  // 일단 gpb생성
+  const createGpb = async () => {
+    let storeId;
+    try {
+      const response = await axios.post("http://localhost:8080/bizimg/create", {
+        userId: user.id,
+        industryId: formData.userIndustry,
+        contact: formData.userPhone,
+        storeImage: "",
+        takeout: formData.facilityTakeout ? "T" : "F",
+        delivery: formData.facilityDelivery ? "T" : "F",
+        wifi: formData.facilityWifi ? "T" : "F",
+        pet: formData.facilityPet ? "T" : "F",
+        kid: formData.facilityKids ? "T" : "F",
+        parking: formData.facilityParking ? "T" : "F",
+      });
+      storeId = response.data.storeId;
+      console.log(storeId, "#####################");
+      const creacteApproval = await axios.post(
+        "http://localhost:8080/bizimg/approval/",
+        {
+          storeId: storeId,
+          mainMenu: formData.userMenu, //Management
+          price: formData.userPrice, //Management
+          finalApprovalStatus: formData.userReservation ? "T" : "F", //Management
+          priceApproval: formData.priceComparison ? "T" : "F", //Management
+          cleanlinessApproval: formData.isImgclean, //Management
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // 저장함수
   const handleSubmit = () => {
     if (validateForm()) {
       console.log("최종 제출 데이터:", formData);
+      createGpb();
       alert("신청이 완료되었습니다!");
     } else {
       alert("입력값을 다시 확인해주세요.");
@@ -360,6 +459,12 @@ function BusinessApply() {
                             >
                               확인
                             </button>
+                            <button
+                              className="btn bg-error text-white shadow-none"
+                              onClick={removeUpload}
+                            >
+                              초기화
+                            </button>
                           </div>
                         </div>
                       )}
@@ -369,7 +474,17 @@ function BusinessApply() {
                   {/* 파일 업로드 입력란이 업로드 후 사라짐 */}
                   {!isUploaded && (
                     <>
-                      <div className="border-base-content/20 bg-base-100 rounded-box flex cursor-pointer justify-center border border-dashed p-12">
+                      <div
+                        className="border-base-content/20 bg-base-100 rounded-box flex cursor-pointer justify-center border border-dashed p-12"
+                        onDragOver={(e) => e.preventDefault()}
+                        onDragLeave={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                            readURL(e.dataTransfer.files[0]);
+                          }
+                        }}
+                      >
                         <input
                           type="file"
                           id="fileUpload"
@@ -419,6 +534,18 @@ function BusinessApply() {
                         </span>{" "}
                         AI가 이미지를 인식할거예요.
                       </p>
+                      <img
+                        id="face-image"
+                        src={imageSrc}
+                        alt="Uploaded"
+                        onLoad={predict} // 이미지 로드 후 판단
+                        style={{
+                          opacity: 0,
+                          position: "absolute",
+                          width: "300px",
+                          height: "auto",
+                        }}
+                      />
                     </div>
                   )}
                 </div>

@@ -7,7 +7,7 @@ import CustomArrow from "./CustomArrow";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-export default function SimpleSlider({ data }) {
+export default function SimpleSlider2({ data }) {
   var settings = {
     dots: true,
     infinite: true,

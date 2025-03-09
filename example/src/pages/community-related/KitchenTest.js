@@ -26,14 +26,15 @@ const KitchenTest = () => {
       console.log(predictions[0]?.className, vlaue);
     }
   }, [predictions]);
+
   console.log(predictions, "결과물");
 
-  // 파일 업로드 후 이미지 미리보기와 예측 실행
+  // 파일 업로드 후 이미지 판단측 실행
   const readURL = (file) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       setImageSrc(e.target.result);
-      // 이미지 렌더링 후 예측 (약간의 딜레이)
+      // 약간의 딜레이주기
       setTimeout(() => {
         predict();
       }, 100);
@@ -107,8 +108,15 @@ const KitchenTest = () => {
             <div className="relative">
               <img
                 id="face-image"
+                src={imageSrc}
                 alt="Uploaded"
-                className="w-full rounded-lg"
+                onLoad={predict} // 이미지 로드 후 판단
+                style={{
+                  opacity: 0,
+                  position: "absolute",
+                  width: "300px",
+                  height: "auto",
+                }}
               />
               <button
                 onClick={removeUpload}
