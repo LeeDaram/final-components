@@ -13,6 +13,12 @@ import { useAuth } from "../../pages/login-related/AuthContext";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import {
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 
 // 카카오맵 SDK
 import {
@@ -28,6 +34,9 @@ import Stack from "@mui/material/Stack";
 import { User } from "lucide-react";
 import { format } from "date-fns";
 import Storereview from "./StoreReview";
+
+const SIZE = 8;
+const MAX_PAGES_TO_SHOW = 1; // 1개씩 그룹화
 
 const StoreDetail = () => {
   const { storeName } = useParams(); // url에서 storeName 가져오기
@@ -46,6 +55,10 @@ const StoreDetail = () => {
   const [menu, setMenu] = useState("");
   const [cost, setCost] = useState();
   const [review, setReview] = useState("");
+
+  const [reviews, setReviews] = useState([]); // 리뷰 데이터
+  const [page, setPage] = useState(0); // 현재 페이지 번호
+  const [totalPages, setTotalPages] = useState(0); // 전체 페이지 개수
 
   const { user, login, logout } = useAuth();
   console.log("현재 로그인 유저", user);
@@ -115,6 +128,38 @@ const StoreDetail = () => {
       document.head.removeChild(script);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const tlqkf = page.number;
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/store/reviews/${store.storeId}`,
+          {
+            params: { page: tlqkf, size: SIZE },
+          }
+        );
+
+        console.log("리뷰 데이터:", response.data);
+        setReviews(response.data.content); // 리뷰 데이터 저장
+        setTotalPages(response.data.totalPages); // 전체 페이지 개수 저장
+
+        if (response.data && response.data.content.length > 0) {
+          setPage(response.data.page); // 페이지 정보 업데이트
+        } else {
+          setPage(null);
+        }
+      } catch (error) {
+        console.error("페이지네이션 오류:", error);
+      }
+    };
+    fetchReviews();
+  }, [store?.storeId, page]);
+
+  const handleSearchClick = (newPage) => {
+    setPage(newPage);
+    console.log("개좆같은 페이지네이션", page);
+  };
 
   // SDK가 로드되지 않으면 스피너 표시
   if (!isSdkLoaded) {
@@ -216,38 +261,23 @@ const StoreDetail = () => {
         },
       }
     );
+  };
 
-    // 데이터 객체 담기
-    // const resData = {
-    //   storeId: store.storeId,
-    //   userId: user.id,
-    //   reviewMenu: menu.current.value,
-    //   reviewPrice: cost.current.value,
-    //   content: review.current.value,
-    //   files: fileInputRef.current.files,
-    //   rating: rating,
-    // };
+  // 페이지 번호 생성
+  const makePageNumbers = (currentPage, totalPages) => {
+    if (totalPages <= 1) return [0];
 
-    // if (resData) {
-    //   try {
-    //     const response = await axios.post(
-    //       "http://localhost:8080/api/reviews",
-    //       resData
-    //     );
-    //     console.log("예약성공", response.data); // reviewId
-    //     alert("이용후기 작성이 완료되었습니다!");
-    //   } catch (error) {
-    //     console.log("예약실패", error);
-    //     alert("이용후기 작성 중 오류가 발생했습니다.");
-    //   }
-    // }
+    let pages = [];
 
-    // if(resData && images.length > 0 && reviewId){
-    //   const formData = new FormData();
+    // 현재 그룹의 시작/끝 페이지 계산
+    let start = Math.floor(currentPage / MAX_PAGES_TO_SHOW) * MAX_PAGES_TO_SHOW;
+    let end = Math.min(start + MAX_PAGES_TO_SHOW - 1, totalPages - 1);
 
-    // }
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
 
-    // setModalOn(false);
+    return pages;
   };
 
   return (
@@ -620,16 +650,101 @@ const StoreDetail = () => {
       </div>
 
       {/* 페이지네이션 */}
-      <div className="flex justify-center mt-6 space-x-2">
-        {[1, 2, 3, 4, 5].map((num) => (
-          <button
-            key={`num-${num}`}
-            className="px-3 py-1 bg-gray-200 rounded text-sm hover:bg-gray-300"
-          >
-            {num}
-          </button>
-        ))}
-      </div>
+      {page && (
+        <>
+          <div className="flex justify-center items-center mt-6">
+            <nav
+              aria-label="Pagination"
+              className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+            >
+              {/* 처음 페이지 버튼 */}
+              <button
+                className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                  page.number === 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-gray-900 hover:bg-gray-100"
+                }`}
+                disabled={page.number === 0}
+                onClick={() => handleSearchClick({ page: 0 })}
+              >
+                <FiChevronsLeft />
+              </button>
+
+              {/* 전 페이지 그룹 버튼 */}
+              <button
+                className={`relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-medium ${
+                  page.number === 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-gray-900 hover:bg-gray-100"
+                }`}
+                disabled={page.number === 0}
+                onClick={() =>
+                  handleSearchClick({
+                    page:
+                      makePageNumbers(page.number, page.totalPages)[
+                        MAX_PAGES_TO_SHOW - 1
+                      ] - 1,
+                  })
+                }
+              >
+                <FiChevronLeft />
+              </button>
+
+              {/* 페이지 번호 버튼 */}
+              {makePageNumbers(page.number, page.totalPages).map((navNum) => (
+                <button
+                  key={navNum}
+                  onClick={() => handleSearchClick({ page: navNum })}
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
+                    page.number === navNum
+                      ? "bg-indigo-600 text-white"
+                      : "bg-white text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  {navNum + 1}
+                </button>
+              ))}
+
+              {/* 다음 페이지 그룹 버튼 */}
+              <button
+                className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                  page.number === page.totalPages
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-gray-900 hover:bg-gray-100"
+                }`}
+                disabled={page.number === page.totalPages}
+                onClick={() =>
+                  handleSearchClick({
+                    page:
+                      makePageNumbers(page.number, page.totalPages)[
+                        MAX_PAGES_TO_SHOW - 1
+                      ] + 1,
+                  })
+                }
+              >
+                <FiChevronRight />
+              </button>
+
+              {/* 마지막 페이지 버튼 */}
+              <button
+                className={`relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-medium ${
+                  page.number === page.totalPages - 1
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-gray-900 hover:bg-gray-100"
+                }`}
+                disabled={page.number === page.totalPages - 1}
+                onClick={() => handleSearchClick({ page: page.totalPages - 1 })}
+              >
+                <FiChevronsRight />
+              </button>
+            </nav>
+          </div>
+
+          <div className="text-center mt-4 text-sm text-gray-600">
+            페이지 {page.number + 1} / {page.totalPages}
+          </div>
+        </>
+      )}
     </div>
   );
 };

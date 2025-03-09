@@ -44,11 +44,9 @@ function Storereview({ data }) {
         console.log(error);
       }
     };
-    console.log("@@@@@@@", sort);
     fetchReviews();
   }, [data, sort]);
 
-  // 개별 리뷰 공감 상태 토글 함수
   // 개별 리뷰 공감 상태 토글 함수
   const toggleLike = async (reviewId) => {
     const reviewItem = review.find((r) => r.reviewId === reviewId);
@@ -107,7 +105,6 @@ function Storereview({ data }) {
 
   useEffect(() => {
     console.log("업데이트된 리뷰 상태:", imgNum);
-    console.log("시발아", likedReviews);
   }, [imgNum, likedReviews]);
 
   const openModal = (reviewId) => {
