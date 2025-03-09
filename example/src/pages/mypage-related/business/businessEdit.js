@@ -31,9 +31,13 @@ function BusinessEdit() {
                 throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
             }
 
-            const storeData = await response.json();
-            setStoreInfo(storeData);
-            setReservation(storeData.isActivate);
+            const storeText = await response.text();
+            const storeData = storeText ? JSON.parse(storeText) : null;
+
+            if (storeData) {
+                setStoreInfo(storeData);
+                setReservation(storeData.isActivate);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -89,11 +93,13 @@ function BusinessEdit() {
                     <div className="w-3/4 pl-10 pt-10 border-l border-gray-200 ">
                         <h2 className="text-2xl font-bold mb-6">업소 정보</h2>
                         {!storeInfo || Object.keys(storeInfo).length === 0 ? (
-                            <div class="alert alert-soft alert-error flex items-start gap-4">
-                                <span class="icon-[tabler--info-circle] size-6"></span>
-                                <div class="flex flex-col gap-1">
-                                    <h5 class="text-lg font-semibold">앗, 착한가격업소 등록 신청을 하지 않았어요!</h5>
-                                    <p class="mt-1.5 list-inside list-disc">
+                            <div className="alert alert-soft alert-error flex items-start gap-4">
+                                <span className="icon-[tabler--info-circle] size-6"></span>
+                                <div className="flex flex-col gap-1">
+                                    <h5 className="text-lg font-semibold">
+                                        앗, 착한가격업소 등록 신청을 하지 않았어요!
+                                    </h5>
+                                    <p className="mt-1.5 list-inside list-disc">
                                         현재 귀하의 업소는 착한가격업소에 등록되지 않았습니다. 먼저 등록 절차를 완료해
                                         주세요.
                                     </p>

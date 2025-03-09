@@ -77,7 +77,8 @@ function BusinessApply() {
                 throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
             }
 
-            const storeData = await storeResponse.json();
+            const storeText = await storeResponse.text();
+            const storeData = storeText ? JSON.parse(storeText) : null;
 
             if (storeData) {
                 setFirstStroe(false);

@@ -52,11 +52,13 @@ function ApplyStatus() {
                         {/* 결과요약 */}
 
                         {!approvalResult || Object.keys(approvalResult).length === 0 ? (
-                            <div class="alert alert-soft alert-error flex items-start gap-4">
-                                <span class="icon-[tabler--info-circle] size-6"></span>
-                                <div class="flex flex-col gap-1">
-                                    <h5 class="text-lg font-semibold">앗, 착한가격업소 등록 신청을 하지 않았어요!</h5>
-                                    <p class="mt-1.5 list-inside list-disc">
+                            <div className="alert alert-soft alert-error flex items-start gap-4">
+                                <span className="icon-[tabler--info-circle] size-6"></span>
+                                <div className="flex flex-col gap-1">
+                                    <h5 className="text-lg font-semibold">
+                                        앗, 착한가격업소 등록 신청을 하지 않았어요!
+                                    </h5>
+                                    <p className="mt-1.5 list-inside list-disc">
                                         현재 귀하의 업소는 착한가격업소에 등록되지 않았습니다. 먼저 등록 절차를 완료해
                                         주세요.
                                     </p>

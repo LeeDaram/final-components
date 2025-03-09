@@ -50,13 +50,17 @@ function Useractivates() {
                 }
             );
             if (!response.ok) throw new Error('예약 조회 실패');
-            const activateData = await response.json();
 
-            setActivate(activateData.content);
-            setPageInfo({
-                totalPages: activateData.page.totalPages,
-                currentPage: activateData.page.number,
-            });
+            const storeText = await response.text();
+            const activateData = storeText ? JSON.parse(storeText) : null;
+
+            if (activateData) {
+                setActivate(activateData.content);
+                setPageInfo({
+                    totalPages: activateData.page.totalPages,
+                    currentPage: activateData.page.number,
+                });
+            }
         } catch (error) {
             console.error(error.message);
         }
@@ -92,9 +96,12 @@ function Useractivates() {
                 throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
             }
 
-            const userData = await response.json();
+            const userText = await response.text();
+            const userData = userText ? JSON.parse(userText) : null;
 
-            setApprovalResult(userData);
+            if (userData) {
+                setApprovalResult(userData);
+            }
         } catch (err) {
             console.error(err);
         }
