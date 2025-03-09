@@ -276,15 +276,13 @@ function Header() {
                                 </>
                             ) : (
                                 <>
-                                    <Link
-                                        to="/login"
-                                        className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2"
-                                    >
+                                    <Link to="/login" className=" btn btn-soft btn-secondary">
                                         로그인
                                     </Link>
+
                                     <Link
                                         to="/join"
-                                        className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 ml-4"
+                                        className="btn btn-soft bg-blue-500 hover:bg-blue-600 text-white ml-4"
                                     >
                                         회원가입
                                     </Link>

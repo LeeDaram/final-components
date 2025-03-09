@@ -3,6 +3,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 function Login() {
+    // 엔터키
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            if (e.target.id === 'userId') {
+                document.getElementById('userPassword').focus();
+            } else if (e.target.id === 'userPassword') {
+                handleLogin();
+            }
+        }
+    };
+
     // 로그인 함수
     const { login } = useAuth();
 
@@ -130,6 +141,7 @@ function Login() {
                                 id="userId"
                                 value={formData.userId}
                                 onChange={handleChange}
+                                onKeyDown={handleKeyDown}
                             />
                             <span className="label">
                                 {formErrors.userId && <span className="text-red-500">{formErrors.userId}</span>}
@@ -145,6 +157,7 @@ function Login() {
                                 id="userPassword"
                                 value={formData.userPassword}
                                 onChange={handleChange}
+                                onKeyDown={handleKeyDown}
                             />
                             <span className="label">
                                 {formErrors.userPassword && (
