@@ -215,8 +215,10 @@ function Store() {
 
   //초기화
   useEffect(() => {
-    handleSearchClick();
-  }, [selectSido, selectSigungu, selectIndustry, searchType, sort, filters]);
+    if (query) {
+      handleSearchClick();
+    }
+  }, [searchKeyword]);
 
   useEffect(() => {
     console.log("선택된 시도", selectSido);
@@ -390,7 +392,8 @@ function Store() {
               ))
             ) : (
               <div className="col-span-4 text-center text-gray-500">
-                <span class="loading loading-spinner loading-lg"></span>
+                {/* <span class="loading loading-spinner loading-lg"></span> */}
+                검색결과가 없습니다.
               </div>
             )}
           </div>
