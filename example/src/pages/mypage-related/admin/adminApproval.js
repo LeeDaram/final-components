@@ -79,6 +79,7 @@ function AdminApproval() {
     // 토글 클릭 함수
     const handleTabClick = (tab) => {
         setActiveTab(tab);
+        setCurrentPage(1);
     };
 
     // 리스트 불러오기
@@ -334,7 +335,7 @@ function AdminApproval() {
                                     </thead>
                                     <tbody>
                                         {approvalList.map((item, index) => (
-                                            <tr key={item.businessRegNo} className="border-t">
+                                            <tr key={`${item.businessRegNo}-${index}`} className="border-t">
                                                 <td className="text-center p-2">{index + 1}</td>
                                                 <td className="p-2 text-center">{item.storeName}</td>
                                                 <td className="p-2 text-center">{item.sidoName}</td>

@@ -108,6 +108,7 @@ function UserReviews() {
     const handlePeriodChange = (period) => {
         setSelectedPeriod(period);
         fetchUserReviewPeriod(period, 0);
+        setCurrentPage(1);
     };
 
     // 페이지 이동 처리

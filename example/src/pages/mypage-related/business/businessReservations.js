@@ -34,6 +34,7 @@ function Useractivates() {
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
+        setCurrentPage(1);
     };
 
     // 예약정보 가져오기
@@ -128,7 +129,7 @@ function Useractivates() {
                     <div className="w-3/4 pl-10 pt-10 border-l border-gray-200">
                         <h2 className="text-2xl font-bold mb-6">예약현황</h2>
                         {approvalResult?.finalApprovalStatus != 'APPROVED' ? (
-                            <div class="alert alert-soft alert-error flex items-start gap-4">
+                            <div className="alert alert-soft alert-error flex items-start gap-4">
                                 <span className="icon-[tabler--info-circle] size-6"></span>
                                 <div className="flex flex-col gap-1">
                                     <h5 className="text-lg font-semibold">
