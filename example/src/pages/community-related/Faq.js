@@ -45,9 +45,9 @@ function Faq() {
                             ))
                         ) : (
                             <div className="flex flex-col justify-center items-center h-[550px] ">
-                                <div class="card group hover:shadow w-full">
-                                    <div class="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                                        <span class="loading loading-spinner loading-lg text-primary"></span>
+                                <div className="card group hover:shadow w-full">
+                                    <div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+                                        <span className="loading loading-spinner loading-lg text-primary"></span>
                                     </div>
                                 </div>
                                 <p className="text-2xl mt-10">사이트 점검중입니다</p>

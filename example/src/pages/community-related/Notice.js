@@ -130,13 +130,15 @@ const NoticePage = () => {
                                             notice.noticeId
                                         )}
                                     </td>
-                                    <Link to="/answer" state={{ notice: '공지사항', id: notice.noticeId }}>
-                                        <div className="hover:underline">
-                                            <td className={`p-3 ${notice.important && 'font-semibold'}`}>
-                                                {notice.title}
-                                            </td>
-                                        </div>
-                                    </Link>
+                                    <td className="p-3">
+                                        <Link to="/answer" state={{ notice: '공지사항', id: notice.noticeId }}>
+                                            <div className="hover:underline">
+                                                <span className={`p-3 ${notice.important && 'font-semibold'}`}>
+                                                    {notice.title}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    </td>
                                     <td className="p-3">관리자</td>
                                     <td className="p-3 text-center">{notice.createdAt}</td>
                                     <td className="p-3 pl-8">{notice.attachmentsCount > 0 && <FaFileAlt />}</td>

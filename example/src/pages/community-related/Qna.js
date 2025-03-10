@@ -123,11 +123,15 @@ const QnaPage = () => {
                             {qnas.map((qna, index) => (
                                 <tr key={index} className="border-b hover:bg-gray-50">
                                     <td className="p-3">{qna.questionId}</td>
-                                    <Link to="/answer" state={{ qna: 'Q&A', id: qna.questionId }}>
-                                        <div className="hover:underline">
-                                            <td className="p-3">{qna.title}</td>
-                                        </div>
-                                    </Link>
+                                    <td className="p-3">
+                                        <Link
+                                            to="/answer"
+                                            state={{ qna: 'Q&A', id: qna.questionId }}
+                                            className="hover:underline"
+                                        >
+                                            {qna.title}
+                                        </Link>
+                                    </td>
                                     <td className="p-3">{qna.userId}</td>
                                     <td className="p-3 text-center">{qna.createdAt}</td>
                                     <td className="p-3 pl-8">{qna.answerCount > 0 && <FaCheckSquare />}</td>
