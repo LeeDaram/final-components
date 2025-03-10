@@ -620,6 +620,7 @@ function BusinessForm() {
             navigate('/login');
         } catch (error) {
             console.error('회원가입 실패', error);
+            alert('회원가입 오류 : 입력란을 모두 입력해주세요');
         }
     };
 

@@ -4,8 +4,11 @@ import { FiAlertCircle } from 'react-icons/fi';
 import { useAuth } from '../../../pages/login-related/AuthContext';
 import * as tmImage from '@teachablemachine/image';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function BusinessApply() {
+    const navigate = useNavigate();
+
     // ###############################################
     // 모델 URL (Teachable Machine에서 제공)
     const URL = 'https://teachablemachine.withgoogle.com/models/0mpeZYm5b/';
@@ -370,6 +373,7 @@ function BusinessApply() {
             formDataImg.append('storeId', storeId);
             formDataImg.append(`files`, imgFile[0]);
 
+            // 파일 업로드
             const createBizImg = await axios.post(
                 `${process.env.REACT_APP_API_URL}/bizimg/approval/attachment`,
                 formDataImg,
@@ -390,7 +394,8 @@ function BusinessApply() {
             // console.log('최종 제출 데이터:', formData);
             createGpb();
             alert('신청이 완료되었습니다!');
-            window.location.href = '/mypage/business/apply-status';
+            navigate('/mypage/business/apply-status', { replace: true });
+            window.location.reload();
         } else {
             alert('입력값을 다시 확인해주세요.');
         }
