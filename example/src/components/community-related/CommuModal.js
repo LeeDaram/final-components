@@ -65,7 +65,9 @@ export default function DeletModal({ isOpen, onClose, notice, qna }) {
   const navigate = useNavigate();
   const handleDeleteNoticeMain = async () => {
     try {
-      await axios.delete(`http://localhost:8080/notice/delete/${notice.id}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/notice/delete/${notice.id}`
+      );
     } catch (error) {
       console.log("ERROR");
     }
@@ -74,7 +76,9 @@ export default function DeletModal({ isOpen, onClose, notice, qna }) {
   const handleDeleteQnaMain = async () => {
     try {
       // 현재 id 체크 후 작성자가 날려야함
-      await axios.delete(`http://localhost:8080/qna/delete/${qna.id}`);
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/qna/delete/${qna.id}`
+      );
     } catch (error) {
       console.log("ERROR");
     }
@@ -84,7 +88,7 @@ export default function DeletModal({ isOpen, onClose, notice, qna }) {
     console.log("답글삭제");
     try {
       await axios.delete(
-        `http://localhost:8080/qna/delete/answer/${qna.deleteAnswerId}`
+        `${process.env.REACT_APP_API_URL}/qna/delete/answer/${qna.deleteAnswerId}`
       );
     } catch (error) {
       console.log("ERROR");

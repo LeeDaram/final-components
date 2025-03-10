@@ -21,7 +21,7 @@ const ChartComponent = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/shop")
+    fetch(`${process.env.REACT_APP_API_URL}/api/shop`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("데이터를 불러오는데 실패했습니다.");

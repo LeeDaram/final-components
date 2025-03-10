@@ -20,36 +20,38 @@ const GuidePage = () => {
     switch (activeTab) {
       case "intro":
         return (
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-blue-600 mb-4">
-              착한가격업소 안내
-            </h2>
-            <p className="text-lg">
-              착한가격업소는 정부와 지방자치단체가 지정한{" "}
-              <span className="text-blue-500 font-semibold">
-                물가안정 모범업소
-              </span>
-              입니다.
-            </p>
-            <div>
-              <EconomyDiagram />
-            </div>
+          <div className="flex justify-center">
+            <div className="text-center w-9/12">
+              <h2 className="text-3xl font-bold text-blue-600 mb-4">
+                착한가격업소 안내
+              </h2>
+              <p className="text-lg">
+                착한가격업소는 정부와 지방자치단체가 지정한{" "}
+                <span className="text-blue-500 font-semibold">
+                  물가안정 모범업소
+                </span>
+                입니다.
+              </p>
+              <div>
+                <EconomyDiagram />
+              </div>
 
-            <p>
-              저렴하게 안심하고 이용할 수 있는 착한가격업소 효율적인 경영을
-              통하여 소비자에게 저렴한 가격으로 양질의 서비스를 제공하는 정부와
-              지방자치단체가 지정, 관리하는 업소를 말합니다.
-            </p>
-            <div>
-              <Features />
+              <p>
+                저렴하게 안심하고 이용할 수 있는 착한가격업소 효율적인 경영을
+                통하여 소비자에게 저렴한 가격으로 양질의 서비스를 제공하는
+                정부와 지방자치단체가 지정, 관리하는 업소를 말합니다.
+              </p>
+              <div>
+                <Features />
+              </div>
+              <p>
+                각 지자체별 착한가격업소에 대한 다양한 지원 혜택 착한가격업소로
+                지정되면 정책혜택 및 기타혜택을 제공합니다. 1. 각 지자체별로
+                쓰레기 봉투, 상하수도 요금 감면 등 다양한 혜택을 제공합니다.
+                (지원 사항이 다소 차이가 있어 해당 지자체에 지원 사항을
+                확인하세요) 2. 온라인/모바일을 통한 업소 홍보를 제공합니다.
+              </p>
             </div>
-            <p>
-              각 지자체별 착한가격업소에 대한 다양한 지원 혜택 착한가격업소로
-              지정되면 정책혜택 및 기타혜택을 제공합니다. 1. 각 지자체별로
-              쓰레기 봉투, 상하수도 요금 감면 등 다양한 혜택을 제공합니다. (지원
-              사항이 다소 차이가 있어 해당 지자체에 지원 사항을 확인하세요) 2.
-              온라인/모바일을 통한 업소 홍보를 제공합니다.
-            </p>
           </div>
         );
       case "designation status":
