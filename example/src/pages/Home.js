@@ -153,7 +153,7 @@ function Home() {
             <SimpleSlider data={stores} />
 
             {/* 베스트 포토후기 */}
-            <h2 className="text-3xl text-center font-bold mb-4 py-12">
+            <h2 className="text-3xl text-center font-bold my-4 py-16">
               베스트 포토후기
             </h2>
             {/* <div className="grid grid-cols-4 gap-4 mb-6 justify-center">
