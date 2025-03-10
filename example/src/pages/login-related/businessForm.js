@@ -202,7 +202,7 @@ function BusinessForm() {
             setIsTrueBiz(data.data);
             // console.log(data.data, '사업자등록증OCR데이터');
 
-            setBizInfo(data.data.images[0].bizLicense.result);
+            setBizInfo(data.data?.images[0].bizLicense.result);
             // console.log(data.data.images[0].bizLicense.result, '사업자등록증간편데이터@@@@@@');
         } catch (error) {
             // console.log(error);
@@ -593,6 +593,8 @@ function BusinessForm() {
             if (formData.userPhone) {
                 bodyData.phoneNumber = formData.userPhone;
             }
+
+            console.log(bodyData);
 
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/sign-up/biz`, {
                 method: 'POST',

@@ -463,7 +463,7 @@ function BusinessRegister() {
                     <div className="w-3/4 pl-10 pt-10 border-l border-gray-200 ">
                         <h2 className="text-2xl font-bold mb-6">착한가격업소 등록 재신청</h2>
 
-                        {firstStore != 'APPROVED' && firstStore != 'PENDING' ? (
+                        {firstStore != 'APPROVED' && firstStore != 'PENDING' && firstStore != '' ? (
                             <>
                                 {/* 이미지 업로드 */}
                                 <div className="mb-3">
