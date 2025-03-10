@@ -202,7 +202,6 @@ function AdminApproval() {
                     {/* 우측 - 내용 */}
                     <div className="w-3/4 pl-10 pt-10 border-l border-gray-200">
                         <h2 className="text-2xl font-bold mb-6">착한가격업소 승인 관리</h2>
-
                         {/* 버튼 */}
                         <nav className="tabs tabs-bordered" aria-label="Tabs">
                             {activeTabInfo.map((tab) => (
@@ -289,7 +288,10 @@ function AdminApproval() {
                                     <div>
                                         <img
                                             className="border rounded-lg object-cover w-full max-w-xs h-64"
-                                            src={modalData?.storeImage || ''}
+                                            src={
+                                                modalData?.storeImage ||
+                                                `${process.env.REACT_APP_API_URL}/api/mypage/management/attachments/modal/${modalData.storeId}`
+                                            }
                                             alt="심사정보 이미지"
                                         />
                                     </div>
