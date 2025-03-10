@@ -166,14 +166,17 @@ function AdminApproval() {
     const updateApprovalStatus = async (storeId, finalApprovalStatus) => {
         try {
             console.log(storeId, finalApprovalStatus);
-            const response = await fetch('http://localhost:8080/api/mypage/approvaList/modal/update-status', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ storeId: storeId, finalApprovalStatus: finalApprovalStatus }),
-            });
+            const response = await fetch(
+                `${process.env.REACT_APP_API_URL}/api/mypage/approvaList/modal/update-status`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ storeId: storeId, finalApprovalStatus: finalApprovalStatus }),
+                }
+            );
 
             if (!response.ok) {
                 throw new Error('승인 상태 업데이트에 실패했습니다.');
