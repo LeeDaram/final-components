@@ -13,6 +13,7 @@ function BusinessRegister() {
     const [imageSrc, setImageSrc] = useState(null); // 이미지
     const [predictions, setPredictions] = useState([]); // 분석결과
     const [imgFile, setImgFile] = useState([]); //DB에 업로드할 사진 이미지
+    const [storeId, setStoreId] = useState(null);
 
     // 모델 초기화 (컴포넌트가 마운트될 때)
     useEffect(() => {
@@ -133,6 +134,23 @@ function BusinessRegister() {
     // 유저 정보 가져오기
     const fetchUserInfo = async () => {
         try {
+            // 스토어 아이디 가져오기
+            const storeIdresponse = await fetch(`http://localhost:8080/bizimg/storeId?userId=${user.id}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!storeIdresponse.ok) {
+                throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
+            }
+
+            // response -> storeIdresponse로 변경
+            const storeIdData = await storeIdresponse.json();
+
+            setStoreId(storeIdData);
+
             // 지역 정보 가져오기
             const response = await fetch(`http://localhost:8080/api/location/${user.id}`, {
                 method: 'GET',
@@ -177,6 +195,33 @@ function BusinessRegister() {
             }
 
             // 유저 신청정보 가져오기
+            const storeInfoResponse = await fetch(`http://localhost:8080/api/mypage/register/storeInfo/${user.id}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!storeInfoResponse.ok) {
+                throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
+            }
+
+            const storeInfoData = await storeInfoResponse.json();
+
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                userIndustry: storeInfoData.industryId,
+                userMenu: storeInfoData.mainMenu,
+                userPrice: storeInfoData.price,
+                userPhone: storeInfoData.contact,
+                userReservation: storeInfoData.isActivate === 'T',
+                facilityParking: storeInfoData.parking === 'T',
+                facilityTakeout: storeInfoData.takeout === 'T',
+                facilityDelivery: storeInfoData.delivery === 'T',
+                facilityWifi: storeInfoData.wifi === 'T',
+                facilityPet: storeInfoData.pet === 'T',
+                facilityKids: storeInfoData.kid === 'T',
+            }));
         } catch (err) {
             console.error(err);
         }
@@ -238,6 +283,10 @@ function BusinessRegister() {
             // 없는 메뉴 에러일 때
             if (err) {
                 setPriceMessage(`✅ ${userSido} 지역 ${userMenu} 평균 가격과 동일합니다!`);
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    priceComparison: true,
+                }));
             } else {
                 setPriceMessage('');
             }
@@ -331,9 +380,8 @@ function BusinessRegister() {
 
     // 일단 gpb생성
     const createGpb = async () => {
-        let storeId;
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/bizimg/create`, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/bizimg/update`, {
                 userId: user.id,
                 industryId: formData.userIndustry,
                 contact: formData.userPhone,
@@ -345,7 +393,8 @@ function BusinessRegister() {
                 kid: formData.facilityKids ? 'T' : 'F',
                 parking: formData.facilityParking ? 'T' : 'F',
             });
-            storeId = response.data.storeId;
+
+            console.log(storeId, '######################');
 
             const body = {
                 storeId: storeId,
@@ -353,6 +402,7 @@ function BusinessRegister() {
                 price: formData.userPrice, // Management
                 priceApproval: formData.priceComparison ? 'T' : 'F', // Management
                 cleanlinessApproval: formData.isImgclean, // Management
+                isActivate: formData.userReservation ? 'T' : 'F',
             };
 
             if (formData.priceComparison && formData.isImgclean == 'T') {
@@ -361,7 +411,8 @@ function BusinessRegister() {
                 body.finalApprovalStatus = 'AI_REJECTED';
             }
 
-            const createApproval = await axios.post(`${process.env.REACT_APP_API_URL}/bizimg/approval`, body);
+            // 승인관리 업로드
+            const createApproval = await axios.put(`${process.env.REACT_APP_API_URL}/bizimg/update/approval`, body);
 
             console.log(imgFile, '이미지파일이 어떻게 들어오나요');
 
@@ -369,6 +420,7 @@ function BusinessRegister() {
             formDataImg.append('storeId', storeId);
             formDataImg.append(`files`, imgFile[0]);
 
+            // 파일 업로드
             const createBizImg = await axios.post(
                 `${process.env.REACT_APP_API_URL}/bizimg/approval/attachment`,
                 formDataImg,
