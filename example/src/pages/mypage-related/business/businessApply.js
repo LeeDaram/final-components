@@ -158,6 +158,7 @@ function BusinessApply() {
         userSido: userData.sidoName,
         userSigungu: userData.sigunguName,
       }));
+      console.log(userData, formData, "##################");
 
       const storeResponse = await fetch(
         `http://localhost:8080/api/mypage/register/storeInfo/${user.id}`,
@@ -173,7 +174,8 @@ function BusinessApply() {
         throw new Error("사용자 정보를 불러오는 데 실패했습니다.");
       }
 
-      const storeData = await storeResponse.json();
+      const storeText = await storeResponse.text();
+      const storeData = storeText ? JSON.parse(storeText) : null;
 
       if (storeData) {
         setFirstStroe(false);
@@ -355,7 +357,7 @@ function BusinessApply() {
       storeId = response.data.storeId;
       console.log(storeId, "#####################");
       const creacteApproval = await axios.post(
-        "http://localhost:8080/bizimg/approval/",
+        "http://localhost:8080/bizimg/approval",
         {
           storeId: storeId,
           mainMenu: formData.userMenu, //Management
@@ -365,6 +367,29 @@ function BusinessApply() {
           cleanlinessApproval: formData.isImgclean, //Management
         }
       );
+      console.log(imgFile, "이미지파일이 어떻게 들어오나요");
+
+      const formDataImg = new FormData();
+      formDataImg.append("storeId", storeId);
+      formDataImg.append(`files`, imgFile[0]);
+
+      const createBizImg = await axios.post(
+        "http://localhost:8080/bizimg/approval/attachment",
+        formDataImg,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // const creacteBizImg = await axios.post(
+      //   "http://localhost:8080/bizimg/approval/attachment",
+      //   {
+      //     storeId: storeId,
+      //     files: imgFile,
+      //   }
+      // );
     } catch (err) {
       console.error(err);
     }
