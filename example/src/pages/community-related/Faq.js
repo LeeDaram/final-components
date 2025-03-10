@@ -9,7 +9,7 @@ function Faq() {
   useEffect(() => {
     const getFaqData = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/faq/all");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/faq/all`);
         setFaqData(res.data);
       } catch (error) {
         console.log("ERROR");

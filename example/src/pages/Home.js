@@ -31,7 +31,9 @@ function Home() {
   useEffect(() => {
     const getTodayData = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/home/likecount");
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/home/likecount`
+        );
         setStores(res.data);
       } catch (error) {
         console.log("ERROR");
@@ -41,7 +43,9 @@ function Home() {
 
     const getHomeCountData = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/home/homecount");
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/home/homecount`
+        );
         setHomeCount(res.data);
       } catch (error) {
         console.log("ERROR");
@@ -51,7 +55,9 @@ function Home() {
 
     const getHomeNoticeData = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/home/newnotice");
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/home/newnotice`
+        );
         setHomeNotice(res.data);
       } catch (error) {
         console.log("ERROR");
@@ -146,31 +152,18 @@ function Home() {
           <div className="p-6 text-left">
             {/* 착한가격업소 */}
 
-            <h2 className="text-3xl text-center font-bold mb-4 py-12">
+            <h2 className="text-3xl text-center font-bold py-12">
               오늘의 착한가격업소
             </h2>
 
             <SimpleSlider data={stores} />
 
             {/* 베스트 포토후기 */}
-            <h2 className="text-3xl text-center font-bold my-4 py-16">
-              베스트 포토후기
+            <h2 className="text-3xl text-center font-bold my-4 pt-16 pb-12">
+              착한녀석들 소식
             </h2>
-            {/* <div className="grid grid-cols-4 gap-4 mb-6 justify-center">
-                            {reviews.map((review) => (
-                                <Link
-                                    key={review.id}
-                                    to={`/review/${review.id}`}
-                                    className="border p-4 rounded shadow hover:bg-gray-100"
-                                >
-                                    <img src={review.src} alt="포토후기" className="w-full h-64 object-cover" />
-                                    <div className="text-lg font-semibold">{review.storeName}</div>
-                                    <div className="text-sm text-gray-500">{review.reviewer}</div>
-                                    <div className="text-yellow-500">⭐ {review.rating}</div>
-                                </Link>
-                            ))}
-                        </div> */}
-            <SimpleSlider2 data={stores} />
+
+            <SimpleSlider2 />
 
             {/* 공지사항 */}
             <h2 className="text-xl font-bold mb-4 mt-20">공지사항</h2>
@@ -184,7 +177,7 @@ function Home() {
                     onClick={() => handleNotice(notice)}
                     //버튼으로 바꾸고 온클릭 맥여서 navigate에 id값 태워서 보낸다음에 answer페이지 조회
                   >
-                    <div className="text-lg font-semibold text-left">
+                    <div className="text-base font-semibold text-left">
                       <span>{notice.noticeId}번공지 : </span>{" "}
                       {notice.noticeTitle}
                     </div>

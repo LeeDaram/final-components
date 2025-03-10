@@ -43,7 +43,7 @@ const Write = () => {
     if (data?.notice) {
       try {
         const noticeResponse = await axios.post(
-          `http://localhost:8080/notice/create`,
+          `${process.env.REACT_APP_API_URL}/notice/create`,
           {
             title: title,
             content: content,
@@ -59,7 +59,7 @@ const Write = () => {
 
     if (data?.qna) {
       try {
-        await axios.post(`http://localhost:8080/qna/create`, {
+        await axios.post(`${process.env.REACT_APP_API_URL}/qna/create`, {
           title: title,
           content: content,
           userId: user.id,
@@ -79,7 +79,7 @@ const Write = () => {
 
       try {
         const uploadResponse = await axios.post(
-          "http://localhost:8080/notice/attachments",
+          `${process.env.REACT_APP_API_URL}/notice/attachments`,
           formData
         );
         console.log(uploadResponse);

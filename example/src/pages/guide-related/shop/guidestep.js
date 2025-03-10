@@ -45,7 +45,7 @@ const GuideStep = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 훅
 
   const handleApplyClick = () => {
-    navigate("/apply"); // 신청 페이지로 이동
+    navigate("/mypage/update/info"); // 신청 페이지로 이동
   };
 
   return (
@@ -77,7 +77,7 @@ const GuideStep = () => {
         ))}
       </div>
 
-      {/* Image section above the buttons */}
+      {/* Image section above the buttons
       <div className="flex items-center justify-center space-x-6 mt-12">
         <div className="flex-1 bg-gray-300 aspect-video">
           <img
@@ -102,7 +102,7 @@ const GuideStep = () => {
             className="w-full h-full object-cover rounded-lg"
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Button section below the images */}
       <div className="flex space-x-4 mt-12">

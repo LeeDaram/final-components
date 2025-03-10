@@ -32,17 +32,17 @@ const Answer = () => {
       try {
         if (data.notice === "공지사항") {
           const res = await axios.get(
-            `http://localhost:8080/notice/main/${data.id}`
+            `${process.env.REACT_APP_API_URL}/notice/main/${data.id}`
           );
           setEditingMain(res.data);
           const attachments = await axios.get(
-            `http://localhost:8080/notice/attachment/${data.id}/download`
+            `${process.env.REACT_APP_API_URL}/notice/attachment/${data.id}/download`
           );
           setFiles(attachments.data);
         }
         if (data.qna === "Q&A") {
           const res = await axios.get(
-            `http://localhost:8080/qna/main/${data.id}`
+            `${process.env.REACT_APP_API_URL}/qna/main/${data.id}`
           );
           setEditingMain(res.data);
           console.log(res.data, "@@@@@");
@@ -51,11 +51,11 @@ const Answer = () => {
         }
         if (mainPageNotice) {
           const res = await axios.get(
-            `http://localhost:8080/notice/main/${mainPageNotice.noticeId}`
+            `${process.env.REACT_APP_API_URL}/notice/main/${mainPageNotice.noticeId}`
           );
           setEditingMain(res.data);
           const attachments = await axios.get(
-            `http://localhost:8080/notice/attachment/${mainPageNotice.noticeId}/download`
+            `${process.env.REACT_APP_API_URL}/notice/attachment/${mainPageNotice.noticeId}/download`
           );
           setFiles(attachments.data);
         }
@@ -77,10 +77,13 @@ const Answer = () => {
     }
     try {
       // Q&A 답글 등록 (POST)
-      const res = await axios.post(`http://localhost:8080/qna/create/answer`, {
-        questionId: data.id,
-        content: comment,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/qna/create/answer`,
+        {
+          questionId: data.id,
+          content: comment,
+        }
+      );
 
       alert("등록되었습니다");
       setComment("");
@@ -99,7 +102,7 @@ const Answer = () => {
     try {
       //notice qna로직 구분
       const res = await axios.patch(
-        `http://localhost:8080/notice/update/${data.id}`,
+        `${process.env.REACT_APP_API_URL}/notice/update/${data.id}`,
         {
           title: editingMain.title,
           content: editingMain.content,
@@ -145,7 +148,7 @@ const Answer = () => {
   const handleSaveEdit = async () => {
     try {
       const res = await axios.patch(
-        `http://localhost:8080/qna/update/answer/${editingAnswerId}`,
+        `${process.env.REACT_APP_API_URL}/qna/update/answer/${editingAnswerId}`,
         {
           content: editingContent,
         }
@@ -228,7 +231,7 @@ const Answer = () => {
             {files.map((file) => (
               <div className="text-right">
                 <a
-                  href={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                  href={`${process.env.REACT_APP_API_URL}/notice/attachment/img/${file.attachmentId}/download`}
                   download={file.storedFilename}
                   style={{ display: "inline-block", marginTop: "0.5rem" }}
                 >
@@ -241,7 +244,7 @@ const Answer = () => {
                 <div key={file.attachmentId} style={{ marginBottom: "1rem" }}>
                   {file.contentType.startsWith("image/") ? (
                     <img
-                      src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                      src={`${process.env.REACT_APP_API_URL}/notice/attachment/img/${file.attachmentId}/download`}
                       alt={file.originFilename}
                       style={{
                         maxWidth: "300px",
@@ -251,7 +254,7 @@ const Answer = () => {
                     />
                   ) : file.contentType === "application/pdf" ? (
                     <iframe
-                      src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                      src={`${process.env.REACT_APP_API_URL}/notice/attachment/img/${file.attachmentId}/download`}
                       title={file.originFilename}
                       width="600"
                       height="400"
@@ -265,7 +268,7 @@ const Answer = () => {
                       style={{ display: "block", margin: "0 auto" }}
                     >
                       <source
-                        src={`http://localhost:8080/notice/attachment/img/${file.attachmentId}/download`}
+                        src={`${process.env.REACT_APP_API_URL}/notice/attachment/img/${file.attachmentId}/download`}
                         type="video/mp4"
                       />
                       Your browser does not support the video tag.
