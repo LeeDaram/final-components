@@ -9,6 +9,7 @@ import { useAuth } from "../../pages/login-related/AuthContext";
 
 // Material UI
 import Rating from "@mui/material/Rating";
+import { formatDate } from "date-fns";
 
 function Storereview({ data }) {
   const [review, setReview] = useState([]); // 리뷰 데이터 저장
@@ -19,8 +20,9 @@ function Storereview({ data }) {
   const modalBackground = useRef(); // 콘텐츠 바깥 클릭 시 닫히게
   const [sort, setSort] = useState(0); // 배댓 혹은 최신
   const { user } = useAuth(); // 유저 정보
+  const [aaa, setAaa] = useState([]);
 
-  console.log("데이터받기", data);
+  // console.log("@@@@@@@@@@@@@@@@@", data);
 
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,15 +53,14 @@ function Storereview({ data }) {
   const fetchReviews = async (page) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/store/reviews/${data}?sort=${sort}`,
+        `${process.env.REACT_APP_API_URL}/store/reviews/${data}?sort=${sort}`,
         {
           params: { page: page, size: 8 },
         }
       );
       console.log("데이터받기 44444", response.data);
-
+      setAaa(response.data);
       setReview(response.data.content);
-      console.log(response.data.content, "dddddddd");
 
       // 이미지 ID 변환 및 저장
       const newImgNumList = {};
@@ -84,7 +85,7 @@ function Storereview({ data }) {
     console.log("데이터받기 2", data);
 
     fetchReviews();
-  }, [data, sort]);
+  }, [sort]);
 
   // 개별 리뷰 공감 상태 토글 함수
   const toggleLike = async (reviewId) => {
@@ -113,7 +114,7 @@ function Storereview({ data }) {
 
     try {
       // 백엔드에 PATCH 요청 보내기
-      await axios.patch(`http://localhost:8080/${reviewId}/like`, {
+      await axios.patch(`${process.env.REACT_APP_API_URL}/${reviewId}/like`, {
         reviewId: reviewId,
         storeId: storeId,
         isLiked: isLiked,
@@ -138,9 +139,9 @@ function Storereview({ data }) {
 
   // 컴포넌트 마운트 시 localStorage에서 공감 상태 불러오기
   useEffect(() => {
-    const storedLikes = JSON.parse(localStorage.getItem(`${user.id}`)) || {};
+    const storedLikes = JSON.parse(localStorage.getItem(`${user?.id}`)) || {};
     setLikedReviews(storedLikes);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     console.log("업데이트된 리뷰 상태:", imgNum);
@@ -158,6 +159,11 @@ function Storereview({ data }) {
   };
 
   console.log("누구야", review);
+
+  const formatDate = (isoString) => {
+    if (!isoString) return "날짜 없음";
+    return isoString.replace("T", "일 ");
+  };
 
   return (
     <div>
@@ -199,14 +205,16 @@ function Storereview({ data }) {
               </div>
 
               {/* 메뉴, 가격 */}
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500">
                 {v.reviewMenu}/{v.reviewPrice}원
               </p>
               {/* 작성일 */}
-              <p className="text-xs text-gray-400">{v.createdAt}초</p>
+              <p className="text-xs text-gray-500">
+                {formatDate(v.createdAt)}초
+              </p>
 
               {/* 리뷰 내용 */}
-              <p className="text-xl text-gray-600 mt-2">{v.content}</p>
+              <p className="text-xl text-black mt-2">{v.content}</p>
 
               {/* 이미지 */}
               <div className="flex gap-2 mt-3">
@@ -215,7 +223,7 @@ function Storereview({ data }) {
                     onClick={() => openModal(v.reviewId)}
                     className="w-36 h-36 object-cover cursor-pointer"
                     key={i}
-                    src={`http://localhost:8080/review/attachments/${imgId}/download`}
+                    src={`${process.env.REACT_APP_API_URL}/review/attachments/${imgId}/download`}
                     alt={`review-${imgId}`}
                   />
                 ))}
@@ -238,13 +246,13 @@ function Storereview({ data }) {
                       }
                     }}
                   >
-                    <div className="bg-white rounded-lg p-4 max-w-3xl max-h-[80vh] overflow-auto relative">
+                    <div className="bg-white rounded-lg p-4 max-w-3xl max-h-[80vh] overflow-auto relative border">
                       <div className="flex gap-2 overflow-x-auto">
                         {selectedImgs.map((imgId, i) => (
                           <img
                             key={i}
-                            className="w-40 h-40 object-cover flex-shrink-0"
-                            src={`http://localhost:8080/review/attachments/${imgId}/download`}
+                            className="w-48 h-48 object-cover flex-shrink-0"
+                            src={`${process.env.REACT_APP_API_URL}/review/attachments/${imgId}/download`}
                             alt={`modal-review-${imgId}`}
                           />
                         ))}

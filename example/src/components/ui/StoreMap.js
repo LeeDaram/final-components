@@ -22,7 +22,7 @@ function StoreMap() {
   useEffect(() => {
     const fetchAddress = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/address`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/address`);
         setAddress(res.data); // 주소 데이터 업데이트
       } catch (error) {
         console.log("fetchAddress error", error);
