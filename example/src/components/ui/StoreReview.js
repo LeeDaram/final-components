@@ -184,7 +184,7 @@ function Storereview({ data }) {
       {review.length > 0 ? (
         review.map((v, index) => (
           <>
-            <div key={`review-${index}`} className="border-t pt-4">
+            <div key={`review-${index}`} className=" pt-4">
               {/* 사용자 정보 */}
               <div className="flex items-center space-x-2">
                 <p className="font-semibold text-gray-700 text-xl">
@@ -279,6 +279,7 @@ function Storereview({ data }) {
                   <span className="pl-2 text-sm">{v.likeCount}</span>
                 </button>
               </div>
+              <div className="border-t"></div>
             </div>
           </>
         ))
