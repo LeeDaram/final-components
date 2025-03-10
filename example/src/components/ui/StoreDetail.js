@@ -15,17 +15,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 
 // 카카오맵 SDK
-import {
-  Map,
-  MapMarker,
-  ZoomControl,
-  MapTypeControl,
-} from "react-kakao-maps-sdk";
+import { Map, MapMarker } from "react-kakao-maps-sdk";
 
 // material ui
 import Rating from "@mui/material/Rating";
-import Stack from "@mui/material/Stack";
-import { User } from "lucide-react";
 import { format } from "date-fns";
 import Storereview from "./StoreReview";
 
@@ -46,9 +39,13 @@ const StoreDetail = () => {
   const [menu, setMenu] = useState("");
   const [cost, setCost] = useState();
   const [review, setReview] = useState("");
+  const { user } = useAuth();
 
-  const { user, login, logout } = useAuth();
-  console.log("현재 로그인 유저", user);
+  console.log("@@@@@@@@@@@@@", store);
+
+  useEffect(() => {
+    console.log("데이터받기 777777777777 2", store.storeId);
+  }, [store, user]);
 
   const [isSdkLoaded, setIsSdkLoaded] = useState(false); // SDK 로드 상태
   const storeCoord = {
@@ -56,7 +53,7 @@ const StoreDetail = () => {
     lng: store.lng,
   };
 
-  // 체크박스 옵션(나중에 filterChecking에 업뎃해줘야됨)
+  // 체크박스 옵션
   const filterCheckboxes = [
     { icon: <FaCarSide />, name: "주차", checking: store.parking },
     { icon: <MdOutlineTakeoutDining />, name: "포장", checking: store.takeout },
@@ -106,7 +103,6 @@ const StoreDetail = () => {
     script.async = true;
     script.onload = () => {
       window.kakao.maps.load(() => {
-        console.log("카카오맵 SDK 로드 완료");
         setIsSdkLoaded(true); // SDK가 로드되면 true로 변경
       });
     };
@@ -118,7 +114,7 @@ const StoreDetail = () => {
 
   // SDK가 로드되지 않으면 스피너 표시
   if (!isSdkLoaded) {
-    return <span class="loading loading-spinner loading-lg" />;
+    return <span className="loading loading-spinner loading-lg" />;
   }
 
   // 날짜 핸들러
@@ -126,14 +122,13 @@ const StoreDetail = () => {
     setSelectedDate(date);
   };
 
-  //예약 저장 핸들러
+  // 예약 저장 핸들러
   const handleReservation = async () => {
     if (!selectedDate) {
       alert("날짜를 선택해주세요.");
       return;
     }
     const formattedDate = format(selectedDate, "yyyy-MM-dd");
-    console.log("sysdate", formattedDate);
 
     const requestData = {
       reservationDate: formattedDate,
@@ -145,7 +140,7 @@ const StoreDetail = () => {
         "http://localhost:8080/api/reservation",
         requestData
       );
-      console.log("예약 성공:", response.data);
+
       alert("예약이 완료되었습니다!");
     } catch (error) {
       console.error("예약 실패:", error);
@@ -153,7 +148,6 @@ const StoreDetail = () => {
       // 예약 중복 시 서버에서 메시지 날림
       if (error.response && error.response.data) {
         alert(error.response.data.message);
-        // console.log("예약중복 메시지", error.response.data.message);
       } else {
         // 서버 및 통신 문제 오류
         alert("예약 중 오류가 발생했습니다.");
@@ -175,7 +169,8 @@ const StoreDetail = () => {
   };
 
   // 데이터 없을경우 화면 처리
-  if (!store) return <span class="loading loading-spinner loading-lg"></span>;
+  if (!store)
+    return <span className="loading loading-spinner loading-lg"></span>;
 
   const handleReviewSubmit = () => {
     if (!user) {
@@ -192,12 +187,9 @@ const StoreDetail = () => {
 
   // 저장 버튼
   const handleSubmit = async () => {
-    // console.log(rating, menu, cost, review);
-    // console.log(images.length);
-
     const formData = new FormData();
     formData.append("storeId", store.storeId);
-    formData.append("userId", store.userId);
+    formData.append("userId", user.id);
     formData.append("rating", rating);
     formData.append("cost", cost);
     formData.append("menu", menu);
@@ -216,38 +208,7 @@ const StoreDetail = () => {
         },
       }
     );
-
-    // 데이터 객체 담기
-    // const resData = {
-    //   storeId: store.storeId,
-    //   userId: user.id,
-    //   reviewMenu: menu.current.value,
-    //   reviewPrice: cost.current.value,
-    //   content: review.current.value,
-    //   files: fileInputRef.current.files,
-    //   rating: rating,
-    // };
-
-    // if (resData) {
-    //   try {
-    //     const response = await axios.post(
-    //       "http://localhost:8080/api/reviews",
-    //       resData
-    //     );
-    //     console.log("예약성공", response.data); // reviewId
-    //     alert("이용후기 작성이 완료되었습니다!");
-    //   } catch (error) {
-    //     console.log("예약실패", error);
-    //     alert("이용후기 작성 중 오류가 발생했습니다.");
-    //   }
-    // }
-
-    // if(resData && images.length > 0 && reviewId){
-    //   const formData = new FormData();
-
-    // }
-
-    // setModalOn(false);
+    setModalOn(false);
   };
 
   return (
@@ -291,7 +252,7 @@ const StoreDetail = () => {
             {/* 예약버튼*/}
             <div className="flex">
               <button
-                className="mt-2 px-3 py-1 text-sm border border-blue-500 bg-white text-blue-500 rounded mx-3"
+                className="mt-2 px-3 py-1 text-sm border border-blue-500 bg-white text-blue-500 rounded mx-3 w-full"
                 onClick={() => handleReservationClick()}
               >
                 예약하기
@@ -335,11 +296,6 @@ const StoreDetail = () => {
                   </div>
                 </div>
               )}
-
-              {/* 문의버튼 */}
-              <button className="mt-2 px-3 py-1 text-sm bg-blue-500 text-white rounded">
-                문의하기
-              </button>
             </div>
             <div className="flex">
               <GrMoney />
@@ -347,11 +303,13 @@ const StoreDetail = () => {
                 <span className="text-black font-bold pl-2">품목(가격)</span>{" "}
               </p>
             </div>
-            <div className="flex">
-              <div className="bg-blue-500 text-white rounded text-sm">
+            <div className="flex items-center">
+              <div className="p-1 bg-blue-500 text-white rounded text-sm">
                 착한가격
               </div>
-              <div className="text-gray-400 text-sm pl-1">{store.mainMenu}</div>
+              <div className="text-gray-400 text-sm pl-1 text-center">
+                {store.mainMenu}
+              </div>
               <div className="text-black text-base pl-1">{store.price}원</div>
             </div>
           </div>
@@ -359,26 +317,25 @@ const StoreDetail = () => {
       </div>
 
       {/* 편의시설 및 카카오맵 */}
-      <div className="w-full h-36">
+      <div className=" w-full h-36">
         {/* 편의시설 목록 */}
-        <div className="flex gap-4 mt-4 w-full h-1/2">
+        <div className="flex gap-4 justify-between mt-4 w-full h-1/2">
           {/*  */}
           {result ? (
             <div className="w-1/2">등록된 편의시설이 없습니다.</div>
           ) : (
-            filterCheckboxes
-              .filter((item) => item.checking === "T")
-              .map((item) => (
-                <div
-                  key={item.name}
-                  className="flex flex-col items-start text-sm w-1/2 h-1/2"
-                >
-                  <div className="flex items-center justify-center bg-gray-300 w-12 h-12 rounded-full text-2xl">
-                    {item.icon}
+            <div className="flex w-1/2">
+              {filterCheckboxes
+                .filter((item) => item.checking === "T")
+                .map((item) => (
+                  <div key={item.name} className=" flex flex-col text-sm w-1/2">
+                    <div className="flex items-center justify-center bg-gray-300 w-12 h-12 rounded-full text-2xl">
+                      {item.icon}
+                    </div>
+                    <p className="mt-1">{item.name}</p>
                   </div>
-                  <p className="mt-1">{item.name}</p>
-                </div>
-              ))
+                ))}
+            </div>
           )}
           {/* 카카오 맵 */}
           <div className="w-1/2">
@@ -616,19 +573,7 @@ const StoreDetail = () => {
 
       {/* 리뷰 섹션 */}
       <div className="mt-6 space-y-6">
-        <Storereview data={store} />
-      </div>
-
-      {/* 페이지네이션 */}
-      <div className="flex justify-center mt-6 space-x-2">
-        {[1, 2, 3, 4, 5].map((num) => (
-          <button
-            key={`num-${num}`}
-            className="px-3 py-1 bg-gray-200 rounded text-sm hover:bg-gray-300"
-          >
-            {num}
-          </button>
-        ))}
+        <Storereview data={store.storeId} />
       </div>
     </div>
   );
