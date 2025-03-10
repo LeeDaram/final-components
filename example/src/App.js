@@ -60,13 +60,6 @@ import KitchenTest from './pages/community-related/KitchenTest';
 // import axios from 'axios';
 // axios.get(...)
 function App() {
-    useEffect(() => {
-        // axios.defaults.baseURL = "http://localhost:8080";
-        // ex)
-        // instance.get('')
-        // axios.get('/api/v1/users')
-    }, []);
-
     return (
         <Router>
             <AuthProvider>
