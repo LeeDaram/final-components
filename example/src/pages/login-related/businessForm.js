@@ -200,12 +200,12 @@ function BusinessForm() {
                 },
             });
             setIsTrueBiz(data.data);
-            console.log(data.data, '사업자등록증OCR데이터');
+            // console.log(data.data, '사업자등록증OCR데이터');
 
             setBizInfo(data.data.images[0].bizLicense.result);
-            console.log(data.data.images[0].bizLicense.result, '사업자등록증간편데이터@@@@@@');
+            // console.log(data.data.images[0].bizLicense.result, '사업자등록증간편데이터@@@@@@');
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             setIsUploaded(false);
         }
     };
@@ -227,7 +227,7 @@ function BusinessForm() {
             const bizName = bizInfo.repName[0].text; //사업자 이름
             const bizShopName = bizInfo.companyName[0].text; //사업장 이름
 
-            console.log(bizNumber, bizopenDate, bizName, bizShopName, '번호 날짜 이름 순');
+            // console.log(bizNumber, bizopenDate, bizName, bizShopName, '번호 날짜 이름 순');
 
             const isBizEnter = async () => {
                 try {
@@ -244,7 +244,7 @@ function BusinessForm() {
                             ],
                         }
                     );
-                    console.log(res.data.data[0].valid_msg, '사업자 진위여부확인');
+                    // console.log(res.data.data[0].valid_msg, '사업자 진위여부확인');
                     //valid_msg 가 undefined면 사업자로 판단해도 될듯?
                     if (!res.data.data[0].valid_msg) {
                         alert('인증되었습니다');
@@ -259,7 +259,7 @@ function BusinessForm() {
                         alert('없는 사업자 번호입니다');
                     }
                 } catch (e) {
-                    console.log(e);
+                    // console.log(e);
                 }
             };
             isBizEnter();
@@ -278,7 +278,7 @@ function BusinessForm() {
 
     // 자동 업로드
     const handleUpload = (selectedFile) => {
-        console.log('자동 업로드 중...', selectedFile);
+        // console.log('자동 업로드 중...', selectedFile);
 
         // 업로드 완료 후 상태 변경
         setIsUploaded(true);
@@ -290,7 +290,7 @@ function BusinessForm() {
     useEffect(() => {
         const fetchTerms = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/users/terms');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/terms`);
                 if (!response.ok) throw new Error('서버 응답 오류');
 
                 const data = await response.json();
@@ -393,7 +393,7 @@ function BusinessForm() {
         setIsLoading(true); // 로딩 시작
 
         try {
-            const response = await fetch('http://localhost:8080/api/email/send', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/email/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.userEmail }),
@@ -420,7 +420,7 @@ function BusinessForm() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/email/verify', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/email/verify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -455,7 +455,7 @@ function BusinessForm() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/users/${formData.userId}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${formData.userId}`);
 
             if (!response.ok) {
                 throw new Error('서버 응답 오류');
@@ -594,7 +594,7 @@ function BusinessForm() {
                 bodyData.phoneNumber = formData.userPhone;
             }
 
-            const response = await fetch('http://localhost:8080/api/users/sign-up/biz', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/sign-up/biz`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyData),

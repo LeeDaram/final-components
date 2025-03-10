@@ -59,7 +59,7 @@ function AdminDashboard() {
     // 업종별 착한가격업소 현황 API 호출
     const fetchIndustryStatus = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/dashboard/industry-count', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/industry-count`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${userToken}`,
@@ -115,7 +115,7 @@ function AdminDashboard() {
     // 시도별 착한가격업소 현황 API 호출
     const fetchSidoStatus = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/dashboard/sido-count', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/sido-count`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${userToken}`,
@@ -165,7 +165,7 @@ function AdminDashboard() {
     // 년도별 착한가격업소 현황 API 호출
     const fetchYearStatus = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/dashboard/year-count', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/year-count`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${userToken}`,
@@ -218,7 +218,7 @@ function AdminDashboard() {
     // 월별 착한가격업소 API 호출
     const fetchMonthStatus = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/dashboard/month-count', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/month-count`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${userToken}`,
@@ -271,7 +271,7 @@ function AdminDashboard() {
     // 권한별 착한가격업소 API 호출
     const fetchUserStatus = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/dashboard/user-count', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/user-count`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${userToken}`,

@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     // 로그인
     const login = async (id, password) => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/sign-in', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/sign-in`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: id, password }),
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     // 로그아웃
     const logout = async () => {
         try {
-            await fetch('http://localhost:8080/api/users/sign-out', {
+            await fetch(`${process.env.REACT_APP_API_URL}/api/users/sign-out`, {
                 method: 'POST',
                 credentials: 'include',
             });

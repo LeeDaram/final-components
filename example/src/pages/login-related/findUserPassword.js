@@ -59,7 +59,7 @@ function FindUserPassword() {
     const fetchUserPw = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:8080/api/users/reset/password', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/reset/password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ function FindUserPassword() {
 
                 {/* 아이디 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold " for="userId">
+                    <label className="label label-text text-base font-semibold " htmlFor="userId">
                         아이디
                     </label>
                     <input
@@ -141,7 +141,7 @@ function FindUserPassword() {
 
                 {/* 이름 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold " for="userName">
+                    <label className="label label-text text-base font-semibold " htmlFor="userName">
                         이름
                     </label>
                     <input
@@ -159,7 +159,7 @@ function FindUserPassword() {
 
                 {/* 이메일 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold " for="userEmail">
+                    <label className="label label-text text-base font-semibold " htmlFor="userEmail">
                         이메일
                     </label>
                     <input

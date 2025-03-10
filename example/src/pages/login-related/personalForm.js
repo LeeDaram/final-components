@@ -56,7 +56,7 @@ function PersonalForm() {
     useEffect(() => {
         const fetchTerms = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/users/terms');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/terms`);
                 if (!response.ok) throw new Error('서버 응답 오류');
 
                 const data = await response.json();
@@ -159,7 +159,7 @@ function PersonalForm() {
         setIsLoading(true); // 로딩 시작
 
         try {
-            const response = await fetch('http://localhost:8080/api/email/send', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/email/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.userEmail }),
@@ -186,7 +186,7 @@ function PersonalForm() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/email/verify', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/email/verify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: formData.userEmail, verificationCode: formData.verificationCode }),
@@ -218,7 +218,7 @@ function PersonalForm() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/users/${formData.userId}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${formData.userId}`);
 
             if (!response.ok) {
                 throw new Error('서버 응답 오류');
@@ -329,7 +329,7 @@ function PersonalForm() {
                 bodyData.phoneNumber = formData.userPhone;
             }
 
-            const response = await fetch('http://localhost:8080/api/users/sign-up/personal', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/sign-up/personal`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyData),

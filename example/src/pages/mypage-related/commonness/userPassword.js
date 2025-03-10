@@ -65,7 +65,7 @@ function UserPassword() {
     // 서버 : 비밀번호 변경
     const fetchPwSave = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/update/password', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/update/password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

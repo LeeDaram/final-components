@@ -26,8 +26,8 @@ function BusinessApply() {
         //결과 값이 있을때 반려 대기 판단.
         const vlaue = parseInt(parseFloat(predictions[0]?.probability.toFixed(2)) * 100);
     }, [predictions]);
-    console.log(predictions, '결과물');
-    console.log(imgFile, '이미지file');
+    // console.log(predictions, '결과물');
+    // console.log(imgFile, '이미지file');
 
     // predictions 결과에 따라 from data에 값 저장
     useEffect(() => {
@@ -39,14 +39,14 @@ function BusinessApply() {
                     isImgclean: 'T',
                     files: imgFile[0], // 단일 파일 처리
                 }));
-                console.log('통과', vlaue);
+                // console.log('통과', vlaue);
             } else {
                 setFormData((prevFormData) => ({
                     ...prevFormData,
                     isImgclean: 'F',
                     files: imgFile[0],
                 }));
-                console.log('실패', vlaue);
+                // console.log('실패', vlaue);
             }
         }
     }, [predictions, imgFile]);
@@ -133,7 +133,7 @@ function BusinessApply() {
     // 유저 정보 가져오기
     const fetchUserInfo = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/location/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/location/${user.id}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -151,7 +151,7 @@ function BusinessApply() {
                 userSido: userData.sidoName,
                 userSigungu: userData.sigunguName,
             }));
-            console.log(userData, formData, '##################');
+            // console.log(userData, formData, '##################');
 
             const storeResponse = await fetch(
                 `${process.env.REACT_APP_API_URL}/api/mypage/approval/result/${user.id}`,
@@ -189,7 +189,7 @@ function BusinessApply() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/approval?mainMenu=${userMenu}&sidoName=${userSido}`,
+                `${process.env.REACT_APP_API_URL}/api/approval?mainMenu=${userMenu}&sidoName=${userSido}`,
                 {
                     method: 'GET',
                     headers: {
@@ -364,7 +364,7 @@ function BusinessApply() {
 
             const createApproval = await axios.post(`${process.env.REACT_APP_API_URL}/bizimg/approval`, body);
 
-            console.log(imgFile, '이미지파일이 어떻게 들어오나요');
+            // console.log(imgFile, '이미지파일이 어떻게 들어오나요');
 
             const formDataImg = new FormData();
             formDataImg.append('storeId', storeId);
@@ -387,7 +387,7 @@ function BusinessApply() {
     // 저장함수
     const handleSubmit = () => {
         if (validateForm()) {
-            console.log('최종 제출 데이터:', formData);
+            // console.log('최종 제출 데이터:', formData);
             createGpb();
             alert('신청이 완료되었습니다!');
             window.location.href = '/mypage/business/apply-status';
@@ -828,11 +828,11 @@ function BusinessApply() {
                                 </button>
                             </>
                         ) : (
-                            <div class="alert alert-soft alert-error flex items-start gap-4">
-                                <span class="icon-[tabler--info-circle] size-6"></span>
-                                <div class="flex flex-col gap-1">
-                                    <h5 class="text-lg font-semibold">기존에 착한가격업소에 등록한 적이 있어요</h5>
-                                    <p class="mt-1.5 list-inside list-disc">
+                            <div className="alert alert-soft alert-error flex items-start gap-4">
+                                <span className="icon-[tabler--info-circle] size-6"></span>
+                                <div className="flex flex-col gap-1">
+                                    <h5 className="text-lg font-semibold">기존에 착한가격업소에 등록한 적이 있어요</h5>
+                                    <p className="mt-1.5 list-inside list-disc">
                                         현재 귀하의 업소는 착한가격업소에 신청한 이력이 있습니다. 착한가격업소 재신청을
                                         이용해주세요.
                                     </p>

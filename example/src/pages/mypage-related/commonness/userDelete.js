@@ -56,7 +56,7 @@ function UserDelete() {
     // 서버 : 회원탈퇴 (일반)
     const fetchUserrDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/users/delete/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/delete/${user.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ function UserDelete() {
     // 서버 : 회원탈퇴 (소셜)
     const fetchUserrDeleteSocial = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/users/social/delete/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/social/delete/${user.id}`, {
                 method: 'DELETE',
                 Authorization: `Bearer ${token}`,
             });

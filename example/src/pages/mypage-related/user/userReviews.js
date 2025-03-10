@@ -60,7 +60,7 @@ function UserReviews() {
     const fetchUserReviewPeriod = async (period, page) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/mypage/review/${user.id}/filter/${period}?page=${page}&size=10`,
+                `${process.env.REACT_APP_API_URL}/api/mypage/review/${user.id}/filter/${period}?page=${page}&size=10`,
                 {
                     method: 'GET',
                     headers: {
@@ -87,7 +87,7 @@ function UserReviews() {
     // 리뷰 삭제 처리
     const handleDeleteReview = async (reviewId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/mypage/review/delete/${reviewId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mypage/review/delete/${reviewId}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -138,7 +138,7 @@ function UserReviews() {
             .map((img, index) => (
                 <img
                     key={index}
-                    src={`http://localhost:8080/api/mypage/posts/attachments/${img}`}
+                    src={`${process.env.REACT_APP_API_URL}/api/mypage/posts/attachments/${img}`}
                     alt={`리뷰 이미지 ${index}`}
                     className={`w-24 h-24 rounded-md object-cover ${
                         index === 2 && images.length > 3 ? 'relative' : ''
@@ -290,7 +290,7 @@ function UserReviews() {
                     {selectedImages.map((img, index) => (
                         <img
                             key={index}
-                            src={`http://localhost:8080/api/mypage/posts/attachments/${img}`}
+                            src={`${process.env.REACT_APP_API_URL}/api/mypage/posts/attachments/${img}`}
                             alt="확대 이미지"
                             className="w-32 h-32 rounded-md object-cover"
                         />

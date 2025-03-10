@@ -39,7 +39,7 @@ function UserAccount() {
     // 사용자 기본 정보 조회
     const fetchUserInfo = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/me', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/me`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -68,7 +68,7 @@ function UserAccount() {
     // 사용자 약관 정보 가져오기
     const fetchUserTermsInfo = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/users/terms/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/terms/${user.id}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -79,7 +79,8 @@ function UserAccount() {
                 throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
             }
 
-            const termsData = await response.json();
+            const text = await response.text();
+            const termsData = text ? JSON.parse(text) : {};
             setTermsData(termsData.isAgree);
         } catch (err) {
             console.error(err);
@@ -104,9 +105,7 @@ function UserAccount() {
                 bodyData.termsAgreementDto.isAgree = termsData;
             }
 
-            console.log(bodyData);
-
-            const response = await fetch(`http://localhost:8080/api/users/update/personal/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/update/personal/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

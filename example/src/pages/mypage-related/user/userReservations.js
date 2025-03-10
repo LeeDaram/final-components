@@ -40,7 +40,7 @@ function Useritems() {
     const fetchUserActivatePeriod = async (period, page) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/mypage/activate/${user.id}/filter?period=${period}&page=${page}&size=9`,
+                `${process.env.REACT_APP_API_URL}/api/mypage/activate/${user.id}/filter?period=${period}&page=${page}&size=9`,
                 {
                     method: 'GET',
                     headers: {
@@ -66,7 +66,7 @@ function Useritems() {
     // 예약 삭제
     const handleDeleteActivate = async (activateId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/mypage/activate/delete/${activateId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mypage/activate/delete/${activateId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

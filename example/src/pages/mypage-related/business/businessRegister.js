@@ -27,8 +27,8 @@ function BusinessRegister() {
         //결과 값이 있을때 반려 대기 판단.
         const vlaue = parseInt(parseFloat(predictions[0]?.probability.toFixed(2)) * 100);
     }, [predictions]);
-    console.log(predictions, '결과물');
-    console.log(imgFile, '이미지file');
+    // console.log(predictions, '결과물');
+    // console.log(imgFile, '이미지file');
 
     // predictions 결과에 따라 from data에 값 저장
     useEffect(() => {
@@ -40,14 +40,14 @@ function BusinessRegister() {
                     isImgclean: 'T',
                     files: imgFile[0], // 단일 파일 처리
                 }));
-                console.log('통과', vlaue);
+                // console.log('통과', vlaue);
             } else {
                 setFormData((prevFormData) => ({
                     ...prevFormData,
                     isImgclean: 'F',
                     files: imgFile[0],
                 }));
-                console.log('실패', vlaue);
+                // console.log('실패', vlaue);
             }
         }
     }, [predictions, imgFile]);
@@ -135,7 +135,7 @@ function BusinessRegister() {
     const fetchUserInfo = async () => {
         try {
             // 스토어 아이디 가져오기
-            const storeIdresponse = await fetch(`http://localhost:8080/bizimg/storeId?userId=${user.id}`, {
+            const storeIdresponse = await fetch(`${process.env.REACT_APP_API_URL}/bizimg/storeId?userId=${user.id}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -152,7 +152,7 @@ function BusinessRegister() {
             setStoreId(storeIdData);
 
             // 지역 정보 가져오기
-            const response = await fetch(`http://localhost:8080/api/location/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/location/${user.id}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -170,7 +170,7 @@ function BusinessRegister() {
                 userSido: userData.sidoName,
                 userSigungu: userData.sigunguName,
             }));
-            console.log(userData, formData, '##################');
+            // console.log(userData, formData, '##################');
 
             // 사용자 신청상태 가져오기
             const storeResponse = await fetch(
@@ -195,12 +195,15 @@ function BusinessRegister() {
             }
 
             // 유저 신청정보 가져오기
-            const storeInfoResponse = await fetch(`http://localhost:8080/api/mypage/register/storeInfo/${user.id}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const storeInfoResponse = await fetch(
+                `${process.env.REACT_APP_API_URL}/api/mypage/register/storeInfo/${user.id}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
             if (!storeInfoResponse.ok) {
                 throw new Error('사용자 정보를 불러오는 데 실패했습니다.');
@@ -238,7 +241,7 @@ function BusinessRegister() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/approval?mainMenu=${userMenu}&sidoName=${userSido}`,
+                `${process.env.REACT_APP_API_URL}/api/approval?mainMenu=${userMenu}&sidoName=${userSido}`,
                 {
                     method: 'GET',
                     headers: {
@@ -394,7 +397,7 @@ function BusinessRegister() {
                 parking: formData.facilityParking ? 'T' : 'F',
             });
 
-            console.log(storeId, '######################');
+            // console.log(storeId, '######################');
 
             const body = {
                 storeId: storeId,
@@ -414,7 +417,7 @@ function BusinessRegister() {
             // 승인관리 업로드
             const createApproval = await axios.put(`${process.env.REACT_APP_API_URL}/bizimg/update/approval`, body);
 
-            console.log(imgFile, '이미지파일이 어떻게 들어오나요');
+            // console.log(imgFile, '이미지파일이 어떻게 들어오나요');
 
             const formDataImg = new FormData();
             formDataImg.append('storeId', storeId);
@@ -438,7 +441,7 @@ function BusinessRegister() {
     // 저장함수
     const handleSubmit = () => {
         if (validateForm()) {
-            console.log('최종 제출 데이터:', formData);
+            // console.log('최종 제출 데이터:', formData);
             createGpb();
             alert('신청이 완료되었습니다!');
             window.location.href = '/mypage/business/apply-status';

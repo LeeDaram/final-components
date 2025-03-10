@@ -41,7 +41,7 @@ function Useractivates() {
     const fetchStoreActivatePeriod = async (period, page) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/mypage/store/activate/${user.id}/filter?period=${period}&page=${page}&size=10`,
+                `${process.env.REACT_APP_API_URL}/api/mypage/store/activate/${user.id}/filter?period=${period}&page=${page}&size=10`,
                 {
                     method: 'GET',
                     headers: {
@@ -85,7 +85,7 @@ function Useractivates() {
     // 유저 정보 가져오기
     const fetchUserInfo = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/mypage/approval/result/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mypage/approval/result/${user.id}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -110,7 +110,7 @@ function Useractivates() {
     // 예약정보 삭제
     const handleDeleteActivate = async (activateId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/mypage/activate/delete/${activateId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mypage/activate/delete/${activateId}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

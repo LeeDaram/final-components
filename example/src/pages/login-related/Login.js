@@ -73,7 +73,7 @@ function Login() {
 
     // 소셜로그인
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+        window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/google`;
     };
 
     return (

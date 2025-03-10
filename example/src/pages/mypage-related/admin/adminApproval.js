@@ -118,7 +118,7 @@ function AdminApproval() {
     const fetchApprovalList = async (status, page) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/mypage/approva/management/list?status=${status}&page=${page}&size=10`,
+                `${process.env.REACT_APP_API_URL}/api/mypage/approva/management/list?status=${status}&page=${page}&size=10`,
                 {
                     method: 'GET',
                     headers: {
@@ -145,7 +145,7 @@ function AdminApproval() {
     // 상세모달 정보 가져오기
     const fetchModalInfo = async (storeId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/mypage/approvaList/modal/${storeId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mypage/approvaList/modal/${storeId}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -165,7 +165,6 @@ function AdminApproval() {
 
     const updateApprovalStatus = async (storeId, finalApprovalStatus) => {
         try {
-            console.log(storeId, finalApprovalStatus);
             const response = await fetch(
                 `${process.env.REACT_APP_API_URL}/api/mypage/approvaList/modal/update-status`,
                 {

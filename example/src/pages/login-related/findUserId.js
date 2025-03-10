@@ -53,7 +53,7 @@ function FindUserId() {
         setIsLoading(true);
         try {
             const response = await fetch(
-                `http://localhost:8080/api/users/findUserId?name=${formData.userName}&email=${formData.userEmail}`,
+                `${process.env.REACT_APP_API_URL}/api/users/findUserId?name=${formData.userName}&email=${formData.userEmail}`,
                 {
                     method: 'GET',
                 }
@@ -114,7 +114,7 @@ function FindUserId() {
 
                 {/* 이름 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold " for="userName">
+                    <label className="label label-text text-base font-semibold " htmlFor="userName">
                         이름
                     </label>
                     <input
@@ -132,7 +132,7 @@ function FindUserId() {
 
                 {/* 이메일 */}
                 <div className="relative mb-3">
-                    <label className="label label-text text-base font-semibold " for="userEmail">
+                    <label className="label label-text text-base font-semibold " htmlFor="userEmail">
                         이메일
                     </label>
                     <input

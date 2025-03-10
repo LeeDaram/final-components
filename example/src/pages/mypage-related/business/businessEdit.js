@@ -20,7 +20,7 @@ function BusinessEdit() {
     // 유저 정보 가져오기
     const fetchUserInfo = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/mypage/storeInfo/${user.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mypage/storeInfo/${user.id}`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ function BusinessEdit() {
     // 예약 가능 여부 수정
     const fetchUpdateStoreInfo = async (newIsActivate) => {
         try {
-            const response = await fetch('http://localhost:8080/api/mypage/update/store/activation', {
+            const response = await fetch('${process.env.REACT_APP_API_URL}/api/mypage/update/store/activation', {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
