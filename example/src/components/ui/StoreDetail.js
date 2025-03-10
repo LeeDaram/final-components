@@ -43,9 +43,9 @@ const StoreDetail = () => {
 
   console.log("@@@@@@@@@@@@@", store);
 
-  useEffect(() => {
-    console.log("데이터받기 777777777777 2", store.storeId);
-  }, [store, user]);
+  // useEffect(() => {
+  //   console.log("데이터받기 777777777777 2", store.storeId);
+  // }, [store, user]);
 
   const [isSdkLoaded, setIsSdkLoaded] = useState(false); // SDK 로드 상태
   const storeCoord = {
@@ -124,6 +124,11 @@ const StoreDetail = () => {
 
   // 예약 저장 핸들러
   const handleReservation = async () => {
+    if (!user) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+
     if (!selectedDate) {
       alert("날짜를 선택해주세요.");
       return;
@@ -137,7 +142,7 @@ const StoreDetail = () => {
     };
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/reservation",
+        `${process.env.REACT_APP_API_URL}/api/reservation`,
         requestData
       );
 
@@ -200,7 +205,7 @@ const StoreDetail = () => {
     }
 
     const response = await axios.post(
-      "http://localhost:8080/api/review",
+      `${process.env.REACT_APP_API_URL}/api/review`,
       formData,
       {
         headers: {
@@ -210,6 +215,11 @@ const StoreDetail = () => {
     );
     setModalOn(false);
   };
+
+  if (!store) {
+    console.error("store 값이 없음", state);
+    return <span className="loading loading-spinner loading-lg"></span>;
+  }
 
   return (
     <div className="w-9/12 mx-auto bg-white p-6 rounded-lg shadow-md">
@@ -518,8 +528,11 @@ const StoreDetail = () => {
           </p>
           <div className="flex mt-2 space-x-2 font-medium">
             <p className="text-gray-500">
-              전체후기의{" "}
-              <span className="text-blue-500">85%가 긍정적(파이썬)</span>
+              <span className="text-blue-500">
+                {store.likeCount.toLocaleString()}명
+              </span>
+              이<span className="text-blue-500"> {store.storeName}</span>
+              을(를) 좋아합니다.
             </p>
           </div>
         </div>

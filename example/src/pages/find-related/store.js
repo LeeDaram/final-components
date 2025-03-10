@@ -111,9 +111,12 @@ function Store() {
     // console.log("sort 값", params.sort);
 
     try {
-      const response = await axios.get("http://localhost:8080/stores", {
-        params,
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/stores`,
+        {
+          params,
+        }
+      );
 
       console.log("서버 응답:", response.data);
       // console.log("현재페이지의 총 개수", response.data.page.totalPages);
@@ -156,9 +159,15 @@ function Store() {
         // const resp = await axios.get(
         //   `http://localhost:8080/stores?page=${currentPage}&size=${size}`
         // );
-        const sidoData = await axios.get(`http://localhost:8080/sido`);
-        const sigunguData = await axios.get(`http://localhost:8080/sigungu`);
-        const industryData = await axios.get(`http://localhost:8080/industry`);
+        const sidoData = await axios.get(
+          `${process.env.REACT_APP_API_URL}/sido`
+        );
+        const sigunguData = await axios.get(
+          `${process.env.REACT_APP_API_URL}/sigungu`
+        );
+        const industryData = await axios.get(
+          `${process.env.REACT_APP_API_URL}/industry`
+        );
 
         await handleSearchClick();
 
