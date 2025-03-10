@@ -303,11 +303,13 @@ const StoreDetail = () => {
                 <span className="text-black font-bold pl-2">품목(가격)</span>{" "}
               </p>
             </div>
-            <div className="flex">
-              <div className="bg-blue-500 text-white rounded text-sm">
+            <div className="flex items-center">
+              <div className="p-1 bg-blue-500 text-white rounded text-sm">
                 착한가격
               </div>
-              <div className="text-gray-400 text-sm pl-1">{store.mainMenu}</div>
+              <div className="text-gray-400 text-sm pl-1 text-center">
+                {store.mainMenu}
+              </div>
               <div className="text-black text-base pl-1">{store.price}원</div>
             </div>
           </div>
@@ -315,47 +317,50 @@ const StoreDetail = () => {
       </div>
 
       {/* 편의시설 및 카카오맵 */}
-      <div className="w-full h-36">
+      <div className=" w-full h-36">
         {/* 편의시설 목록 */}
-        <div className="flex mt-4 w-full h-1/2">
+        <div className="flex gap-4 justify-between mt-4 w-full h-1/2">
           {/*  */}
           {result ? (
             <div className="w-1/2">등록된 편의시설이 없습니다.</div>
           ) : (
-            filterCheckboxes
-              .filter((item) => item.checking === "T")
-              .map((item) => (
-                <div key={item.name} className=" flex flex-col text-sm w-1/3">
-                  <div className="flex items-center justify-center bg-gray-300 w-12 h-12 rounded-full text-2xl">
-                    {item.icon}
+            <div className="flex w-1/2">
+              {filterCheckboxes
+                .filter((item) => item.checking === "T")
+                .map((item) => (
+                  <div key={item.name} className=" flex flex-col text-sm w-1/2">
+                    <div className="flex items-center justify-center bg-gray-300 w-12 h-12 rounded-full text-2xl">
+                      {item.icon}
+                    </div>
+                    <p className="mt-1">{item.name}</p>
                   </div>
-                  <p className="mt-1">{item.name}</p>
-                </div>
-              ))
+                ))}
+            </div>
           )}
           {/* 카카오 맵 */}
+          <div className="w-1/2">
+            <Map
+              center={storeCoord}
+              style={{ width: "100%", height: "140px" }}
+              className=""
+              level={3} // 지도 확대 레벨
+            >
+              {/* 줌 컨트롤러 추가 */}
+              {/* <ZoomControl position={"RIGHT"} /> */}
 
-          <Map
-            center={storeCoord}
-            style={{ width: "100%", height: "140px" }}
-            className=""
-            level={3} // 지도 확대 레벨
-          >
-            {/* 줌 컨트롤러 추가 */}
-            {/* <ZoomControl position={"RIGHT"} /> */}
+              {/* 지도 타입 컨트롤러 추가 */}
+              {/* <MapTypeControl position={"TOPRIGHT"} /> */}
 
-            {/* 지도 타입 컨트롤러 추가 */}
-            {/* <MapTypeControl position={"TOPRIGHT"} /> */}
-
-            {/* 기준좌표 마커 */}
-            <MapMarker
-              position={storeCoord}
-              image={{
-                src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-                size: { width: 30, height: 35 },
-              }}
-            />
-          </Map>
+              {/* 기준좌표 마커 */}
+              <MapMarker
+                position={storeCoord}
+                image={{
+                  src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+                  size: { width: 30, height: 35 },
+                }}
+              />
+            </Map>
+          </div>
         </div>
 
         <div className=" w-1/2 border-t pt-4 mt-2"></div>
