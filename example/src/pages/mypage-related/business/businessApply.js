@@ -347,6 +347,8 @@ function BusinessApply() {
             });
             storeId = response.data.storeId;
 
+            console.log(storeId);
+
             const body = {
                 storeId: storeId,
                 mainMenu: formData.userMenu, // Management
@@ -389,6 +391,7 @@ function BusinessApply() {
         if (validateForm()) {
             // console.log('최종 제출 데이터:', formData);
             createGpb();
+            console.log(formData);
             alert('신청이 완료되었습니다!');
             window.location.href = '/mypage/business/apply-status';
         } else {

@@ -91,16 +91,22 @@ function BusinessForm() {
             fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
         }
 
+        // 시군구 값에서 '시' 또는 '도'로 끝나는 부분까지만 추출
+        const sigungu = data.sigungu.split(' ')[0];
+
         setFormData({ ...formData, businessAddress: fullAddress });
-        setAddressData({ sido: data.sido, sigungu: data.sigungu });
+        setAddressData({ sido: data.sido, sigungu });
         findCoordinate(fullAddress);
     };
 
     // 위도 경도 값 추출
     const findCoordinate = async (address) => {
         try {
+            // 주소에서 첫 번째 공백 이전의 부분만 추출
+            const cityName = address.split(' ')[0];
+
             const response = await fetch(
-                `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=similar&page=1&size=10&query=${address}`,
+                `https://dapi.kakao.com/v2/local/search/address.json?analyze_type=similar&page=1&size=10&query=${cityName}`,
                 {
                     method: 'GET',
                     headers: {
@@ -615,6 +621,7 @@ function BusinessForm() {
     const joinUser = () => {
         if (validateForm()) {
             handleSubmit();
+            console.log(formData);
         } else {
             alert('회원가입 오류 : 입력란을 모두 입력해주세요');
         }
