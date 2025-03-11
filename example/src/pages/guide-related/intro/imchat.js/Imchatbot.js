@@ -9,18 +9,18 @@ const ImchatBot = () => {
     // 챗봇 시작 시 명령어 목록 자동 추가
     const initialMessages = [
       {
-        text: `바로가기 목록:\n1/로그인
-        \n2/지도
-        \n3/F&Q
-        \n4/Q&A
-        \n5/공지사항
+        text: `바로가기 목록 숫자입력 : \n1. 로그인 /
+        \n2. 지도 /
+        \n3. F&Q /
+        \n4. Q&A /
+        \n5. 공지사항 /
       
         `,
         type: "other-message",
         //숫자열
       },
       {
-        text: `해당되는 글자를 입력해주세요:\n지원/\n프로필\n/대시보드\n/연락처\n/도움말\n/설명`,
+        text: `해당 글자를 입력하세요 :\n지원 /\n프로필\n / 대시보드\n / 연락처\n / 도움말\n / 설명`,
         type: "other-message",
         // /문자열
       },
