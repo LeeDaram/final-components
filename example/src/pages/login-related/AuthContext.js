@@ -13,6 +13,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     // 로그인 상태 유지
@@ -27,6 +28,9 @@ export const AuthProvider = ({ children }) => {
                 role: decoded.authorities,
                 loginType: decoded.loginType,
             });
+            setLoading(false);
+        } else {
+            setLoading(false);
         }
     }, []);
 
@@ -69,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    return <AuthContext.Provider value={{ user, token, login, logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, token, login, logout, loading }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
