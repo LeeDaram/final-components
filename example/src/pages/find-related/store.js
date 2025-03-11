@@ -108,7 +108,6 @@ function Store() {
     };
 
     try {
-      console.log("@@@@@@@@@@@@@@@@", sort);
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/stores`,
         {
@@ -117,6 +116,7 @@ function Store() {
       );
 
       setTotalPages(response.data.page.totalPages);
+      console.log("@@@@@@@@@@@", response.data);
 
       if (response.data && response.data.content.length > 0) {
         // const isAnyFilterChecked = Object.values(filters).some(Boolean);
