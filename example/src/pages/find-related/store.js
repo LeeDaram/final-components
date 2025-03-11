@@ -161,13 +161,13 @@ function Store() {
           `${process.env.REACT_APP_API_URL}/industry`
         );
 
-        await handleSearchClick();
+        // await handleSearchClick();
 
         // setStores(resp.data.content);
         setSido(sidoData.data);
         setSigungu(sigunguData.data);
         setIndustry(industryData.data);
-        if (query.trim() !== "") {
+        if (query.trim() !== "" && searchKeyword !== query) {
           setSearchKeyword(query);
           handleSearchClick({ keyword: query });
         }
@@ -181,16 +181,20 @@ function Store() {
   // 추천,평점 클릭 함수
   const handleSortClick = (value) => {
     setSort(value);
-    handleSearchClick({ sortValue: value });
+    // handleSearchClick({ sortValue: value });
   };
+
+  useEffect(() => {
+    handleSearchClick({ sortValue: sort });
+  }, [sort]);
 
   // 편의시설 옵션 체크
   const handleFilterChange = (event) => {
-    const { id, name, checked } = event.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [id]: checked ? "T" : "",
-    }));
+    const { id, checked } = event.target;
+    setFilters((prevFilters) => {
+      if (prevFilters[id] === (checked ? "T" : "")) return prevFilters;
+      return { ...prevFilters, [id]: checked ? "T" : "" };
+    });
   };
 
   // 초기화 버튼
@@ -214,10 +218,10 @@ function Store() {
 
   //초기화
   useEffect(() => {
-    if (query) {
+    if (query && searchKeyword !== query) {
       handleSearchClick();
     }
-  }, [searchKeyword]);
+  }, [query]);
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {

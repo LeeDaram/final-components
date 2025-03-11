@@ -21,11 +21,21 @@ function StoreComponent({ data }) {
       onClick={() => handleStoreDetail()}
     >
       <div className="w-full h-48 bg-gray-300 flex items-center justify-center text-lg font-bold text-gray-700">
-        <img
-          src={data.storeImage}
-          alt="업소대표 이미지"
-          className="w-full h-full object-cover"
-        />
+        {data.storeImage ? (
+          <img
+            src={data.storeImage}
+            alt="업소대표 이미지"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <img
+            src={
+              "https://e7.pngegg.com/pngimages/365/94/png-clipart-sasuke-uchiha-madara-uchiha-itachi-uchiha-kakashi-hatake-sharingan-naruto-symmetry-sasuke-uchiha-thumbnail.png"
+            }
+            alt="업소대표 이미지"
+            className="w-full h-full object-cover"
+          />
+        )}
       </div>
 
       <div className="mt-4 px-2">
