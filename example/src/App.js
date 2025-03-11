@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PrivateRoute from './pages/login-related/PrivateRoute';
+import PublicRoute from './pages/login-related/PublicRoute';
 
 import Home from './pages/Home';
 import Team from './pages/Team';
@@ -68,39 +70,182 @@ function App() {
                     {/* <Header /> */}
                     <main>
                         <Routes>
+                            {/* 로그인 및 회원가입 페이지 (비로그인 전용) */}
+                            <Route
+                                path="/login"
+                                element={
+                                    <PublicRoute>
+                                        <Login />
+                                    </PublicRoute>
+                                }
+                            />
+                            <Route
+                                path="/join"
+                                element={
+                                    <PublicRoute>
+                                        <Join />
+                                    </PublicRoute>
+                                }
+                            />
+                            <Route
+                                path="/find-id"
+                                element={
+                                    <PublicRoute>
+                                        <FindUserId />
+                                    </PublicRoute>
+                                }
+                            />
+                            <Route
+                                path="/find-password"
+                                element={
+                                    <PublicRoute>
+                                        <FindUserPassword />
+                                    </PublicRoute>
+                                }
+                            />
+
+                            {/* 회원가입 유형 선택 */}
+                            <Route
+                                path="/personal-form"
+                                element={
+                                    <PublicRoute>
+                                        <PersonalForm />
+                                    </PublicRoute>
+                                }
+                            />
+                            <Route
+                                path="/business-form"
+                                element={
+                                    <PublicRoute>
+                                        <BusinessForm />
+                                    </PublicRoute>
+                                }
+                            />
+
+                            {/* 공통 마이페이지 (로그인된 모든 사용자 접근 가능) */}
+                            <Route
+                                path="/mypage/update/info"
+                                element={
+                                    <PrivateRoute requiredRoless={['ROLE_ADMIN', 'ROLE_BIZ', 'ROLE_USER']}>
+                                        <UserAccount />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/update/password"
+                                element={
+                                    <PrivateRoute requiredRoless={['ROLE_ADMIN', 'ROLE_BIZ', 'ROLE_USER']}>
+                                        <UserPassword />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/delete/account"
+                                element={
+                                    <PrivateRoute requiredRoless={['ROLE_ADMIN', 'ROLE_BIZ', 'ROLE_USER']}>
+                                        <UserDelete />
+                                    </PrivateRoute>
+                                }
+                            />
+
+                            {/* 관리자 마이페이지 (관리자 전용) */}
+                            <Route
+                                path="/mypage/admin/approval"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_ADMIN">
+                                        <AdminApproval />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/admin/dashboard"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_ADMIN">
+                                        <AdminDashboard />
+                                    </PrivateRoute>
+                                }
+                            />
+
+                            {/* 사업자회원 마이페이지 (사업자 전용) */}
+                            <Route
+                                path="/mypage/business/apply"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_BIZ">
+                                        <BusinessApply />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/business/register"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_BIZ">
+                                        <BusinessRegister />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/business/apply-status"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_BIZ">
+                                        <ApplyStatus />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/business/update-info"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_BIZ">
+                                        <BusinessEdit />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/business/reservations"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_BIZ">
+                                        <BusinessReservations />
+                                    </PrivateRoute>
+                                }
+                            />
+
+                            {/* 개인회원 마이페이지 (일반회원 전용) */}
+                            <Route
+                                path="/mypage/reviews"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_USER">
+                                        <UserReviews />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route
+                                path="/mypage/reservations"
+                                element={
+                                    <PrivateRoute requiredRoles="ROLE_USER">
+                                        <UserReservations />
+                                    </PrivateRoute>
+                                }
+                            />
+
+                            {/* 홈화면 */}
                             <Route path="/" element={<Home />} />
                             <Route path="/company" element={<Company />} />
                             <Route path="/marketplace" element={<Marketplace />} />
                             <Route path="/features" element={<Features />} />
                             <Route path="/team" element={<Team />} />
                             <Route path="/contact" element={<Contact />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/join" element={<Join />} />
-                            <Route path="/personal-form" element={<PersonalForm />} />
-                            <Route path="/business-form" element={<BusinessForm />} />
-                            <Route path="/find-id" element={<FindUserId />} />
-                            <Route path="/find-password" element={<FindUserPassword />} />
-                            <Route path="/mypage/update/info" element={<UserAccount />} />
-                            <Route path="/mypage/update/password" element={<UserPassword />} />
-                            <Route path="/mypage/delete/account" element={<UserDelete />} />
-                            <Route path="/mypage/reviews" element={<UserReviews />} />
-                            <Route path="/mypage/reservations" element={<UserReservations />} />
-                            <Route path="/mypage/business/apply" element={<BusinessApply />} />
-                            <Route path="/mypage/business/register" element={<BusinessRegister />} />
-                            <Route path="/mypage/business/apply-status" element={<ApplyStatus />} />
-                            <Route path="/mypage/business/update-info" element={<BusinessEdit />} />
-                            <Route path="/mypage/business/reservations" element={<BusinessReservations />} />
-                            <Route path="/mypage/admin/approval" element={<AdminApproval />} />
-                            <Route path="/mypage/admin/dashboard" element={<AdminDashboard />} />
+
+                            {/* 착한가격업소 찾기 */}
                             <Route path="/find/map" element={<Store />} />
                             <Route path="/find/map/:storeName" element={<StoreDetail />} />
+
+                            {/* 커뮤니티 */}
                             <Route path="/community-related/notice" element={<NoticePage />} />
                             <Route path="/components/community-related/write" element={<Write />} />
                             <Route path="/community-related/qna" element={<QnaPage />} />
                             <Route path="/community-related/faq" element={<Faq />} />
                             <Route path="/answer" element={<Answer />} />
-                            <Route path="/file" element={<FileUpload />} />
-                            <Route path="/ocr" element={<Ocrtest />} />
+
+                            {/* 사이트 소개 */}
                             <Route path="/guide-related/intro/brand" element={<Brand />} />
                             <Route path="/guide-related/intro/guide" element={<Guide />} />
                             <Route path="/chatbot" element={<Imchat />} />
@@ -108,8 +253,12 @@ function App() {
                             <Route path="/guide-related/intro/herosection" element={<HeroSection />} />
                             <Route path="/guide/intro/history" element={<HistoryPage />} />
                             <Route path="/guide/shop" element={<GuidePage />} />
-                            <Route path="/kitchen" element={<KitchenTest />} />
                             <Route path="/guide-related/intro/service" element={<Service />} />
+
+                            {/* 기타 */}
+                            <Route path="/file" element={<FileUpload />} />
+                            <Route path="/ocr" element={<Ocrtest />} />
+                            <Route path="/kitchen" element={<KitchenTest />} />
                         </Routes>
                     </main>
                 </div>
