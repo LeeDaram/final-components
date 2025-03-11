@@ -151,20 +151,21 @@ function Home() {
 
                         {/* 공지사항 */}
                         <h2 className="text-xl font-bold mb-4 mt-20">공지사항</h2>
-                        <div className="border p-5 rounded-lg">
-                            <div className="grid grid-cols-3 gap-4 justify-center">
+                        <div className="border p-6 rounded-lg bg-white ">
+                            <div className="grid grid-cols-3 gap-6 justify-center">
                                 {homeNotice.map((notice) => (
                                     <button
                                         key={notice.noticeId}
                                         to={`/notice/${notice.id}`}
-                                        className="border p-4 rounded shadow hover:bg-gray-100"
+                                        className="border p-5 rounded-lg  ease-in-out bg-gray-50 hover:bg-gray-100"
                                         onClick={() => handleNotice(notice)}
-                                        //버튼으로 바꾸고 온클릭 맥여서 navigate에 id값 태워서 보낸다음에 answer페이지 조회
                                     >
-                                        <div className="text-base font-semibold text-left">
-                                            <span>{notice.noticeId}번공지 : </span> {notice.noticeTitle}
+                                        <div className="text-lg font-semibold text-gray-800 mb-2 text-left">
+                                            {notice.noticeId}번 공지 : {notice.noticeTitle}
                                         </div>
-                                        <div className="text-sm text-gray-500 text-left">{notice.noticeContent}</div>
+                                        <div className="text-sm text-gray-600 text-left line-clamp-2">
+                                            {notice.noticeContent}
+                                        </div>
                                     </button>
                                 ))}
                             </div>

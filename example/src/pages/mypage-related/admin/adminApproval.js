@@ -181,7 +181,8 @@ function AdminApproval() {
                 throw new Error('승인 상태 업데이트에 실패했습니다.');
             }
 
-            fetchApprovalList(activeTab);
+            await fetchApprovalList(activeTab, currentPage - 1);
+
             setOpenModal(false);
         } catch (error) {
             console.error('Error:', error);

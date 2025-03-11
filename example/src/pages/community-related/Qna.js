@@ -10,6 +10,7 @@ import { FiChevronsLeft, FiChevronsRight, FiChevronLeft, FiChevronRight } from '
 const QnaPage = () => {
     const { user, token } = useAuth();
 
+    const [totalElements, settotalElements] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [qnas, setQnas] = useState([]);
     const [searchQna, setSearchQna] = useState('');
@@ -43,6 +44,7 @@ const QnaPage = () => {
                 params,
             });
 
+            settotalElements(res.data.page.totalElements);
             setTotalPages(res.data.page.totalPages);
             if (res.data && res.data.content.length > 0) {
                 setPage(res.data.page);
@@ -92,7 +94,12 @@ const QnaPage = () => {
                     <h1 className="text-3xl font-bold mb-4 mt-10">Q&A</h1>
 
                     <div className="flex justify-between items-center border-b pb-4 mb-1 border-black">
-                        <div className="text-gray-700">전체 124건 - 현재 페이지 {currentPage}/13</div>
+                        {page && (
+                            <div className="text-gray-700">
+                                전체 {totalElements}건 - 현재 페이지 {page.number + 1} / {page.totalPages}
+                            </div>
+                        )}
+
                         <div className="flex items-center border rounded overflow-hidden">
                             <input
                                 type="text"

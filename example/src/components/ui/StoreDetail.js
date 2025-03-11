@@ -178,7 +178,43 @@ const StoreDetail = () => {
     };
 
     // 저장 버튼
+    // 저장 버튼
     const handleSubmit = async () => {
+        // 유효성 검사 전에 값들이 제대로 들어오는지 확인
+        console.log('storeId:', store?.storeId);
+        console.log('userId:', user?.id);
+        console.log('rating:', rating);
+        console.log('cost:', cost);
+        console.log('menu:', menu);
+        console.log('review:', review);
+        console.log('images:', images);
+
+        // 유효성 검사
+        if (!store?.storeId) {
+            alert('가게 정보가 없습니다.');
+            return;
+        }
+        if (!user?.id) {
+            alert('유저 정보가 없습니다.');
+            return;
+        }
+        if (!rating || rating < 1 || rating > 5) {
+            alert('평점을 1에서 5 사이로 입력해주세요.');
+            return;
+        }
+        if (!cost || isNaN(cost) || cost < 0) {
+            alert('비용을 올바르게 입력해주세요.');
+            return;
+        }
+        if (!menu || menu.trim() === '') {
+            alert('메뉴를 입력해주세요.');
+            return;
+        }
+        if (!review || review.trim() === '') {
+            alert('리뷰를 입력해주세요.');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('storeId', store.storeId);
         formData.append('userId', user.id);
@@ -187,16 +223,28 @@ const StoreDetail = () => {
         formData.append('menu', menu);
         formData.append('review', review);
 
-        for (let i = 0; i < images.length; i++) {
-            formData.append(`files`, images[i]);
+        // 이미지 추가 (없는 경우도 안전하게 처리)
+        if (Array.isArray(images) && images.length > 0) {
+            for (let i = 0; i < images.length; i++) {
+                formData.append('files', images[i]);
+            }
         }
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/review`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        setModalOn(false);
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/review`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            alert('리뷰가 성공적으로 저장되었습니다.');
+
+            window.location.reload();
+            setModalOn(false);
+        } catch (error) {
+            console.error('리뷰 저장 오류:', error);
+            alert('리뷰 저장에 실패했습니다. 다시 시도해주세요.');
+        }
     };
 
     if (!store) {

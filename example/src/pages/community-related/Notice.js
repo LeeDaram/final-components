@@ -8,6 +8,7 @@ import { FaFileAlt } from 'react-icons/fa';
 import { FiChevronsLeft, FiChevronsRight, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 const NoticePage = () => {
     const { user, token } = useAuth();
+    const [totalElements, settotalElements] = useState(1);
 
     // 페이지네이션
     const SIZE = 8;
@@ -43,6 +44,7 @@ const NoticePage = () => {
                 params,
             });
 
+            settotalElements(res.data.page.totalElements);
             setTotalPages(res.data.page.totalPages);
             if (res.data && res.data.content.length > 0) {
                 setPage(res.data.page);
@@ -91,7 +93,11 @@ const NoticePage = () => {
                     <h1 className="text-3xl font-bold mb-4 mt-10">공지사항</h1>
 
                     <div className="flex justify-between items-center border-b pb-4 mb-1 border-black">
-                        <div className="text-gray-700">전체 124건 - 현재 페이지 {currentPage}/13</div>
+                        {page && (
+                            <div className="text-gray-700">
+                                전체 {totalElements}건 - 현재 페이지 {page.number + 1} / {page.totalPages}
+                            </div>
+                        )}
                         <div className="flex items-center border rounded overflow-hidden">
                             <input
                                 type="text"
