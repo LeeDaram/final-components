@@ -352,50 +352,50 @@ function BusinessApply() {
 
             const body = {
                 storeId: storeId,
-                mainMenu: formData.userMenu, // Management
-                price: formData.userPrice, // Management
-                priceApproval: formData.priceComparison ? 'T' : 'F', // Management
-                cleanlinessApproval: formData.isImgclean, // Management
+                mainMenu: formData.userMenu,
+                price: formData.userPrice,
+                priceApproval: formData.priceComparison ? 'T' : 'F',
+                cleanlinessApproval: formData.isImgclean,
                 isActivate: formData.userReservation ? 'T' : 'F',
             };
 
-            if (formData.priceComparison && formData.isImgclean == 'T') {
+            if (formData.priceComparison && formData.isImgclean === 'T') {
                 body.finalApprovalStatus = 'PENDING';
             } else {
                 body.finalApprovalStatus = 'AI_REJECTED';
             }
 
-            const createApproval = await axios.post(`${process.env.REACT_APP_API_URL}/bizimg/approval`, body);
-
-            // console.log(imgFile, '이미지파일이 어떻게 들어오나요');
+            await axios.post(`${process.env.REACT_APP_API_URL}/bizimg/approval`, body);
 
             const formDataImg = new FormData();
             formDataImg.append('storeId', storeId);
-            formDataImg.append(`files`, imgFile[0]);
+            formDataImg.append('files', imgFile[0]);
 
             // 파일 업로드
-            const createBizImg = await axios.post(
-                `${process.env.REACT_APP_API_URL}/bizimg/approval/attachment`,
-                formDataImg,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
+            await axios.post(`${process.env.REACT_APP_API_URL}/bizimg/approval/attachment`, formDataImg, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
         } catch (err) {
             console.error(err);
+            throw err; // 에러 발생 시 handleSubmit으로 전달
         }
     };
 
     // 저장함수
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (validateForm()) {
-            // console.log('최종 제출 데이터:', formData);
-            createGpb();
-            alert('신청이 완료되었습니다!');
-            navigate('/mypage/business/apply-status', { replace: true });
-            window.location.reload();
+            try {
+                // 신청 완료 전에 대기
+                await createGpb();
+                alert('신청이 완료되었습니다!');
+                navigate('/mypage/business/apply-status', { replace: true });
+                window.location.reload();
+            } catch (err) {
+                alert('신청 중 오류가 발생했습니다.');
+                console.error(err);
+            }
         } else {
             alert('입력값을 다시 확인해주세요.');
         }
