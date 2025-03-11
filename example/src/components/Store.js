@@ -3,6 +3,9 @@ import { Phone, Banknote } from "lucide-react";
 import { FaStar } from "react-icons/fa6";
 import StoreDetail from "./ui/StoreDetail";
 import { useNavigate } from "react-router-dom";
+import kakaoImg from "../assets/images/store/KakaoTalk_20250311_172109283.png";
+
+const kaImg = kakaoImg;
 
 function StoreComponent({ data }) {
   const [isAdding, setIsAdding] = useState(false); // 새페이지
@@ -29,9 +32,7 @@ function StoreComponent({ data }) {
           />
         ) : (
           <img
-            src={
-              "https://e7.pngegg.com/pngimages/365/94/png-clipart-sasuke-uchiha-madara-uchiha-itachi-uchiha-kakashi-hatake-sharingan-naruto-symmetry-sasuke-uchiha-thumbnail.png"
-            }
+            src={kaImg}
             alt="업소대표 이미지"
             className="w-full h-full object-cover"
           />
