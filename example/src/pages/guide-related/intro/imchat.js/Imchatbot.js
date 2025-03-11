@@ -11,17 +11,16 @@ const ImchatBot = () => {
       {
         text: `바로가기 목록:\n로그인./1
         \n지도./2
-        \n가이드./3
-        \n내 정보./4
-        \nFAQ./5
-        \nQ&A./6
-        \n공지사항./7
+        \nFAQ./3
+        \nQ&A./4
+        \n공지사항./5
+      
         `,
         type: "other-message",
         //숫자열
       },
       {
-        text: `추가 명령어 목록:\n8. 지원\n9. 프로필\n10. /대시보드\n11. /연락처\n12. /도움말\n13. /설명`,
+        text: `추가 명령어 목록:\n6. 지원\n7. 프로필\n8. /대시보드\n9. /연락처\n10. /도움말\n11. /설명`,
         type: "other-message",
         // /문자열
       },
@@ -52,16 +51,14 @@ const ImchatBot = () => {
           {
             text: `바로가기 목록:\n로그인./1
         \n지도./2
-        \n가이드./3
-        \n내 정보./4
-        \nFAQ./5
-        \nQ&A./6
-        \n공지사항./7
+        \nFAQ./3
+        \nQ&A./4
+        \n공지사항./5
         `,
             type: "other-message",
           },
           {
-            text: `추가 명령어 목록:\n8. 지원\n9. 프로필\n10. /대시보드\n11. /연락처\n12. /도움말\n13. /설명`,
+            text: `추가 명령어 목록:\n6. 지원\n7. 프로필\n8. /대시보드\n9. /연락처\n10. /도움말\n11. /설명`,
             type: "other-message",
             // /문자열
           },
@@ -89,11 +86,9 @@ const ImchatBot = () => {
 
       1: "REDIRECT:/login",
       2: "REDIRECT:/find/map",
-      3: "REDIRECT:/intro/guide",
-      4: "REDIRECT:/update/info",
-      5: "REDIRECT:/community-related/faq",
-      6: "REDIRECT:/community-related/qna",
-      7: "REDIRECT:/community-related/notice",
+      3: "REDIRECT:/community-related/faq",
+      4: "REDIRECT:/community-related/qna",
+      5: "REDIRECT:/community-related/notice",
       //리다이렉트 명령어
 
       지원: "지원 관련 정보는 관리자에게 문의하세요.",
