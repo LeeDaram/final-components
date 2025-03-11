@@ -48,7 +48,7 @@ const SingleComponent = () => {
               자세히 보기
             </button>
             {isChatOpen && (
-              <div className="fixed inset-0 md:top-56 md:left-auto md:right-4 flex items-center justify-center md:justify-end z-50">
+              <div className="fixed inset-0 md:top-[calc(56px+10px)] md:left-auto md:right-4 flex items-center justify-center md:justify-end z-50">
                 <div className="bg-white rounded-lg shadow-lg w-11/12 sm:w-80 h-[400px] md:h-[500px] flex flex-col hover:shadow-xl transition-shadow duration-300">
                   <div className="p-4 flex justify-between border-b">
                     <h2 className="text-base sm:text-lg font-semibold">챗봇</h2>
