@@ -9,18 +9,18 @@ const ImchatBot = () => {
     // 챗봇 시작 시 명령어 목록 자동 추가
     const initialMessages = [
       {
-        text: `바로가기 목록 숫자입력 : \n1. 로그인 /
-        \n2. 지도 /
-        \n3. F&Q /
-        \n4. Q&A /
-        \n5. 공지사항 /
+        text: `바로가기 목록 숫자입력  \n1. 로그인 
+        2. 지도 
+        3. F&Q 
+        \n4. Q&A 
+        5. 공지사항 
       
         `,
         type: "other-message",
         //숫자열
       },
       {
-        text: `해당 글자를 입력하세요 :\n지원 /\n프로필\n / 대시보드\n / 연락처\n / 도움말\n / 설명`,
+        text: `해당 커맨드를 입력하세요 \n지원 /\n프로필\n / 대시보드\n / 연락처\n / 도움말\n / 설명`,
         type: "other-message",
         // /문자열
       },
@@ -49,18 +49,18 @@ const ImchatBot = () => {
             type: "other-message",
           },
           {
-            text: `바로가기 목록:\n1:로그인/1
-            \n2:지도/2
-            \n3:F&Q/3
-            \n4:Q&A/4
-            \n5:공지사항/5
+            text: `바로가기 목록 숫자입력  \n1. 로그인 
+            2. 지도 
+            3. F&Q 
+            \n4. Q&A 
+            5. 공지사항 
           
             `,
             type: "other-message",
             //숫자열
           },
           {
-            text: `추가 명령어 목록:\n지원. 지원\n프로필. 프로필\n대시보드. /대시보드\n연락처. /연락처\n도움말. /도움말\n설명. /설명`,
+            text: `해당 커맨드를 입력하세요 \n지원 /\n프로필\n / 대시보드\n / 연락처\n / 도움말\n / 설명`,
             type: "other-message",
             // /문자열
           },
@@ -128,7 +128,7 @@ const ImchatBot = () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`m-1 p-2 rounded max-w-[70%] break-words ${
+              className={`m-1 p-2 rounded max-w-[65%] break-words ${
                 msg.type === "my-message"
                   ? "bg-green-400 ml-auto"
                   : "bg-gray-400 text-left mr-auto"
