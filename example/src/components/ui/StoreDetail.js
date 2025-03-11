@@ -180,15 +180,6 @@ const StoreDetail = () => {
     // 저장 버튼
     // 저장 버튼
     const handleSubmit = async () => {
-        // 유효성 검사 전에 값들이 제대로 들어오는지 확인
-        console.log('storeId:', store?.storeId);
-        console.log('userId:', user?.id);
-        console.log('rating:', rating);
-        console.log('cost:', cost);
-        console.log('menu:', menu);
-        console.log('review:', review);
-        console.log('images:', images);
-
         // 유효성 검사
         if (!store?.storeId) {
             alert('가게 정보가 없습니다.');
