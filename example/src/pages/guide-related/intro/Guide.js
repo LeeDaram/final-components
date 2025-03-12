@@ -77,7 +77,7 @@ const HeroSection = () => {
             챗봇 열기
           </button>
           {isChatOpen && (
-            <div className="fixed top-[44px] right-4 z-50 flex justify-end items-start">
+            <div className="fixed top-[204px] right-4 z-50 flex justify-end items-start">
               <div className="bg-white rounded-lg shadow-lg w-11/12 sm:w-80 h-[400px] md:h-[500px] flex flex-col hover:shadow-xl transition-shadow duration-300">
                 <div className="p-4 flex justify-between border-b">
                   <h2 className="text-base sm:text-lg font-semibold">챗봇</h2>

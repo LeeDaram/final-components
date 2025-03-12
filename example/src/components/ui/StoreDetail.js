@@ -144,13 +144,134 @@ const StoreDetail = () => {
     } catch (error) {
       console.error("예약 실패:", error);
 
-      // 예약 중복 시 서버에서 메시지 날림
-      if (error.response && error.response.data) {
-        alert(error.response.data.message);
-      } else {
-        // 서버 및 통신 문제 오류
-        alert("예약 중 오류가 발생했습니다.");
+      if (!selectedDate) {
+        alert("날짜를 선택해주세요.");
+        return;
       }
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+
+      const requestData = {
+        reservationDate: formattedDate,
+        userId: user.id,
+        storeId: store.storeId,
+      };
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/reservation`,
+          requestData
+        );
+
+        alert("예약이 완료되었습니다!");
+      } catch (error) {
+        console.error("예약 실패:", error);
+
+        // 예약 중복 시 서버에서 메시지 날림
+        if (error.response && error.response.data) {
+          alert(error.response.data.message);
+        } else {
+          // 서버 및 통신 문제 오류
+          alert("예약 중 오류가 발생했습니다.");
+        }
+      }
+
+      // 예약 완료 후 모달 닫기
+      setIsmodal(false);
+    }
+
+    // 예약버튼
+    const handleReservationClick = () => {
+      if (!user) {
+        alert("로그인 후 이용하실 수 있습니다.");
+        setIsmodal(false);
+        return;
+      }
+      setIsmodal(true);
+    };
+
+    // 데이터 없을경우 화면 처리
+    if (!store)
+      return <span className="loading loading-spinner loading-lg"></span>;
+
+    const handleReviewSubmit = () => {
+      if (!user) {
+        alert("로그인 후 이용하실 수 있습니다.");
+      } else {
+        setModalOn(true);
+      }
+    };
+
+    // 사진 업로드 버튼 클릭
+    const triggerFileUpload = () => {
+      fileInputRef.current.click();
+    };
+
+    // 저장 버튼
+    // 저장 버튼
+    const handleSubmit = async () => {
+      // 유효성 검사
+      if (!store?.storeId) {
+        alert("가게 정보가 없습니다.");
+        return;
+      }
+      if (!user?.id) {
+        alert("유저 정보가 없습니다.");
+        return;
+      }
+      if (!rating || rating < 1 || rating > 5) {
+        alert("평점을 1에서 5 사이로 입력해주세요.");
+        return;
+      }
+      if (!cost || isNaN(cost) || cost < 0) {
+        alert("비용을 올바르게 입력해주세요.");
+        return;
+      }
+      if (!menu || menu.trim() === "") {
+        alert("메뉴를 입력해주세요.");
+        return;
+      }
+      if (!review || review.trim() === "") {
+        alert("리뷰를 입력해주세요.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("storeId", store.storeId);
+      formData.append("userId", user.id);
+      formData.append("rating", rating);
+      formData.append("cost", cost);
+      formData.append("menu", menu);
+      formData.append("review", review);
+
+      // 이미지 추가 (없는 경우도 안전하게 처리)
+
+      for (let i = 0; i < images.length; i++) {
+        formData.append("files", images[i]);
+      }
+
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/review`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        alert("리뷰가 성공적으로 저장되었습니다.");
+
+        window.location.reload();
+        setModalOn(false);
+      } catch (error) {
+        console.error("리뷰 저장 오류:", error);
+        alert("리뷰 저장에 실패했습니다. 다시 시도해주세요.");
+      }
+    };
+
+    if (!store) {
+      console.error("store 값이 없음", state);
+      return <span className="loading loading-spinner loading-lg"></span>;
     }
 
     // 예약 완료 후 모달 닫기
