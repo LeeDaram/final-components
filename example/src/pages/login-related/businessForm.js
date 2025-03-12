@@ -116,7 +116,7 @@ function BusinessForm() {
             }
 
             const data = await response.json();
-            setCoordinate({ lat: data.documents[0].x, lng: data.documents[0].y });
+            setCoordinate({ lat: data.documents[0].y, lng: data.documents[0].x });
         } catch (err) {
             console.error(err.message);
         }

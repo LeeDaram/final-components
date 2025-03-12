@@ -400,9 +400,6 @@ function BusinessRegister() {
                 parking: formData.facilityParking ? 'T' : 'F',
             });
 
-            const storeId = response.data.storeId;
-            // console.log(storeId, '######################');
-
             const body = {
                 storeId: storeId,
                 mainMenu: formData.userMenu,
